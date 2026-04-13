@@ -18,10 +18,11 @@
         
         .logo-yellow { color: #facc15; }
         .logo-yellow-bg { background-color: #facc15; }
+        .logo-yellow-border { border-color: #facc15; }
         
         .product-image-container {
             background-color: #111827;
-            padding: 40px 20px;
+            padding: 30px 20px;
             min-height: 400px;
             display: flex;
             align-items: center;
@@ -32,6 +33,14 @@
             max-height: 340px;
             width: auto;
             object-fit: contain;
+        }
+        
+        .modal {
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
     </style>
 </head>
@@ -171,14 +180,14 @@
         </div>
     </section>
 
-    <!-- QUICK VIEW MODAL -->
+    <!-- QUICK VIEW MODAL - Smaller and cleaner -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-6">
-        <div class="modal bg-zinc-900 rounded-3xl max-w-2xl w-full overflow-hidden">
+        <div class="modal bg-zinc-900 rounded-3xl max-w-lg w-full overflow-hidden">
             <div class="p-6">
                 <button onclick="closeModal()" class="float-right text-5xl leading-none text-gray-400 hover:text-white mb-4">×</button>
                 
                 <div class="modal-image-container rounded-2xl mb-6">
-                    <img id="modalImage" src="" alt="" class="w-full h-[480px] object-contain mx-auto">
+                    <img id="modalImage" src="" alt="" class="w-full h-[420px] object-contain mx-auto">
                 </div>
 
                 <div id="thumbnailContainer" class="flex gap-4 justify-center mb-8"></div>
@@ -244,20 +253,16 @@
         }
 
         function updateModalImage() {
-            if (currentProduct && currentProduct.images && currentProduct.images.length > currentImageIndex) {
-                document.getElementById('modalImage').src = currentProduct.images[currentImageIndex];
-            }
+            document.getElementById('modalImage').src = currentProduct.images[currentImageIndex];
         }
 
         function renderThumbnails() {
             const container = document.getElementById('thumbnailContainer');
             container.innerHTML = '';
-            if (!currentProduct || !currentProduct.images) return;
-
             currentProduct.images.forEach((imgSrc, i) => {
                 const thumb = document.createElement('img');
                 thumb.src = imgSrc;
-                thumb.className = `w-24 h-24 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 transition ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
+                thumb.className = `w-20 h-20 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 transition ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
                 thumb.onclick = () => {
                     currentImageIndex = i;
                     updateModalImage();
