@@ -199,4 +199,84 @@
 
         const products = [
             { id: 0, name: "DOG Classic Tee", price: 29, images: ["classic-tee-1.jpg", "classic-tee-2.jpg"] },
-            { id: 1, name: "DOG Long Sleeve", price: 39,
+            { id: 1, name: "DOG Long Sleeve", price: 39, images: ["long-sleeve-1.jpg", "long-sleeve-2.jpg"] },
+            { id: 2, name: "DOG Hoodie", price: 59, images: ["hoodie-1.jpg", "hoodie-2.jpg"] }
+        ];
+
+        function quickView(index) {
+            currentProduct = products[index];
+            currentQty = 1;
+            currentImageIndex = 0;
+            document.getElementById('modalTitle').textContent = currentProduct.name;
+            document.getElementById('modalPrice').textContent = '$' + currentProduct.price;
+            updateModalImage();
+            updateModalTotal();   // <-- Fixed: always update total on open
+            renderThumbnails();
+            document.getElementById('quickModal').classList.remove('hidden');
+            document.getElementById('quickModal').classList.add('flex');
+        }
+
+        function updateModalImage() {
+            document.getElementById('modalImage').src = currentProduct.images[currentImageIndex];
+        }
+
+        function renderThumbnails() {
+            const container = document.getElementById('thumbnailContainer');
+            container.innerHTML = '';
+            currentProduct.images.forEach((src, i) => {
+                const thumb = document.createElement('img');
+                thumb.src = src;
+                thumb.className = `w-24 h-24 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
+                thumb.onclick = () => {
+                    currentImageIndex = i;
+                    updateModalImage();
+                    renderThumbnails();
+                };
+                container.appendChild(thumb);
+            });
+        }
+
+        function closeModal() {
+            const m = document.getElementById('quickModal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('logo-yellow-border', 'text-[#facc15]'));
+            btn.classList.add('logo-yellow-border', 'text-[#facc15]');
+        }
+
+        function changeQty(delta) {
+            currentQty = Math.max(1, currentQty + delta);
+            document.getElementById('modalQty').textContent = currentQty;
+            updateModalTotal();   // <-- Fixed: update total when quantity changes
+        }
+
+        function updateModalTotal() {
+            if (!currentProduct) return;
+            const total = currentProduct.price * currentQty;
+            document.getElementById('modalTotalPrice').textContent = '$' + total;
+        }
+
+        function addCurrentToCart() {
+            if (!currentProduct) return;
+            alert(currentQty + " × " + currentProduct.name + " added to cart!");
+            closeModal();
+        }
+
+        function addToCart(index, price, name) {
+            cartCount++;
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+
+        function toggleCart() {
+            alert("Cart coming soon — currently " + cartCount + " items");
+        }
+
+        function activateLogo() {
+            alert("Faith Activated! +$10 to the mission");
+        }
+    </script>
+</body>
+</html>
