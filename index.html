@@ -20,6 +20,17 @@
         .logo-yellow-bg { background-color: #facc15; }
         .logo-yellow-border { border-color: #facc15; }
         
+        .logo-hero { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.6)); 
+        }
+        .logo-hero:hover { 
+            transform: translateY(-12px) scale(1.08); 
+            filter: drop-shadow(0 0 45px rgba(250, 204, 21, 0.95)) brightness(1.15); 
+        }
+        
+        #mission, #shop, #donate, #impact { scroll-margin-top: 100px; }
+        
         .product-image-container {
             background-color: #111827;
             padding: 30px 20px;
@@ -172,7 +183,7 @@
         </div>
     </section>
 
-    <!-- QUICK VIEW MODAL - Fixed with thumbnails -->
+    <!-- QUICK VIEW MODAL WITH THUMBNAILS -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-6">
         <div class="modal bg-zinc-900 rounded-3xl max-w-2xl w-full overflow-hidden">
             <div class="p-6">
