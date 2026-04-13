@@ -32,26 +32,30 @@
         
         #mission, #shop, #donate, #impact { scroll-margin-top: 100px; }
         
-        .product-card { 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .product-card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 25px 50px -12px rgba(250, 204, 21, 0.3); 
-        }
-        
         .product-image-container {
-            background-color: #111;
-            padding: 20px;
+            background-color: #111827;
+            padding: 30px 20px;
+            min-height: 460px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .modal { animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.85) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .product-image {
+            max-height: 420px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .modal-image-container {
+            background-color: #111827;
+            padding: 40px 20px;
+        }
     </style>
 </head>
 <body class="bg-black text-white">
 
-    <!-- NAVBAR (same) -->
+    <!-- NAVBAR -->
     <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
             <div class="flex items-center gap-3 group">
@@ -71,7 +75,7 @@
         </div>
     </nav>
 
-    <!-- HERO (same) -->
+    <!-- HERO -->
     <section class="hero-bg h-screen flex items-center relative">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <img src="logo.png" alt="Dads of God Logo" id="heroLogo" 
@@ -86,7 +90,7 @@
         </div>
     </section>
 
-    <!-- MISSION (same) -->
+    <!-- MISSION -->
     <section id="mission" class="bg-zinc-950 py-24 border-b border-[#facc15]/20">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <div class="inline-flex items-center gap-3 mb-6">
@@ -113,8 +117,7 @@
             <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
                 <div class="product-image-container">
                     <img src="classic-tee-1.jpg" alt="DOG Classic Tee" 
-                         class="w-full h-[460px] object-contain mx-auto cursor-pointer" 
-                         onclick="quickView(0)">
+                         class="product-image cursor-pointer" onclick="quickView(0)">
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-baseline">
@@ -130,8 +133,7 @@
             <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
                 <div class="product-image-container">
                     <img src="long-sleeve-1.jpg" alt="DOG Long Sleeve" 
-                         class="w-full h-[460px] object-contain mx-auto cursor-pointer" 
-                         onclick="quickView(1)">
+                         class="product-image cursor-pointer" onclick="quickView(1)">
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-baseline">
@@ -147,8 +149,7 @@
             <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
                 <div class="product-image-container">
                     <img src="hoodie-1.jpg" alt="DOG Hoodie" 
-                         class="w-full h-[460px] object-contain mx-auto cursor-pointer" 
-                         onclick="quickView(2)">
+                         class="product-image cursor-pointer" onclick="quickView(2)">
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-baseline">
@@ -162,15 +163,14 @@
         </div>
     </section>
 
-    <!-- DONATE and IMPACT sections remain the same as your current site -->
-
-    <!-- QUICK VIEW MODAL - Larger image -->
+    <!-- DONATE and IMPACT sections (unchanged) -->
+    <!-- Quick View Modal with larger image -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-6">
         <div class="modal bg-zinc-900 rounded-3xl max-w-2xl w-full overflow-hidden">
             <div class="p-6">
                 <button onclick="closeModal()" class="float-right text-4xl text-gray-400 hover:text-white">×</button>
                 
-                <div class="bg-zinc-950 p-6 rounded-2xl mb-6">
+                <div class="modal-image-container rounded-2xl mb-6">
                     <img id="modalImage" src="" alt="" class="w-full h-[520px] object-contain mx-auto">
                 </div>
 
@@ -179,7 +179,6 @@
                 <h3 id="modalTitle" class="text-3xl font-semibold mb-1"></h3>
                 <div id="modalPrice" class="text-4xl font-bold logo-yellow mb-6"></div>
 
-                <!-- Size and Quantity -->
                 <div class="mb-6">
                     <p class="text-sm text-gray-400 mb-3">SIZE</p>
                     <div class="flex gap-3 flex-wrap">
@@ -212,7 +211,6 @@
     </div>
 
     <script>
-        // (Same script as before with 2 images per product)
         let totalImpact = 0;
         let cartCount = 0;
         let currentProduct = null;
@@ -258,7 +256,6 @@
             });
         }
 
-        // Rest of your functions (addToCart, buyNow, etc.) stay the same
         function closeModal() {
             const modal = document.getElementById('quickModal');
             modal.classList.add('hidden');
