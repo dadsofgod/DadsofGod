@@ -14,7 +14,7 @@
         .logo-yellow { color: #facc15; }
         .logo-yellow-bg { background-color: #facc15; }
 
-        /* Pulsing halo on hero logo - always active */
+        /* Pulsing halo on hero logo */
         #heroLogo {
             transition: transform 0.4s ease;
             animation: pulseHalo 4s infinite ease-in-out;
@@ -65,7 +65,7 @@
         </div>
     </nav>
 
-    <!-- HERO with pulsing halo logo -->
+    <!-- HERO -->
     <section class="h-screen flex items-center relative" style="background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.92)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <img src="logo.png" id="heroLogo" class="mx-auto mb-8 h-64 w-auto cursor-pointer" onclick="activateLogo()" alt="DOG Logo">
@@ -157,7 +157,7 @@
                 </div>
                 <div class="lg:w-1/2 p-8 flex flex-col">
                     <h3 id="modalTitle" class="text-4xl font-semibold mb-2"></h3>
-                    <div id="modalPrice" class="text-6xl font-bold logo-yellow mb-10"></div>
+                    <div id="modalPrice" class="text-6xl font-bold logo-yellow mb-6"></div>
 
                     <div class="mb-8">
                         <p class="text-sm text-gray-400 mb-3">SIZE</p>
@@ -179,7 +179,13 @@
                         </div>
                     </div>
 
-                    <button onclick="addCurrentToCart()" class="mt-auto w-full logo-yellow-bg hover:bg-[#fde047] text-black py-6 rounded-3xl font-semibold text-xl">ADD TO CART</button>
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-baseline mb-6">
+                            <span class="text-gray-400">TOTAL</span>
+                            <div id="modalTotalPrice" class="text-5xl font-bold logo-yellow"></div>
+                        </div>
+                        <button onclick="addCurrentToCart()" class="w-full logo-yellow-bg hover:bg-[#fde047] text-black py-6 rounded-3xl font-semibold text-xl">ADD TO CART</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -193,76 +199,4 @@
 
         const products = [
             { id: 0, name: "DOG Classic Tee", price: 29, images: ["classic-tee-1.jpg", "classic-tee-2.jpg"] },
-            { id: 1, name: "DOG Long Sleeve", price: 39, images: ["long-sleeve-1.jpg", "long-sleeve-2.jpg"] },
-            { id: 2, name: "DOG Hoodie", price: 59, images: ["hoodie-1.jpg", "hoodie-2.jpg"] }
-        ];
-
-        function quickView(index) {
-            currentProduct = products[index];
-            currentQty = 1;
-            currentImageIndex = 0;
-            document.getElementById('modalTitle').textContent = currentProduct.name;
-            document.getElementById('modalPrice').textContent = '$' + currentProduct.price;
-            updateModalImage();
-            renderThumbnails();
-            document.getElementById('quickModal').classList.remove('hidden');
-            document.getElementById('quickModal').classList.add('flex');
-        }
-
-        function updateModalImage() {
-            document.getElementById('modalImage').src = currentProduct.images[currentImageIndex];
-        }
-
-        function renderThumbnails() {
-            const container = document.getElementById('thumbnailContainer');
-            container.innerHTML = '';
-            currentProduct.images.forEach((src, i) => {
-                const thumb = document.createElement('img');
-                thumb.src = src;
-                thumb.className = `w-24 h-24 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
-                thumb.onclick = () => {
-                    currentImageIndex = i;
-                    updateModalImage();
-                    renderThumbnails();
-                };
-                container.appendChild(thumb);
-            });
-        }
-
-        function closeModal() {
-            const m = document.getElementById('quickModal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-
-        function selectSize(btn) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('logo-yellow-border', 'text-[#facc15]'));
-            btn.classList.add('logo-yellow-border', 'text-[#facc15]');
-        }
-
-        function changeQty(delta) {
-            currentQty = Math.max(1, currentQty + delta);
-            document.getElementById('modalQty').textContent = currentQty;
-        }
-
-        function addCurrentToCart() {
-            if (!currentProduct) return;
-            alert(currentQty + " × " + currentProduct.name + " added to cart!");
-            closeModal();
-        }
-
-        function addToCart(index, price, name) {
-            cartCount++;
-            document.getElementById('cart-count').textContent = cartCount;
-        }
-
-        function toggleCart() {
-            alert("Cart coming soon — currently " + cartCount + " items");
-        }
-
-        function activateLogo() {
-            alert("Faith Activated! +$10 to the mission");
-        }
-    </script>
-</body>
-</html>
+            { id: 1, name: "DOG Long Sleeve", price: 39,
