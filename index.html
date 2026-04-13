@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', system-ui, sans-serif; background: black; color: white; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
         .logo-font { font-family: 'Playfair Display', serif; }
         .logo-yellow { color: #facc15; }
         .logo-yellow-bg { background-color: #facc15; }
@@ -21,14 +22,14 @@
             align-items: center;
             justify-content: center;
         }
-        .product-image { max-height: 310px; object-fit: contain; }
+        .product-image { max-height: 310px; object-fit: contain; cursor: pointer; }
     </style>
 </head>
-<body>
+<body class="bg-black text-white">
 
     <!-- NAVBAR -->
-    <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50 p-5">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img src="logo.png" alt="DOG" class="h-12">
                 <span class="text-3xl logo-font logo-yellow">DOG</span>
@@ -46,7 +47,7 @@
     </section>
 
     <!-- MISSION -->
-    <section id="mission" class="bg-zinc-950 py-24">
+    <section id="mission" class="bg-zinc-950 py-24 border-b border-[#facc15]/20">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-5xl font-semibold logo-font logo-yellow mb-6">Our Mission</h2>
             <p class="text-2xl text-gray-200">Dads of God exists to equip strong, faithful men to protect, provide, and stand boldly for their families and the vulnerable — especially the children who cannot fight for themselves.</p>
@@ -61,7 +62,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
                 <div class="product-image-container">
-                    <img src="classic-tee-1.jpg" onclick="quickView(0)" class="product-image cursor-pointer">
+                    <img src="classic-tee-1.jpg" onclick="quickView(0)" class="product-image">
                 </div>
                 <div class="p-6">
                     <h3 class="text-2xl font-semibold">DOG Classic Tee</h3>
@@ -70,7 +71,7 @@
             </div>
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
                 <div class="product-image-container">
-                    <img src="long-sleeve-1.jpg" onclick="quickView(1)" class="product-image cursor-pointer">
+                    <img src="long-sleeve-1.jpg" onclick="quickView(1)" class="product-image">
                 </div>
                 <div class="p-6">
                     <h3 class="text-2xl font-semibold">DOG Long Sleeve</h3>
@@ -79,7 +80,7 @@
             </div>
             <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
                 <div class="product-image-container">
-                    <img src="hoodie-1.jpg" onclick="quickView(2)" class="product-image cursor-pointer">
+                    <img src="hoodie-1.jpg" onclick="quickView(2)" class="product-image">
                 </div>
                 <div class="p-6">
                     <h3 class="text-2xl font-semibold">DOG Hoodie</h3>
@@ -89,20 +90,20 @@
         </div>
     </section>
 
-    <!-- HORIZONTAL MODAL -->
+    <!-- HORIZONTAL MODAL with Size & Quantity -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 rounded-3xl max-w-5xl w-full overflow-hidden">
             <div class="flex flex-col lg:flex-row">
-                <!-- Image side -->
-                <div class="lg:w-1/2 p-8">
-                    <button onclick="closeModal()" class="float-right text-5xl text-gray-400 hover:text-white">×</button>
-                    <div class="bg-zinc-950 rounded-2xl p-8 mb-6">
-                        <img id="modalImage" src="" class="w-full max-h-[420px] object-contain">
+                <!-- Image + Thumbnails -->
+                <div class="lg:w-1/2 p-8 flex flex-col items-center">
+                    <button onclick="closeModal()" class="self-end text-5xl text-gray-400 hover:text-white mb-6">×</button>
+                    <div class="bg-zinc-950 rounded-2xl p-8 mb-6 w-full">
+                        <img id="modalImage" src="" class="w-full max-h-[420px] object-contain mx-auto">
                     </div>
-                    <div id="thumbnailContainer" class="flex gap-4 justify-center"></div>
+                    <div id="thumbnailContainer" class="flex gap-4"></div>
                 </div>
 
-                <!-- Details side -->
+                <!-- Details -->
                 <div class="lg:w-1/2 p-8 flex flex-col">
                     <h3 id="modalTitle" class="text-4xl font-semibold mb-2"></h3>
                     <div id="modalPrice" class="text-6xl font-bold logo-yellow mb-10"></div>
@@ -167,7 +168,11 @@
                 const thumb = document.createElement('img');
                 thumb.src = src;
                 thumb.className = `w-24 h-24 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
-                thumb.onclick = () => { currentImageIndex = i; updateModalImage(); renderThumbnails(); };
+                thumb.onclick = () => {
+                    currentImageIndex = i;
+                    updateModalImage();
+                    renderThumbnails();
+                };
                 container.appendChild(thumb);
             });
         }
