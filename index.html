@@ -14,20 +14,18 @@
         .logo-yellow { color: #facc15; }
         .logo-yellow-bg { background-color: #facc15; }
 
-        /* Glowing pulse effect for hero logo */
+        /* Pulsing halo on hero logo - always active */
         #heroLogo {
-            transition: all 0.4s ease;
-            filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.7));
-            animation: pulseGlow 3s infinite ease-in-out;
+            transition: transform 0.4s ease;
+            animation: pulseHalo 4s infinite ease-in-out;
         }
         #heroLogo:hover {
             transform: scale(1.15);
-            filter: drop-shadow(0 0 50px rgba(250, 204, 21, 0.95)) brightness(1.3);
             animation: none;
         }
-        @keyframes pulseGlow {
-            0%, 100% { filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.7)); }
-            50% { filter: drop-shadow(0 0 45px rgba(250, 204, 21, 0.95)); }
+        @keyframes pulseHalo {
+            0%, 100% { filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.6)); }
+            50% { filter: drop-shadow(0 0 55px rgba(250, 204, 21, 0.95)); }
         }
 
         .product-image-container {
@@ -38,7 +36,11 @@
             align-items: center;
             justify-content: center;
         }
-        .product-image { max-height: 310px; object-fit: contain; cursor: pointer; }
+        .product-image { 
+            max-height: 310px; 
+            object-fit: contain; 
+            cursor: pointer; 
+        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -63,7 +65,7 @@
         </div>
     </nav>
 
-    <!-- HERO with pulsing glowing logo -->
+    <!-- HERO with pulsing halo logo -->
     <section class="h-screen flex items-center relative" style="background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.92)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <img src="logo.png" id="heroLogo" class="mx-auto mb-8 h-64 w-auto cursor-pointer" onclick="activateLogo()" alt="DOG Logo">
