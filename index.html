@@ -61,7 +61,7 @@
 </head>
 <body class="bg-black text-white">
 
-    <!-- NAVBAR (unchanged) -->
+    <!-- NAVBAR -->
     <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
             <div class="flex items-center gap-3 group">
@@ -81,7 +81,7 @@
         </div>
     </nav>
 
-    <!-- HERO (unchanged) -->
+    <!-- HERO -->
     <section class="hero-bg h-screen flex items-center relative">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <img src="logo.png" alt="Dads of God Logo" id="heroLogo" 
@@ -96,7 +96,7 @@
         </div>
     </section>
 
-    <!-- MISSION (unchanged) -->
+    <!-- MISSION -->
     <section id="mission" class="bg-zinc-950 py-24 border-b border-[#facc15]/20">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <div class="inline-flex items-center gap-3 mb-6">
@@ -113,7 +113,7 @@
         </div>
     </section>
 
-    <!-- SHOP SECTION - Fixed image sizing -->
+    <!-- SHOP SECTION - Better framing -->
     <section id="shop" class="max-w-7xl mx-auto px-6 py-20">
         <h2 class="text-5xl font-semibold text-center mb-4 logo-font logo-yellow">Gear for the Working Man</h2>
         <p class="text-center text-xl text-gray-400 mb-12">Premium shirts for the dads who clock in, provide, and stand on faith.</p>
@@ -121,71 +121,107 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Classic Tee -->
             <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
-                <div class="relative">
-                    <img src="classic-tee-1.jpg" alt="DOG Classic Tee" class="w-full h-96 object-contain bg-black cursor-pointer" onclick="quickView(0)">
-                    <button onclick="quickView(0)" class="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-2xl text-xs font-medium transition">QUICK VIEW</button>
+                <div class="relative bg-zinc-950 p-4">
+                    <img src="classic-tee-1.jpg" alt="DOG Classic Tee" 
+                         class="w-full h-[420px] object-contain mx-auto cursor-pointer" 
+                         onclick="quickView(0)">
+                    <button onclick="quickView(0)" 
+                            class="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-2xl text-xs font-medium transition">QUICK VIEW</button>
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-baseline">
                         <h3 class="text-2xl font-semibold">DOG Classic Tee</h3>
                         <span class="text-2xl font-bold logo-yellow">$29</span>
                     </div>
-                    <button onclick="addToCart(0, 29, 'DOG Classic Tee')" class="mt-6 w-full logo-yellow-bg hover:bg-[#fde047] text-black py-4 rounded-2xl font-semibold">ADD TO CART — $29</button>
-                    <button onclick="buyNow(29, 'DOG Classic Tee')" class="mt-3 w-full border border-[#facc15] hover:bg-white/10 py-4 rounded-2xl font-semibold">BUY NOW WITH PAYPAL</button>
+                    <button onclick="addToCart(0, 29, 'DOG Classic Tee')" 
+                            class="mt-6 w-full logo-yellow-bg hover:bg-[#fde047] text-black py-4 rounded-2xl font-semibold">ADD TO CART — $29</button>
+                    <button onclick="buyNow(29, 'DOG Classic Tee')" 
+                            class="mt-3 w-full border border-[#facc15] hover:bg-white/10 py-4 rounded-2xl font-semibold">BUY NOW WITH PAYPAL</button>
                 </div>
             </div>
 
             <!-- Long Sleeve -->
             <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
-                <div class="relative">
-                    <img src="long-sleeve-1.jpg" alt="DOG Long Sleeve" class="w-full h-96 object-contain bg-black cursor-pointer" onclick="quickView(1)">
-                    <button onclick="quickView(1)" class="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-2xl text-xs font-medium transition">QUICK VIEW</button>
+                <div class="relative bg-zinc-950 p-4">
+                    <img src="long-sleeve-1.jpg" alt="DOG Long Sleeve" 
+                         class="w-full h-[420px] object-contain mx-auto cursor-pointer" 
+                         onclick="quickView(1)">
+                    <button onclick="quickView(1)" 
+                            class="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-2xl text-xs font-medium transition">QUICK VIEW</button>
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-baseline">
                         <h3 class="text-2xl font-semibold">DOG Long Sleeve</h3>
                         <span class="text-2xl font-bold logo-yellow">$39</span>
                     </div>
-                    <button onclick="addToCart(1, 39, 'DOG Long Sleeve')" class="mt-6 w-full logo-yellow-bg hover:bg-[#fde047] text-black py-4 rounded-2xl font-semibold">ADD TO CART — $39</button>
-                    <button onclick="buyNow(39, 'DOG Long Sleeve')" class="mt-3 w-full border border-[#facc15] hover:bg-white/10 py-4 rounded-2xl font-semibold">BUY NOW WITH PAYPAL</button>
+                    <button onclick="addToCart(1, 39, 'DOG Long Sleeve')" 
+                            class="mt-6 w-full logo-yellow-bg hover:bg-[#fde047] text-black py-4 rounded-2xl font-semibold">ADD TO CART — $39</button>
+                    <button onclick="buyNow(39, 'DOG Long Sleeve')" 
+                            class="mt-3 w-full border border-[#facc15] hover:bg-white/10 py-4 rounded-2xl font-semibold">BUY NOW WITH PAYPAL</button>
                 </div>
             </div>
 
             <!-- Hoodie -->
             <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden border border-[#facc15]/20">
-                <div class="relative">
-                    <img src="hoodie-1.jpg" alt="DOG Hoodie" class="w-full h-96 object-contain bg-black cursor-pointer" onclick="quickView(2)">
-                    <button onclick="quickView(2)" class="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-2xl text-xs font-medium transition">QUICK VIEW</button>
+                <div class="relative bg-zinc-950 p-4">
+                    <img src="hoodie-1.jpg" alt="DOG Hoodie" 
+                         class="w-full h-[420px] object-contain mx-auto cursor-pointer" 
+                         onclick="quickView(2)">
+                    <button onclick="quickView(2)" 
+                            class="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-2xl text-xs font-medium transition">QUICK VIEW</button>
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-baseline">
                         <h3 class="text-2xl font-semibold">DOG Hoodie</h3>
                         <span class="text-2xl font-bold logo-yellow">$59</span>
                     </div>
-                    <button onclick="addToCart(2, 59, 'DOG Hoodie')" class="mt-6 w-full logo-yellow-bg hover:bg-[#fde047] text-black py-4 rounded-2xl font-semibold">ADD TO CART — $59</button>
-                    <button onclick="buyNow(59, 'DOG Hoodie')" class="mt-3 w-full border border-[#facc15] hover:bg-white/10 py-4 rounded-2xl font-semibold">BUY NOW WITH PAYPAL</button>
+                    <button onclick="addToCart(2, 59, 'DOG Hoodie')" 
+                            class="mt-6 w-full logo-yellow-bg hover:bg-[#fde047] text-black py-4 rounded-2xl font-semibold">ADD TO CART — $59</button>
+                    <button onclick="buyNow(59, 'DOG Hoodie')" 
+                            class="mt-3 w-full border border-[#facc15] hover:bg-white/10 py-4 rounded-2xl font-semibold">BUY NOW WITH PAYPAL</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- DONATE & IMPACT sections unchanged -->
-    <!-- (Same as before) -->
+    <!-- DONATE & IMPACT (unchanged) -->
+    <section id="donate" class="max-w-7xl mx-auto px-6 py-20 bg-zinc-950">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="text-5xl font-semibold logo-font mb-4 logo-yellow">Join the Fight Directly</h2>
+            <p class="text-xl text-gray-300 mb-8">100% of your donation goes to vetted teams rescuing children.</p>
+            <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID_HERE" target="_blank" 
+               class="inline-flex items-center gap-3 logo-yellow-bg text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:bg-[#fde047]">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                DONATE NOW WITH PAYPAL
+            </a>
+        </div>
+    </section>
 
-    <!-- QUICK VIEW MODAL - Fixed for 2 images -->
+    <section id="impact" class="bg-zinc-950 py-20 border-t border-b border-[#facc15]/20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="inline-block bg-black rounded-3xl p-8 border border-[#facc15]/30">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <i class="fa-solid fa-fire flame logo-yellow text-4xl"></i>
+                    <div id="impact-total" class="text-8xl font-bold logo-yellow">$0</div>
+                </div>
+                <p class="text-sm tracking-widest">RAISED TO PROTECT CHILDREN</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK VIEW MODAL - Larger & better framed -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-6">
         <div class="modal bg-zinc-900 rounded-3xl max-w-2xl w-full overflow-hidden">
             <div class="p-6">
                 <button onclick="closeModal()" class="float-right text-4xl text-gray-400 hover:text-white">×</button>
                 
-                <img id="modalImage" src="" alt="" class="w-full h-[420px] object-contain bg-black rounded-2xl mb-6">
+                <img id="modalImage" src="" alt="" class="w-full h-[500px] object-contain bg-zinc-950 rounded-2xl mb-6">
 
                 <div id="thumbnailContainer" class="flex gap-4 justify-center mb-8"></div>
 
                 <h3 id="modalTitle" class="text-3xl font-semibold mb-1"></h3>
                 <div id="modalPrice" class="text-4xl font-bold logo-yellow mb-6"></div>
 
-                <!-- Size and Quantity (unchanged) -->
                 <div class="mb-6">
                     <p class="text-sm text-gray-400 mb-3">SIZE</p>
                     <div class="flex gap-3 flex-wrap">
@@ -225,24 +261,9 @@
         let currentImageIndex = 0;
 
         const products = [
-            { 
-                id: 0, 
-                name: "DOG Classic Tee", 
-                price: 29, 
-                images: ["classic-tee-1.jpg", "classic-tee-2.jpg"] 
-            },
-            { 
-                id: 1, 
-                name: "DOG Long Sleeve", 
-                price: 39, 
-                images: ["long-sleeve-1.jpg", "long-sleeve-2.jpg"] 
-            },
-            { 
-                id: 2, 
-                name: "DOG Hoodie", 
-                price: 59, 
-                images: ["hoodie-1.jpg", "hoodie-2.jpg"] 
-            }
+            { id: 0, name: "DOG Classic Tee", price: 29, images: ["classic-tee-1.jpg", "classic-tee-2.jpg"] },
+            { id: 1, name: "DOG Long Sleeve", price: 39, images: ["long-sleeve-1.jpg", "long-sleeve-2.jpg"] },
+            { id: 2, name: "DOG Hoodie", price: 59, images: ["hoodie-1.jpg", "hoodie-2.jpg"] }
         ];
 
         function quickView(index) {
@@ -268,7 +289,7 @@
             currentProduct.images.forEach((imgSrc, i) => {
                 const thumb = document.createElement('img');
                 thumb.src = imgSrc;
-                thumb.className = `w-20 h-20 object-contain bg-black rounded-xl cursor-pointer border-2 transition ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
+                thumb.className = `w-20 h-20 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 transition ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
                 thumb.onclick = () => {
                     currentImageIndex = i;
                     updateModalImage();
