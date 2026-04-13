@@ -33,22 +33,17 @@
         
         .product-image-container {
             background-color: #111827;
-            padding: 40px 20px;
-            min-height: 420px;
+            padding: 30px 20px;
+            min-height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
         .product-image {
-            max-height: 360px;
+            max-height: 340px;
             width: auto;
             object-fit: contain;
-        }
-        
-        .modal-image-container {
-            background-color: #111827;
-            padding: 40px 20px;
         }
     </style>
 </head>
@@ -106,7 +101,7 @@
         </div>
     </section>
 
-    <!-- SHOP SECTION - Smaller, Tighter Framing -->
+    <!-- SHOP SECTION -->
     <section id="shop" class="max-w-7xl mx-auto px-6 py-20">
         <h2 class="text-5xl font-semibold text-center mb-4 logo-font logo-yellow">Gear for the Working Man</h2>
         <p class="text-center text-xl text-gray-400 mb-12">Premium shirts for the dads who clock in, provide, and stand on faith.</p>
@@ -195,7 +190,7 @@
                 <button onclick="closeModal()" class="float-right text-4xl text-gray-400 hover:text-white">×</button>
                 
                 <div class="modal-image-container rounded-2xl mb-6">
-                    <img id="modalImage" src="" alt="" class="w-full h-[460px] object-contain mx-auto">
+                    <img id="modalImage" src="" alt="" class="w-full h-[480px] object-contain mx-auto">
                 </div>
 
                 <div id="thumbnailContainer" class="flex gap-4 justify-center mb-8"></div>
@@ -225,4 +220,132 @@
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-400">TOTAL</p>
-                        <div id="modalTotalPrice" class
+                        <div id="modalTotalPrice" class="text-4xl font-bold logo-yellow"></div>
+                    </div>
+                </div>
+                
+                <button onclick="addCurrentToCart()" class="w-full logo-yellow-bg hover:bg-[#fde047] text-black py-5 rounded-3xl font-semibold text-lg">ADD TO CART</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let totalImpact = 0;
+        let cartCount = 0;
+        let currentProduct = null;
+        let currentQty = 1;
+        let currentImageIndex = 0;
+
+        const products = [
+            { id: 0, name: "DOG Classic Tee", price: 29, images: ["classic-tee-1.jpg", "classic-tee-2.jpg"] },
+            { id: 1, name: "DOG Long Sleeve", price: 39, images: ["long-sleeve-1.jpg", "long-sleeve-2.jpg"] },
+            { id: 2, name: "DOG Hoodie", price: 59, images: ["hoodie-1.jpg", "hoodie-2.jpg"] }
+        ];
+
+        function quickView(index) {
+            currentProduct = products[index];
+            currentQty = 1;
+            currentImageIndex = 0;
+            updateModalImage();
+            document.getElementById('modalTitle').textContent = currentProduct.name;
+            document.getElementById('modalPrice').textContent = '$' + currentProduct.price;
+            updateModalTotal();
+            renderThumbnails();
+            document.getElementById('quickModal').classList.remove('hidden');
+            document.getElementById('quickModal').classList.add('flex');
+        }
+
+        function updateModalImage() {
+            document.getElementById('modalImage').src = currentProduct.images[currentImageIndex];
+        }
+
+        function renderThumbnails() {
+            const container = document.getElementById('thumbnailContainer');
+            container.innerHTML = '';
+            currentProduct.images.forEach((imgSrc, i) => {
+                const thumb = document.createElement('img');
+                thumb.src = imgSrc;
+                thumb.className = `w-24 h-24 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 transition ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
+                thumb.onclick = () => {
+                    currentImageIndex = i;
+                    updateModalImage();
+                    renderThumbnails();
+                };
+                container.appendChild(thumb);
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('quickModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('logo-yellow-border', 'text-[#facc15]'));
+            btn.classList.add('logo-yellow-border', 'text-[#facc15]');
+        }
+
+        function changeQty(delta) {
+            currentQty = Math.max(1, currentQty + delta);
+            document.getElementById('modalQty').textContent = currentQty;
+            updateModalTotal();
+        }
+
+        function updateModalTotal() {
+            if (!currentProduct) return;
+            document.getElementById('modalTotalPrice').textContent = '$' + (currentProduct.price * currentQty);
+        }
+
+        function addCurrentToCart() {
+            if (!currentProduct) return;
+            addToCart(currentProduct.id, currentProduct.price * currentQty, currentProduct.name);
+            closeModal();
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#facc15] text-black px-8 py-4 rounded-3xl font-semibold shadow-2xl z-[60]';
+            toast.textContent = `${currentQty} × ${currentProduct.name} added!`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        function addToCart(index, price, name) {
+            cartCount++;
+            document.getElementById('cart-count').textContent = cartCount;
+            updateImpact(price * 0.25);
+        }
+
+        function buyNow(price, name) {
+            alert(`Opening PayPal checkout for ${name} - $${price}`);
+            updateImpact(price * 0.25);
+            window.open("https://www.paypal.com", "_blank");
+        }
+
+        function updateImpact(amount) {
+            totalImpact += amount;
+            const el = document.getElementById('impact-total');
+            el.textContent = '$' + Math.round(totalImpact).toLocaleString();
+            el.classList.add('scale-110');
+            setTimeout(() => el.classList.remove('scale-110'), 400);
+        }
+
+        function activateLogo() {
+            const logo = document.getElementById('heroLogo');
+            logo.style.animation = 'none';
+            void logo.offsetWidth;
+            logo.style.animation = 'logoBless 0.8s ease-out';
+            updateImpact(10);
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#facc15] text-black px-8 py-4 rounded-3xl font-semibold shadow-2xl z-[60] flex items-center gap-3';
+            toast.innerHTML = `<i class="fa-solid fa-fire flame"></i> Faith Activated! +$10 to the mission`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2800);
+        }
+
+        function toggleCart() {
+            alert("Cart coming soon — currently " + cartCount + " items");
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
+    </script>
+</body>
+</html>
