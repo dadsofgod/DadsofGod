@@ -14,7 +14,6 @@
         .logo-yellow { color: #facc15; }
         .logo-yellow-bg { background-color: #facc15; }
 
-        /* Pulsing halo on hero logo */
         #heroLogo {
             transition: transform 0.4s ease;
             animation: pulseHalo 4s infinite ease-in-out;
@@ -74,7 +73,7 @@
         </div>
     </section>
 
-    <!-- MISSION with 25% -->
+    <!-- MISSION -->
     <section id="mission" class="bg-zinc-950 py-24 border-b border-[#facc15]/20">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-5xl font-semibold logo-font logo-yellow mb-6">Our Mission</h2>
@@ -83,7 +82,7 @@
         </div>
     </section>
 
-    <!-- SHOP with banner -->
+    <!-- SHOP -->
     <section id="shop" class="max-w-7xl mx-auto px-6 py-20">
         <div class="bg-zinc-950 border border-[#facc15]/30 rounded-3xl p-6 mb-12 text-center">
             <p class="text-lg font-semibold text-[#facc15]">💪 25% of every purchase helps fight child trafficking and protect vulnerable kids.</p>
@@ -186,7 +185,6 @@
                 </div>
             </div>
 
-            <!-- Fixed bottom bar -->
             <div class="border-t border-gray-700 p-6 bg-zinc-900">
                 <div class="flex justify-between items-baseline mb-4">
                     <span class="text-gray-400">TOTAL</span>
@@ -210,7 +208,37 @@
                     <span>Total</span>
                     <span id="cartTotal" class="font-bold logo-yellow">$0</span>
                 </div>
-                <button onclick="checkout()" class="w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-semibold text-lg">PROCEED TO CHECKOUT</button>
+                <button onclick="proceedToCheckout()" class="w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-semibold text-lg">PROCEED TO CHECKOUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-zinc-900 rounded-3xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="text-2xl font-semibold">Checkout</h2>
+                <button onclick="closeCheckout()" class="text-4xl text-gray-400 hover:text-white">×</button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="checkoutSummary" class="mb-8"></div>
+                
+                <div class="mb-6">
+                    <p class="text-sm text-gray-400 mb-2">Email</p>
+                    <input id="checkoutEmail" type="email" class="w-full bg-zinc-800 border border-gray-700 rounded-2xl px-4 py-3 text-white" placeholder="your@email.com">
+                </div>
+                <div class="mb-6">
+                    <p class="text-sm text-gray-400 mb-2">Full Name</p>
+                    <input id="checkoutName" type="text" class="w-full bg-zinc-800 border border-gray-700 rounded-2xl px-4 py-3 text-white" placeholder="John Doe">
+                </div>
+                <div class="mb-6">
+                    <p class="text-sm text-gray-400 mb-2">Shipping Address</p>
+                    <textarea id="checkoutAddress" class="w-full bg-zinc-800 border border-gray-700 rounded-2xl px-4 py-3 text-white h-24" placeholder="123 Main St, City, State, ZIP"></textarea>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-700">
+                <button onclick="completeCheckout()" class="w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-semibold text-lg">PAY WITH PAYPAL</button>
+                <p class="text-center text-xs text-gray-500 mt-4">Secure checkout powered by PayPal</p>
             </div>
         </div>
     </div>
@@ -302,7 +330,6 @@
 
             updateCartDisplay();
             closeModal();
-            alert(`${currentQty} × ${currentProduct.name} ($${itemTotal}) added!`);
         }
 
         function updateCartDisplay() {
@@ -351,10 +378,55 @@
             showCart();
         }
 
-        function checkout() {
-            if (cart.length === 0) return;
-            alert("Checkout coming soon! We'll connect real payment processing here.");
+        function proceedToCheckout() {
             closeCart();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            document.getElementById('checkoutModal').classList.add('flex');
+            renderCheckoutSummary();
+        }
+
+        function closeCheckout() {
+            const m = document.getElementById('checkoutModal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function renderCheckoutSummary() {
+            let html = '<div class="space-y-4">';
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                html += `
+                    <div class="flex justify-between">
+                        <span>${item.name} × ${item.qty}</span>
+                        <span>$${itemTotal}</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('checkoutSummary').innerHTML = html;
+            // You can add the final total here if needed
+        }
+
+        function completeCheckout() {
+            const email = document.getElementById('checkoutEmail').value.trim();
+            const name = document.getElementById('checkoutName').value.trim();
+            const address = document.getElementById('checkoutAddress').value.trim();
+
+            if (!email || !name || !address) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // For now, open PayPal with your business email (replace with your real one)
+            const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL_HERE&amount=${cart.reduce((sum, item) => sum + item.price * item.qty, 0)}&currency_code=USD&item_name=DOG%20Order`;
+            window.open(paypalUrl, '_blank');
+
+            alert("Thank you! Your order has been sent to PayPal. We'll ship soon.");
+            cart = [];
+            updateCartDisplay();
+            closeCheckout();
         }
 
         function toggleCart() {
