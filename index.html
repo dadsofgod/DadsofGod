@@ -23,13 +23,6 @@
             justify-content: center;
         }
         .product-image { max-height: 310px; object-fit: contain; cursor: pointer; }
-        
-        #heroLogo {
-            transition: all 0.4s ease;
-        }
-        #heroLogo:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -112,8 +105,7 @@
         <div class="max-w-2xl mx-auto text-center">
             <h2 class="text-5xl font-semibold logo-font mb-4 logo-yellow">Join the Fight Directly</h2>
             <p class="text-xl text-gray-300 mb-8">100% of your donation goes to vetted teams rescuing children.</p>
-            <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID_HERE" target="_blank" 
-               class="inline-flex items-center gap-3 logo-yellow-bg text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:bg-[#fde047]">
+            <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID_HERE" target="_blank" class="inline-flex items-center gap-3 logo-yellow-bg text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:bg-[#fde047]">
                 <i class="fa-solid fa-hand-holding-heart"></i>
                 DONATE NOW WITH PAYPAL
             </a>
@@ -137,7 +129,6 @@
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 rounded-3xl max-w-5xl w-full overflow-hidden">
             <div class="flex flex-col lg:flex-row">
-                <!-- Image side -->
                 <div class="lg:w-1/2 p-8 flex flex-col items-center">
                     <button onclick="closeModal()" class="self-end text-5xl text-gray-400 hover:text-white mb-6">×</button>
                     <div class="bg-zinc-950 rounded-2xl p-8 mb-6 w-full">
@@ -145,8 +136,6 @@
                     </div>
                     <div id="thumbnailContainer" class="flex gap-4"></div>
                 </div>
-
-                <!-- Details side -->
                 <div class="lg:w-1/2 p-8 flex flex-col">
                     <h3 id="modalTitle" class="text-4xl font-semibold mb-2"></h3>
                     <div id="modalPrice" class="text-6xl font-bold logo-yellow mb-10"></div>
@@ -212,11 +201,7 @@
                 const thumb = document.createElement('img');
                 thumb.src = src;
                 thumb.className = `w-24 h-24 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
-                thumb.onclick = () => {
-                    currentImageIndex = i;
-                    updateModalImage();
-                    renderThumbnails();
-                };
+                thumb.onclick = () => { currentImageIndex = i; updateModalImage(); renderThumbnails(); };
                 container.appendChild(thumb);
             });
         }
