@@ -45,7 +45,7 @@
 </head>
 <body class="bg-black text-white">
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR with real cart total -->
     <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
             <div class="flex items-center gap-3 group">
@@ -58,7 +58,7 @@
                 <a href="#donate" class="hover:logo-yellow transition">Donate</a>
                 <a href="#impact" class="hover:logo-yellow transition">Impact</a>
             </div>
-            <button onclick="toggleCart()" class="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 px-6 py-3 rounded-2xl border border-[#facc15]/30">
+            <button onclick="showCart()" class="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 px-6 py-3 rounded-2xl border border-[#facc15]/30">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span id="cart-count" class="font-semibold">Cart $0</span>
             </button>
@@ -144,10 +144,9 @@
         </div>
     </section>
 
-    <!-- MOBILE-FRIENDLY MODAL -->
+    <!-- HORIZONTAL + MOBILE MODAL -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Scrollable content -->
             <div class="flex-1 overflow-y-auto p-6">
                 <button onclick="closeModal()" class="float-right text-5xl text-gray-400 hover:text-white mb-4">×</button>
                 
@@ -192,8 +191,27 @@
         </div>
     </div>
 
+    <!-- CART MODAL -->
+    <div id="cartModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-zinc-900 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="text-2xl font-semibold">Your Cart</h2>
+                <button onclick="closeCart()" class="text-4xl text-gray-400 hover:text-white">×</button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-6"></div>
+            <div class="p-6 border-t border-gray-700">
+                <div class="flex justify-between text-xl mb-6">
+                    <span>Total</span>
+                    <span id="cartTotal" class="font-bold logo-yellow">$0</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-semibold text-lg">PROCEED TO CHECKOUT</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let cartTotal = 0;
+        let cart = []; // array of {id, name, price, qty}
+
         let currentProduct = null;
         let currentQty = 1;
         let currentImageIndex = 0;
@@ -263,14 +281,79 @@
         function addCurrentToCart() {
             if (!currentProduct) return;
             const itemTotal = currentProduct.price * currentQty;
-            cartTotal += itemTotal;
-            document.getElementById('cart-count').textContent = `Cart $${cartTotal}`;
+
+            // Add or update item in cart
+            const existing = cart.find(item => item.id === currentProduct.id);
+            if (existing) {
+                existing.qty += currentQty;
+            } else {
+                cart.push({
+                    id: currentProduct.id,
+                    name: currentProduct.name,
+                    price: currentProduct.price,
+                    qty: currentQty
+                });
+            }
+
+            updateCartDisplay();
             closeModal();
-            alert(`${currentQty} × ${currentProduct.name} ($${itemTotal}) added!`);
+            alert(`${currentQty} × ${currentProduct.name} added!`);
+        }
+
+        function updateCartDisplay() {
+            let total = 0;
+            cart.forEach(item => total += item.price * item.qty);
+            document.getElementById('cart-count').textContent = `Cart $${total}`;
+        }
+
+        function showCart() {
+            const container = document.getElementById('cartItems');
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400 py-12">Your cart is empty</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center py-4 border-b border-gray-700";
+                    div.innerHTML = `
+                        <div>
+                            <p class="font-medium">${item.name}</p>
+                            <p class="text-sm text-gray-400">Qty: ${item.qty} × $${item.price}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold">$${(item.price * item.qty).toFixed(0)}</p>
+                            <button onclick="removeFromCart(${index})" class="text-red-500 text-sm mt-1">Remove</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            document.getElementById('cartModal').classList.remove('hidden');
+            document.getElementById('cartModal').classList.add('flex');
+        }
+
+        function closeCart() {
+            const m = document.getElementById('cartModal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+            showCart(); // refresh the cart view
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+            alert("Checkout coming soon! We'll connect PayPal or Stripe here.");
+            closeCart();
         }
 
         function toggleCart() {
-            alert(`Your cart total is currently $${cartTotal}`);
+            showCart();
         }
 
         function activateLogo() {
