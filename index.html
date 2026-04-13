@@ -41,19 +41,6 @@
             object-fit: contain; 
             cursor: pointer; 
         }
-
-        /* Improved mobile modal */
-        #quickModal .modal-content {
-            max-height: 92vh;
-            overflow-y: auto;
-        }
-        #quickModal .modal-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        #quickModal .modal-content::-webkit-scrollbar-thumb {
-            background: #facc15;
-            border-radius: 3px;
-        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -131,52 +118,71 @@
         </div>
     </section>
 
-    <!-- DONATE and IMPACT sections stay the same (keep them from your current file) -->
+    <!-- DONATE -->
+    <section id="donate" class="max-w-7xl mx-auto px-6 py-20 bg-zinc-950">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="text-5xl font-semibold logo-font mb-4 logo-yellow">Join the Fight Directly</h2>
+            <p class="text-xl text-gray-300 mb-8">100% of your donation goes to vetted teams rescuing children.</p>
+            <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID_HERE" target="_blank" 
+               class="inline-flex items-center gap-3 logo-yellow-bg text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:bg-[#fde047]">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                DONATE NOW WITH PAYPAL
+            </a>
+        </div>
+    </section>
 
-    <!-- IMPROVED MOBILE MODAL -->
+    <!-- IMPACT -->
+    <section id="impact" class="bg-zinc-950 py-20 border-t border-b border-[#facc15]/20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="inline-block bg-black rounded-3xl p-8 border border-[#facc15]/30">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <i class="fa-solid fa-fire text-4xl logo-yellow"></i>
+                    <div id="impact-total" class="text-8xl font-bold logo-yellow">$0</div>
+                </div>
+                <p class="text-sm tracking-widest">RAISED TO PROTECT CHILDREN</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MOBILE-FRIENDLY MODAL -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
-        <div class="modal-content bg-zinc-900 rounded-3xl max-w-5xl w-full max-h-[92vh] overflow-hidden flex flex-col">
+        <div class="bg-zinc-900 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+            <!-- Scrollable content -->
             <div class="flex-1 overflow-y-auto p-6">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Image side -->
-                    <div class="lg:w-1/2 flex flex-col items-center">
-                        <button onclick="closeModal()" class="self-end text-5xl text-gray-400 hover:text-white mb-4">×</button>
-                        <div class="bg-zinc-950 rounded-2xl p-6 mb-6 w-full">
-                            <img id="modalImage" src="" class="w-full max-h-[380px] object-contain mx-auto">
-                        </div>
-                        <div id="thumbnailContainer" class="flex gap-4"></div>
+                <button onclick="closeModal()" class="float-right text-5xl text-gray-400 hover:text-white mb-4">×</button>
+                
+                <div class="bg-zinc-950 rounded-2xl p-6 mb-6">
+                    <img id="modalImage" src="" class="w-full max-h-[320px] object-contain mx-auto">
+                </div>
+
+                <div id="thumbnailContainer" class="flex gap-4 justify-center mb-8"></div>
+
+                <h3 id="modalTitle" class="text-3xl font-semibold mb-2"></h3>
+                <div id="modalPrice" class="text-5xl font-bold logo-yellow mb-8"></div>
+
+                <div class="mb-8">
+                    <p class="text-sm text-gray-400 mb-3">SIZE</p>
+                    <div class="flex gap-3 flex-wrap">
+                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">S</button>
+                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">M</button>
+                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">L</button>
+                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">XL</button>
+                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">XXL</button>
                     </div>
+                </div>
 
-                    <!-- Details side -->
-                    <div class="lg:w-1/2 flex flex-col">
-                        <h3 id="modalTitle" class="text-3xl lg:text-4xl font-semibold mb-3"></h3>
-                        <div id="modalPrice" class="text-5xl lg:text-6xl font-bold logo-yellow mb-8"></div>
-
-                        <div class="mb-8">
-                            <p class="text-sm text-gray-400 mb-3">SIZE</p>
-                            <div class="flex gap-3 flex-wrap">
-                                <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">S</button>
-                                <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">M</button>
-                                <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">L</button>
-                                <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">XL</button>
-                                <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">XXL</button>
-                            </div>
-                        </div>
-
-                        <div class="mb-10">
-                            <p class="text-sm text-gray-400 mb-3">QUANTITY</p>
-                            <div class="flex items-center gap-6">
-                                <button onclick="changeQty(-1)" class="w-14 h-14 border border-gray-700 rounded-3xl text-4xl hover:border-[#facc15]">-</button>
-                                <span id="modalQty" class="text-5xl font-medium w-14 text-center">1</span>
-                                <button onclick="changeQty(1)" class="w-14 h-14 border border-gray-700 rounded-3xl text-4xl hover:border-[#facc15]">+</button>
-                            </div>
-                        </div>
+                <div class="mb-10">
+                    <p class="text-sm text-gray-400 mb-3">QUANTITY</p>
+                    <div class="flex items-center gap-6">
+                        <button onclick="changeQty(-1)" class="w-14 h-14 border border-gray-700 rounded-3xl text-4xl hover:border-[#facc15]">-</button>
+                        <span id="modalQty" class="text-5xl font-medium w-14 text-center">1</span>
+                        <button onclick="changeQty(1)" class="w-14 h-14 border border-gray-700 rounded-3xl text-4xl hover:border-[#facc15]">+</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Fixed bottom bar for Add to Cart + Total -->
-            <div class="border-t border-gray-700 p-6 bg-zinc-900 sticky bottom-0">
+            <!-- Fixed bottom bar -->
+            <div class="border-t border-gray-700 p-6 bg-zinc-900">
                 <div class="flex justify-between items-baseline mb-4">
                     <span class="text-gray-400">TOTAL</span>
                     <div id="modalTotalPrice" class="text-5xl font-bold logo-yellow"></div>
