@@ -45,7 +45,7 @@
 </head>
 <body class="bg-black text-white">
 
-    <!-- NAVBAR with real cart total -->
+    <!-- NAVBAR -->
     <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
             <div class="flex items-center gap-3 group">
@@ -58,7 +58,7 @@
                 <a href="#donate" class="hover:logo-yellow transition">Donate</a>
                 <a href="#impact" class="hover:logo-yellow transition">Impact</a>
             </div>
-            <button onclick="showCart()" class="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 px-6 py-3 rounded-2xl border border-[#facc15]/30">
+            <button onclick="toggleCart()" class="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 px-6 py-3 rounded-2xl border border-[#facc15]/30">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span id="cart-count" class="font-semibold">Cart $0</span>
             </button>
@@ -74,16 +74,21 @@
         </div>
     </section>
 
-    <!-- MISSION -->
+    <!-- MISSION with 25% mention -->
     <section id="mission" class="bg-zinc-950 py-24 border-b border-[#facc15]/20">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-5xl font-semibold logo-font logo-yellow mb-6">Our Mission</h2>
             <p class="text-2xl text-gray-200">Dads of God exists to equip strong, faithful men to protect, provide, and stand boldly for their families and the vulnerable — especially the children who cannot fight for themselves.</p>
+            <p class="mt-8 text-xl text-[#facc15] font-semibold">25% of every sale goes directly to vetted organizations fighting child trafficking.</p>
         </div>
     </section>
 
-    <!-- SHOP -->
+    <!-- SHOP with banner -->
     <section id="shop" class="max-w-7xl mx-auto px-6 py-20">
+        <div class="bg-zinc-950 border border-[#facc15]/30 rounded-3xl p-6 mb-12 text-center">
+            <p class="text-lg font-semibold text-[#facc15]">💪 25% of every purchase helps fight child trafficking and protect vulnerable kids.</p>
+        </div>
+
         <h2 class="text-5xl font-semibold text-center mb-4 logo-font logo-yellow">Gear for the Working Man</h2>
         <p class="text-center text-xl text-gray-400 mb-12">Premium shirts for the dads who clock in, provide, and stand on faith.</p>
 
@@ -144,7 +149,7 @@
         </div>
     </section>
 
-    <!-- HORIZONTAL + MOBILE MODAL -->
+    <!-- HORIZONTAL + MOBILE MODAL with 25% message -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
             <div class="flex-1 overflow-y-auto p-6">
@@ -157,208 +162,12 @@
                 <div id="thumbnailContainer" class="flex gap-4 justify-center mb-8"></div>
 
                 <h3 id="modalTitle" class="text-3xl font-semibold mb-2"></h3>
-                <div id="modalPrice" class="text-5xl font-bold logo-yellow mb-8"></div>
+                <div id="modalPrice" class="text-5xl font-bold logo-yellow mb-2"></div>
+                <p class="text-sm text-[#facc15] font-medium mb-8">25% of this sale goes directly to fight child trafficking</p>
 
                 <div class="mb-8">
                     <p class="text-sm text-gray-400 mb-3">SIZE</p>
                     <div class="flex gap-3 flex-wrap">
                         <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">S</button>
                         <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">M</button>
-                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">L</button>
-                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">XL</button>
-                        <button onclick="selectSize(this)" class="size-btn px-7 py-3.5 border border-gray-700 rounded-3xl hover:logo-yellow-border text-sm">XXL</button>
-                    </div>
-                </div>
-
-                <div class="mb-10">
-                    <p class="text-sm text-gray-400 mb-3">QUANTITY</p>
-                    <div class="flex items-center gap-6">
-                        <button onclick="changeQty(-1)" class="w-14 h-14 border border-gray-700 rounded-3xl text-4xl hover:border-[#facc15]">-</button>
-                        <span id="modalQty" class="text-5xl font-medium w-14 text-center">1</span>
-                        <button onclick="changeQty(1)" class="w-14 h-14 border border-gray-700 rounded-3xl text-4xl hover:border-[#facc15]">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fixed bottom bar -->
-            <div class="border-t border-gray-700 p-6 bg-zinc-900">
-                <div class="flex justify-between items-baseline mb-4">
-                    <span class="text-gray-400">TOTAL</span>
-                    <div id="modalTotalPrice" class="text-5xl font-bold logo-yellow"></div>
-                </div>
-                <button onclick="addCurrentToCart()" class="w-full logo-yellow-bg hover:bg-[#fde047] text-black py-5 rounded-3xl font-semibold text-xl">ADD TO CART</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CART MODAL -->
-    <div id="cartModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-zinc-900 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
-                <h2 class="text-2xl font-semibold">Your Cart</h2>
-                <button onclick="closeCart()" class="text-4xl text-gray-400 hover:text-white">×</button>
-            </div>
-            <div id="cartItems" class="flex-1 overflow-y-auto p-6"></div>
-            <div class="p-6 border-t border-gray-700">
-                <div class="flex justify-between text-xl mb-6">
-                    <span>Total</span>
-                    <span id="cartTotal" class="font-bold logo-yellow">$0</span>
-                </div>
-                <button onclick="checkout()" class="w-full bg-green-600 hover:bg-green-500 text-white py-5 rounded-3xl font-semibold text-lg">PROCEED TO CHECKOUT</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let cart = []; // array of {id, name, price, qty}
-
-        let currentProduct = null;
-        let currentQty = 1;
-        let currentImageIndex = 0;
-
-        const products = [
-            { id: 0, name: "DOG Classic Tee", price: 29, images: ["classic-tee-1.jpg", "classic-tee-2.jpg"] },
-            { id: 1, name: "DOG Long Sleeve", price: 39, images: ["long-sleeve-1.jpg", "long-sleeve-2.jpg"] },
-            { id: 2, name: "DOG Hoodie", price: 59, images: ["hoodie-1.jpg", "hoodie-2.jpg"] }
-        ];
-
-        function quickView(index) {
-            currentProduct = products[index];
-            currentQty = 1;
-            currentImageIndex = 0;
-            document.getElementById('modalTitle').textContent = currentProduct.name;
-            document.getElementById('modalPrice').textContent = '$' + currentProduct.price;
-            updateModalImage();
-            updateModalTotal();
-            renderThumbnails();
-            document.getElementById('quickModal').classList.remove('hidden');
-            document.getElementById('quickModal').classList.add('flex');
-        }
-
-        function updateModalImage() {
-            document.getElementById('modalImage').src = currentProduct.images[currentImageIndex];
-        }
-
-        function renderThumbnails() {
-            const container = document.getElementById('thumbnailContainer');
-            container.innerHTML = '';
-            currentProduct.images.forEach((src, i) => {
-                const thumb = document.createElement('img');
-                thumb.src = src;
-                thumb.className = `w-20 h-20 object-contain bg-zinc-950 rounded-xl cursor-pointer border-2 ${i === currentImageIndex ? 'border-[#facc15] scale-110' : 'border-transparent'}`;
-                thumb.onclick = () => {
-                    currentImageIndex = i;
-                    updateModalImage();
-                    renderThumbnails();
-                };
-                container.appendChild(thumb);
-            });
-        }
-
-        function closeModal() {
-            const m = document.getElementById('quickModal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-
-        function selectSize(btn) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('logo-yellow-border', 'text-[#facc15]'));
-            btn.classList.add('logo-yellow-border', 'text-[#facc15]');
-        }
-
-        function changeQty(delta) {
-            currentQty = Math.max(1, currentQty + delta);
-            document.getElementById('modalQty').textContent = currentQty;
-            updateModalTotal();
-        }
-
-        function updateModalTotal() {
-            if (!currentProduct) return;
-            const total = currentProduct.price * currentQty;
-            document.getElementById('modalTotalPrice').textContent = '$' + total;
-        }
-
-        function addCurrentToCart() {
-            if (!currentProduct) return;
-            const itemTotal = currentProduct.price * currentQty;
-
-            // Add or update item in cart
-            const existing = cart.find(item => item.id === currentProduct.id);
-            if (existing) {
-                existing.qty += currentQty;
-            } else {
-                cart.push({
-                    id: currentProduct.id,
-                    name: currentProduct.name,
-                    price: currentProduct.price,
-                    qty: currentQty
-                });
-            }
-
-            updateCartDisplay();
-            closeModal();
-            alert(`${currentQty} × ${currentProduct.name} added!`);
-        }
-
-        function updateCartDisplay() {
-            let total = 0;
-            cart.forEach(item => total += item.price * item.qty);
-            document.getElementById('cart-count').textContent = `Cart $${total}`;
-        }
-
-        function showCart() {
-            const container = document.getElementById('cartItems');
-            container.innerHTML = '';
-
-            if (cart.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-400 py-12">Your cart is empty</p>';
-            } else {
-                cart.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = "flex justify-between items-center py-4 border-b border-gray-700";
-                    div.innerHTML = `
-                        <div>
-                            <p class="font-medium">${item.name}</p>
-                            <p class="text-sm text-gray-400">Qty: ${item.qty} × $${item.price}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-semibold">$${(item.price * item.qty).toFixed(0)}</p>
-                            <button onclick="removeFromCart(${index})" class="text-red-500 text-sm mt-1">Remove</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-            }
-
-            document.getElementById('cartModal').classList.remove('hidden');
-            document.getElementById('cartModal').classList.add('flex');
-        }
-
-        function closeCart() {
-            const m = document.getElementById('cartModal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartDisplay();
-            showCart(); // refresh the cart view
-        }
-
-        function checkout() {
-            if (cart.length === 0) return;
-            alert("Checkout coming soon! We'll connect PayPal or Stripe here.");
-            closeCart();
-        }
-
-        function toggleCart() {
-            showCart();
-        }
-
-        function activateLogo() {
-            alert("Faith Activated! +$10 to the mission");
-        }
-    </script>
-</body>
-</html>
+                        <button onclick="selectSize(this)" class="size
