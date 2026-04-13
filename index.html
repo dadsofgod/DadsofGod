@@ -23,6 +23,13 @@
             justify-content: center;
         }
         .product-image { max-height: 310px; object-fit: contain; cursor: pointer; }
+        
+        #heroLogo {
+            transition: all 0.4s ease;
+        }
+        #heroLogo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -30,17 +37,27 @@
     <!-- NAVBAR -->
     <nav class="bg-black border-b border-[#facc15]/30 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <img src="logo.png" alt="DOG" class="h-12">
-                <span class="text-3xl logo-font logo-yellow">DOG</span>
+            <div class="flex items-center gap-3 group">
+                <img src="logo.png" alt="DOG Logo" class="h-12 w-auto transition-all duration-300 group-hover:scale-110">
+                <span class="text-3xl logo-font tracking-tight logo-yellow">DOG</span>
             </div>
+            <div class="hidden md:flex gap-8 text-lg">
+                <a href="#mission" class="hover:logo-yellow transition">Mission</a>
+                <a href="#shop" class="hover:logo-yellow transition">Shop</a>
+                <a href="#donate" class="hover:logo-yellow transition">Donate</a>
+                <a href="#impact" class="hover:logo-yellow transition">Impact</a>
+            </div>
+            <button onclick="toggleCart()" class="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 px-6 py-3 rounded-2xl border border-[#facc15]/30">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count" class="text-sm">0</span>
+            </button>
         </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- HERO with interactive logo -->
     <section class="h-screen flex items-center relative" style="background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.92)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;">
         <div class="max-w-4xl mx-auto px-6 text-center">
-            <img src="logo.png" class="mx-auto mb-8 h-64 w-auto cursor-pointer" onclick="alert('Faith Activated!')" alt="DOG Logo">
+            <img src="logo.png" id="heroLogo" class="mx-auto mb-8 h-64 w-auto cursor-pointer" onclick="activateLogo()" alt="DOG Logo">
             <p class="text-3xl text-gray-300 mb-12">Strong hands. Strong faith. Gear for the dads who clock in, provide, and stand on truth.</p>
             <a href="#shop" class="inline-block logo-yellow-bg hover:bg-[#fde047] text-black font-semibold text-xl px-12 py-6 rounded-3xl transition">SHOP THE GEAR</a>
         </div>
@@ -90,20 +107,46 @@
         </div>
     </section>
 
-    <!-- HORIZONTAL MODAL with Size & Quantity -->
+    <!-- DONATE -->
+    <section id="donate" class="max-w-7xl mx-auto px-6 py-20 bg-zinc-950">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="text-5xl font-semibold logo-font mb-4 logo-yellow">Join the Fight Directly</h2>
+            <p class="text-xl text-gray-300 mb-8">100% of your donation goes to vetted teams rescuing children.</p>
+            <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID_HERE" target="_blank" 
+               class="inline-flex items-center gap-3 logo-yellow-bg text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:bg-[#fde047]">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                DONATE NOW WITH PAYPAL
+            </a>
+        </div>
+    </section>
+
+    <!-- IMPACT -->
+    <section id="impact" class="bg-zinc-950 py-20 border-t border-b border-[#facc15]/20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="inline-block bg-black rounded-3xl p-8 border border-[#facc15]/30">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <i class="fa-solid fa-fire text-4xl logo-yellow"></i>
+                    <div id="impact-total" class="text-8xl font-bold logo-yellow">$0</div>
+                </div>
+                <p class="text-sm tracking-widest">RAISED TO PROTECT CHILDREN</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HORIZONTAL MODAL -->
     <div id="quickModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 rounded-3xl max-w-5xl w-full overflow-hidden">
             <div class="flex flex-col lg:flex-row">
-                <!-- Image + Thumbnails -->
+                <!-- Image side -->
                 <div class="lg:w-1/2 p-8 flex flex-col items-center">
                     <button onclick="closeModal()" class="self-end text-5xl text-gray-400 hover:text-white mb-6">×</button>
                     <div class="bg-zinc-950 rounded-2xl p-8 mb-6 w-full">
-                        <img id="modalImage" src="" class="w-full max-h-[420px] object-contain mx-auto">
+                        <img id="modalImage" src="" class="w-full max-h-[420px] object-contain">
                     </div>
                     <div id="thumbnailContainer" class="flex gap-4"></div>
                 </div>
 
-                <!-- Details -->
+                <!-- Details side -->
                 <div class="lg:w-1/2 p-8 flex flex-col">
                     <h3 id="modalTitle" class="text-4xl font-semibold mb-2"></h3>
                     <div id="modalPrice" class="text-6xl font-bold logo-yellow mb-10"></div>
@@ -135,6 +178,7 @@
     </div>
 
     <script>
+        let cartCount = 0;
         let currentProduct = null;
         let currentQty = 1;
         let currentImageIndex = 0;
@@ -197,6 +241,19 @@
             if (!currentProduct) return;
             alert(currentQty + " × " + currentProduct.name + " added to cart!");
             closeModal();
+        }
+
+        function addToCart(index, price, name) {
+            cartCount++;
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+
+        function toggleCart() {
+            alert("Cart coming soon — currently " + cartCount + " items");
+        }
+
+        function activateLogo() {
+            alert("Faith Activated! +$10 to the mission");
         }
     </script>
 </body>
