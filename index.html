@@ -30,23 +30,30 @@
 </head>
 <body class="bg-zinc-950 text-white">
 
-    <!-- Navbar -->
+    <!-- Navbar with About Link -->
     <nav class="bg-black border-b border-zinc-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex items-center justify-between h-20">
-                <div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.reload()">
+                
+                <!-- Logo + Text -->
+                <div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.href='index.html'">
                     <img src="logo.png" alt="Dads of God" class="h-11 w-auto logo-glow">
                     <div>
                         <div class="font-black text-4xl tracking-tighter gold">DoG</div>
                         <div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div>
                     </div>
                 </div>
+
+                <!-- Menu -->
                 <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
                     <a href="#mission" class="hover:text-[#D4AF37] transition-colors">Mission</a>
                     <a href="#shop" class="hover:text-[#D4AF37] transition-colors">Shop</a>
                     <a href="#impact" class="hover:text-[#D4AF37] transition-colors">Impact</a>
                     <a href="#donate" class="hover:text-[#D4AF37] transition-colors">Donate</a>
+                    <a href="about.html" class="hover:text-[#D4AF37] transition-colors font-semibold">About</a>
                 </div>
+
+                <!-- Cart + Account -->
                 <div class="flex items-center gap-x-4">
                     <div onclick="showCart()" class="flex items-center gap-x-2 cursor-pointer hover:text-[#D4AF37] transition-colors relative">
                         <i class="fa-solid fa-shopping-cart text-2xl"></i>
@@ -65,10 +72,13 @@
                 <img src="logo.png" alt="Dads of God" class="h-52 w-auto logo-glow">
             </div>
         </div>
+        
         <h1 class="text-7xl md:text-[92px] font-black leading-none tracking-tighter mb-6">
             WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span>
         </h1>
+        
         <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Premium gear for men who stand in the gap.</p>
+        
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#shop" class="inline-flex items-center justify-center px-14 py-5 gold-bg text-black font-black text-xl rounded-3xl hover:bg-yellow-400 transition-all">SHOP THE COLLECTION</a>
             <a href="#donate" class="inline-flex items-center justify-center px-10 py-5 border border-zinc-700 hover:bg-zinc-900 transition-all font-bold text-xl rounded-3xl">DONATE NOW</a>
@@ -99,7 +109,7 @@
         </div>
     </div>
 
-    <!-- Shop -->
+    <!-- Shop with Hover Front/Back -->
     <div id="shop" class="max-w-7xl mx-auto px-6 py-24">
         <div class="text-center mb-14">
             <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
@@ -107,6 +117,7 @@
         </div>
 
         <div class="grid md:grid-cols-4 gap-8">
+            
             <!-- Classic Tee -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
@@ -345,7 +356,6 @@
                 rescued += item.rescueValue || 1;
             });
             
-            // Update impact
             impact.raised += total;
             impact.rescued += rescued;
             impact.operations += 1;
@@ -371,7 +381,7 @@
 
         function makeDonation(amount) {
             impact.raised += amount;
-            impact.rescued += Math.floor(amount / 25); // rough estimate
+            impact.rescued += Math.floor(amount / 25);
             impact.operations += 1;
             updateImpact();
             
