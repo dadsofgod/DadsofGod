@@ -45,6 +45,7 @@
                     <a href="#mission" class="hover:text-[#D4AF37] transition-colors">Mission</a>
                     <a href="#shop" class="hover:text-[#D4AF37] transition-colors">Shop</a>
                     <a href="#impact" class="hover:text-[#D4AF37] transition-colors">Impact</a>
+                    <a href="#donate" class="hover:text-[#D4AF37] transition-colors">Donate</a>
                 </div>
                 <div class="flex items-center gap-x-4">
                     <div onclick="showCart()" class="flex items-center gap-x-2 cursor-pointer hover:text-[#D4AF37] transition-colors relative">
@@ -64,16 +65,13 @@
                 <img src="logo.png" alt="Dads of God" class="h-52 w-auto logo-glow">
             </div>
         </div>
-        
         <h1 class="text-7xl md:text-[92px] font-black leading-none tracking-tighter mb-6">
             WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span>
         </h1>
-        
         <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Premium gear for men who stand in the gap.</p>
-        
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#shop" class="inline-flex items-center justify-center px-14 py-5 gold-bg text-black font-black text-xl rounded-3xl hover:bg-yellow-400 transition-all">SHOP THE COLLECTION</a>
-            <a href="#mission" class="inline-flex items-center justify-center px-10 py-5 border border-zinc-700 hover:bg-zinc-900 transition-all font-bold text-xl rounded-3xl">Our Mission</a>
+            <a href="#donate" class="inline-flex items-center justify-center px-10 py-5 border border-zinc-700 hover:bg-zinc-900 transition-all font-bold text-xl rounded-3xl">DONATE NOW</a>
         </div>
     </div>
 
@@ -101,7 +99,7 @@
         </div>
     </div>
 
-    <!-- Shop with Hover Front/Back -->
+    <!-- Shop -->
     <div id="shop" class="max-w-7xl mx-auto px-6 py-24">
         <div class="text-center mb-14">
             <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
@@ -109,7 +107,6 @@
         </div>
 
         <div class="grid md:grid-cols-4 gap-8">
-            
             <!-- Classic Tee -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
@@ -129,7 +126,7 @@
                             <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
                         </div>
                     </div>
-                    <button onclick="addToCart(1, 'Classic Tee', 35)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(1, 'Classic Tee', 35, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
@@ -152,7 +149,7 @@
                             <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
                         </div>
                     </div>
-                    <button onclick="addToCart(2, 'Long Sleeve', 45)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(2, 'Long Sleeve', 45, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
@@ -175,7 +172,7 @@
                             <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
                         </div>
                     </div>
-                    <button onclick="addToCart(3, 'Signature Hoodie', 65)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(3, 'Signature Hoodie', 65, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
@@ -196,11 +193,28 @@
                             <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L/XL</div>
                         </div>
                     </div>
-                    <button onclick="addToCart(4, 'Signature Ballcap', 25)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(4, 'Signature Ballcap', 25, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
         </div>
+    </div>
+
+    <!-- Donate Section -->
+    <div id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
+        <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
+        <h2 class="text-5xl font-bold tracking-tight mt-4">Help us rescue more children.</h2>
+        <p class="text-xl text-zinc-400 mt-4 max-w-lg mx-auto">100% of every donation goes straight to vetted rescue teams on the front lines.</p>
+        
+        <div class="flex flex-wrap justify-center gap-4 mt-10">
+            <button onclick="makeDonation(10)" class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$10</button>
+            <button onclick="makeDonation(25)" class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$25</button>
+            <button onclick="makeDonation(50)" class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$50</button>
+            <button onclick="makeDonation(100)" class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$100</button>
+            <button onclick="showCustomDonation()" class="px-8 py-4 bg-white text-black font-bold rounded-2xl text-lg">Custom Amount</button>
+        </div>
+        
+        <div class="mt-8 text-sm text-zinc-400">Every dollar helps free a child from trafficking.</div>
     </div>
 
     <!-- Impact -->
@@ -208,10 +222,20 @@
         <div class="max-w-5xl mx-auto px-6 text-center">
             <div class="gold text-sm font-bold tracking-[4px]">THE IMPACT</div>
             <h2 class="text-5xl font-bold tracking-tight mt-4">Real rescue.<br>Real results.</h2>
+            
             <div class="grid md:grid-cols-3 gap-6 mt-14">
-                <div class="bg-black border border-zinc-800 p-10 rounded-3xl"><div class="text-7xl font-black gold">$187,420</div><div class="mt-3 text-xl font-semibold">Raised for rescue</div></div>
-                <div class="bg-black border border-zinc-800 p-10 rounded-3xl"><div class="text-7xl font-black gold">312</div><div class="mt-3 text-xl font-semibold">Children rescued</div></div>
-                <div class="bg-black border border-zinc-800 p-10 rounded-3xl"><div class="text-7xl font-black gold">47</div><div class="mt-3 text-xl font-semibold">Rescue operations funded</div></div>
+                <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
+                    <div class="text-7xl font-black gold" id="raised">$0</div>
+                    <div class="mt-3 text-xl font-semibold">Raised for rescue</div>
+                </div>
+                <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
+                    <div class="text-7xl font-black gold" id="rescued">0</div>
+                    <div class="mt-3 text-xl font-semibold">Children rescued</div>
+                </div>
+                <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
+                    <div class="text-7xl font-black gold" id="operations">0</div>
+                    <div class="mt-3 text-xl font-semibold">Rescue operations funded</div>
+                </div>
             </div>
         </div>
     </div>
@@ -249,6 +273,13 @@
 
     <script>
         let cart = [];
+        let impact = { raised: 0, rescued: 0, operations: 0 };
+
+        function updateImpact() {
+            document.getElementById('raised').textContent = '$' + impact.raised.toLocaleString();
+            document.getElementById('rescued').textContent = impact.rescued;
+            document.getElementById('operations').textContent = impact.operations;
+        }
 
         function updateCartCount() {
             document.getElementById('cart-count').textContent = cart.length;
@@ -262,8 +293,8 @@
             el.classList.add('!border-[#D4AF37]', 'bg-[#D4AF37]/10');
         }
 
-        function addToCart(id, name, price) {
-            cart.push({ id, name, price, size: 'M', qty: 1 });
+        function addToCart(id, name, price, rescueValue = 1) {
+            cart.push({ id, name, price, size: 'M', qty: 1, rescueValue });
             updateCartCount();
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#D4AF37] px-8 py-3 rounded-2xl flex items-center gap-x-3 shadow-2xl z-[200]';
@@ -307,6 +338,19 @@
 
         function checkout() {
             if (cart.length === 0) return;
+            let total = 0;
+            let rescued = 0;
+            cart.forEach(item => {
+                total += item.price;
+                rescued += item.rescueValue || 1;
+            });
+            
+            // Update impact
+            impact.raised += total;
+            impact.rescued += rescued;
+            impact.operations += 1;
+            updateImpact();
+            
             const modal = document.getElementById('cart-modal');
             modal.innerHTML = `
                 <div class="bg-zinc-950 w-full md:w-[440px] md:rounded-3xl md:m-4 rounded-t-3xl p-10 text-center border border-zinc-800">
@@ -314,7 +358,7 @@
                         <i class="fa-solid fa-check text-5xl text-emerald-400"></i>
                     </div>
                     <h3 class="font-black text-4xl mb-4">Thank you, brother.</h3>
-                    <p class="text-zinc-300 mb-8">Your order has been placed.<br>25% is already on its way to rescue teams.</p>
+                    <p class="text-zinc-300 mb-8">Your order has been placed.<br>Thank you for helping rescue children.</p>
                     <button onclick="completeOrder()" class="w-full py-4 gold-bg text-black font-black text-xl rounded-2xl">RETURN TO SITE</button>
                 </div>`;
         }
@@ -325,8 +369,29 @@
             window.location.reload();
         }
 
+        function makeDonation(amount) {
+            impact.raised += amount;
+            impact.rescued += Math.floor(amount / 25); // rough estimate
+            impact.operations += 1;
+            updateImpact();
+            
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-8 py-3 rounded-2xl flex items-center gap-x-3 shadow-2xl z-[200]';
+            toast.innerHTML = `<span class="font-semibold">Thank you! $${amount} added to the fight.</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        function showCustomDonation() {
+            const amount = prompt("Enter donation amount ($):");
+            if (amount && !isNaN(amount) && amount > 0) {
+                makeDonation(parseInt(amount));
+            }
+        }
+
         function init() {
             updateCartCount();
+            updateImpact();
             setTimeout(() => {
                 document.querySelectorAll('.size-btn').forEach((btn, i) => {
                     if (i % 4 === 0) btn.classList.add('!border-[#D4AF37]', 'bg-[#D4AF37]/10');
