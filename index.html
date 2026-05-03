@@ -53,52 +53,43 @@
 </head>
 <body class="bg-zinc-950 text-white">
     
-    <!-- Navbar Logo -->
-<div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.reload()">
-    <!-- Small Logo -->
-    <img src="logo.png" 
-         alt="Dads of God" 
-         class="h-10 w-auto">
-    
-    <div>
-        <div class="font-black text-4xl tracking-tighter gold">DoG</div>
-        <div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div>
-    </div>
-</div>
+><!-- Navbar -->
+<nav class="bg-black border-b border-zinc-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between h-20">
+            
+            <!-- Clean Logo + DoG Text -->
+            <div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.reload()">
+                <!-- Your small logo -->
+                <img src="logo.png" 
+                     alt="Dads of God" 
+                     class="h-11 w-auto logo-glow">
                 
-                <!-- Logo with Glowing Halo -->
-                <div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.reload()">
-                    <div class="relative">
-                        <div class="w-11 h-11 bg-gradient-to-br from-[#D4AF37] to-yellow-600 rounded-full flex items-center justify-center">
-                            <span class="text-black font-black text-2xl">DoG</span>
-                        </div>
-                        <div class="absolute inset-0 rounded-full logo-glow"></div>
-                    </div>
-                    <div>
-                        <div class="font-black text-4xl tracking-tighter gold">DoG</div>
-                        <div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div>
-                    </div>
-                </div>
-
-                <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
-                    <a href="#mission" class="hover:text-[#D4AF37] transition-colors">Mission</a>
-                    <a href="#shop" class="hover:text-[#D4AF37] transition-colors">Shop</a>
-                    <a href="#impact" class="hover:text-[#D4AF37] transition-colors">Impact</a>
-                </div>
-
-                <div class="flex items-center gap-x-4">
-                    <div onclick="showCart()" class="flex items-center gap-x-2 cursor-pointer hover:text-[#D4AF37] transition-colors relative">
-                        <i class="fa-solid fa-shopping-cart text-2xl"></i>
-                        <span id="cart-count" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span>
-                    </div>
-                    
-                    <button onclick="window.location.reload()" class="px-6 py-2 text-sm font-semibold border border-zinc-700 hover:bg-zinc-900 transition-colors rounded-2xl">
-                        Account
-                    </button>
+                <div>
+                    <div class="font-black text-4xl tracking-tighter gold">DoG</div>
+                    <div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div>
                 </div>
             </div>
+
+            <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
+                <a href="#mission" class="hover:text-[#D4AF37] transition-colors">Mission</a>
+                <a href="#shop" class="hover:text-[#D4AF37] transition-colors">Shop</a>
+                <a href="#impact" class="hover:text-[#D4AF37] transition-colors">Impact</a>
+            </div>
+
+            <div class="flex items-center gap-x-4">
+                <div onclick="showCart()" class="flex items-center gap-x-2 cursor-pointer hover:text-[#D4AF37] transition-colors relative">
+                    <i class="fa-solid fa-shopping-cart text-2xl"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </div>
+                
+                <button onclick="window.location.reload()" class="px-6 py-2 text-sm font-semibold border border-zinc-700 hover:bg-zinc-900 transition-colors rounded-2xl">
+                    Account
+                </button>
+            </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Hero -->
     <!-- Hero with Large Glowing Logo -->
