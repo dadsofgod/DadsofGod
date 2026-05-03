@@ -148,154 +148,90 @@
     </div>
 
     <!-- Shop -->
-    <div id="shop" class="max-w-7xl mx-auto px-6 py-24">
-        <div class="text-center mb-14">
-            <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
-            <h2 class="section-header mt-4">The <span class="gold">DoG</span> Collection</h2>
-        </div>
-
-        <div class="grid md:grid-cols-4 gap-8">
-            
-            <!-- Classic Tee -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center">
-                    <div class="text-center">
-                        <div class="mx-auto w-44 h-44 bg-gradient-to-br from-zinc-700 to-black rounded-2xl flex items-center justify-center border border-zinc-600">
-                            <span class="text-[72px] font-black text-white/20">DoG</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between">
-                        <div>
-                            <h3 class="font-bold text-2xl">Classic Tee</h3>
-                            <p class="text-sm text-zinc-400">Heavyweight cotton</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-black text-3xl">$35</div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="addToCart(1, 'Classic Tee', 35)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">
-                        ADD TO CART
-                    </button>
-                </div>
-            </div>
-
-            <!-- Long Sleeve -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center">
-                    <div class="text-center">
-                        <div class="mx-auto w-44 h-44 bg-gradient-to-br from-zinc-700 to-black rounded-2xl flex items-center justify-center border border-zinc-600">
-                            <span class="text-[72px] font-black text-white/20">DoG</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between">
-                        <div>
-                            <h3 class="font-bold text-2xl">Long Sleeve</h3>
-                            <p class="text-sm text-zinc-400">Premium thermal</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-black text-3xl">$45</div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="addToCart(2, 'Long Sleeve', 45)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">
-                        ADD TO CART
-                    </button>
-                </div>
-            </div>
-
-            <!-- Hoodie -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center">
-                    <div class="text-center">
-                        <div class="mx-auto w-44 h-44 bg-gradient-to-br from-zinc-700 to-black rounded-2xl flex items-center justify-center border border-zinc-600">
-                            <span class="text-[72px] font-black text-white/20">DoG</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between">
-                        <div>
-                            <h3 class="font-bold text-2xl">Signature Hoodie</h3>
-                            <p class="text-sm text-zinc-400">Heavy fleece</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-black text-3xl">$65</div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="addToCart(3, 'Signature Hoodie', 65)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">
-                        ADD TO CART
-                    </button>
-                </div>
-            </div>
-
-            <!-- Ballcap -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center relative">
-                    <div class="text-center">
-                        <div class="mx-auto w-40 h-40 bg-gradient-to-br from-zinc-700 to-black rounded-2xl flex items-center justify-center border border-zinc-600">
-                            <i class="fa-solid fa-baseball-ball text-[90px] text-white/30"></i>
-                        </div>
-                    </div>
-                    <div class="absolute top-5 right-5 bg-[#D4AF37] text-black text-xs font-black px-3 py-1 rounded-full">NEW</div>
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between">
-                        <div>
-                            <h3 class="font-bold text-2xl">Signature Ballcap</h3>
-                            <p class="text-sm text-zinc-400">Embroidered DoG logo</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-black text-3xl">$25</div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S/M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L/XL</div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="addToCart(4, 'Signature Ballcap', 25)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">
-                        ADD TO CART
-                    </button>
-                </div>
-            </div>
-        </div>
+<div id="shop" class="max-w-7xl mx-auto px-6 py-24">
+    <div class="text-center mb-14">
+        <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
+        <h2 class="section-header mt-4">The <span class="gold">DoG</span> Collection</h2>
     </div>
+
+    <div class="grid md:grid-cols-4 gap-8">
+
+        <!-- Classic Tee -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+            <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden">
+                <img src="classic-tee-1.jpg" alt="Classic Tee" class="h-full w-auto object-contain">
+            </div>
+            <div class="p-8">
+                <div class="flex justify-between">
+                    <div>
+                        <h3 class="font-bold text-2xl">Classic Tee</h3>
+                        <p class="text-sm text-zinc-400">Heavyweight cotton</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-3xl">$35</div>
+                    </div>
+                </div>
+                <!-- Size buttons + Add to Cart button (keep from your current code) -->
+            </div>
+        </div>
+
+        <!-- Long Sleeve -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+            <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden">
+                <img src="long-sleeve-1.jpg" alt="Long Sleeve" class="h-full w-auto object-contain">
+            </div>
+            <div class="p-8">
+                <div class="flex justify-between">
+                    <div>
+                        <h3 class="font-bold text-2xl">Long Sleeve</h3>
+                        <p class="text-sm text-zinc-400">Premium thermal</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-3xl">$45</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hoodie -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+            <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden">
+                <img src="hoodie-1.jpg" alt="Signature Hoodie" class="h-full w-auto object-contain">
+            </div>
+            <div class="p-8">
+                <div class="flex justify-between">
+                    <div>
+                        <h3 class="font-bold text-2xl">Signature Hoodie</h3>
+                        <p class="text-sm text-zinc-400">Heavy fleece</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-3xl">$65</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ballcap -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+            <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
+                <img src="ballcap-1.jpg" alt="Signature Ballcap" class="h-full w-auto object-contain">
+                <div class="absolute top-5 right-5 bg-[#D4AF37] text-black text-xs font-black px-3 py-1 rounded-full">NEW</div>
+            </div>
+            <div class="p-8">
+                <div class="flex justify-between">
+                    <div>
+                        <h3 class="font-bold text-2xl">Signature Ballcap</h3>
+                        <p class="text-sm text-zinc-400">Embroidered DoG logo</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-3xl">$25</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
     <!-- Impact -->
     <div id="impact" class="bg-[#111111] py-24 border-y border-zinc-800">
