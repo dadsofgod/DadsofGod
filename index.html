@@ -53,12 +53,13 @@
 </head>
 <body class="bg-zinc-950 text-white">
     
-><!-- Navbar -->
+<!-- Navbar -->
 <nav class="bg-black border-b border-zinc-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6">
         <div class="flex items-center justify-between h-20">
             
-                <!-- Your small logo -->
+            <!-- Left: Logo + DoG Text -->
+            <div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.reload()">
                 <img src="logo.png" 
                      alt="Dads of God" 
                      class="h-11 w-auto logo-glow">
@@ -69,12 +70,14 @@
                 </div>
             </div>
 
+            <!-- Center Menu -->
             <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
                 <a href="#mission" class="hover:text-[#D4AF37] transition-colors">Mission</a>
                 <a href="#shop" class="hover:text-[#D4AF37] transition-colors">Shop</a>
                 <a href="#impact" class="hover:text-[#D4AF37] transition-colors">Impact</a>
             </div>
 
+            <!-- Right: Cart + Account -->
             <div class="flex items-center gap-x-4">
                 <div onclick="showCart()" class="flex items-center gap-x-2 cursor-pointer hover:text-[#D4AF37] transition-colors relative">
                     <i class="fa-solid fa-shopping-cart text-2xl"></i>
