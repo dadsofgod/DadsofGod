@@ -57,21 +57,23 @@
         </div>
     </nav>
 
-    <!-- Hero -->
-    <div class="max-w-7xl mx-auto px-6 pt-16 pb-24">
-        <div class="max-w-4xl">
-            <div class="inline-flex items-center gap-x-2 bg-zinc-900 px-4 py-1.5 rounded-full text-sm mb-8 border border-zinc-800">
-                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span class="font-semibold">25% of every sale fights child trafficking</span>
+    <!-- Hero with Big Glowing Logo -->
+    <div class="max-w-7xl mx-auto px-6 pt-12 pb-20 text-center">
+        <div class="flex justify-center mb-8">
+            <div class="relative logo-container">
+                <img src="logo.png" alt="Dads of God" class="h-52 w-auto logo-glow">
             </div>
-            <h1 class="text-7xl md:text-[92px] font-black leading-none tracking-tighter mb-6">
-                WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span>
-            </h1>
-            <p class="text-3xl text-zinc-300 max-w-lg mb-10">Premium gear for men who stand in the gap.</p>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="#shop" class="inline-flex items-center justify-center px-14 py-5 gold-bg text-black font-black text-xl rounded-3xl hover:bg-yellow-400 transition-all">SHOP THE COLLECTION</a>
-                <a href="#mission" class="inline-flex items-center justify-center px-10 py-5 border border-zinc-700 hover:bg-zinc-900 transition-all font-bold text-xl rounded-3xl">Our Mission</a>
-            </div>
+        </div>
+        
+        <h1 class="text-7xl md:text-[92px] font-black leading-none tracking-tighter mb-6">
+            WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span>
+        </h1>
+        
+        <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Premium gear for men who stand in the gap.</p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#shop" class="inline-flex items-center justify-center px-14 py-5 gold-bg text-black font-black text-xl rounded-3xl hover:bg-yellow-400 transition-all">SHOP THE COLLECTION</a>
+            <a href="#mission" class="inline-flex items-center justify-center px-10 py-5 border border-zinc-700 hover:bg-zinc-900 transition-all font-bold text-xl rounded-3xl">Our Mission</a>
         </div>
     </div>
 
@@ -99,7 +101,7 @@
         </div>
     </div>
 
-    <!-- Shop -->
+    <!-- Shop with Hover Front/Back -->
     <div id="shop" class="max-w-7xl mx-auto px-6 py-24">
         <div class="text-center mb-14">
             <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
@@ -109,9 +111,10 @@
         <div class="grid md:grid-cols-4 gap-8">
             
             <!-- Classic Tee -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden">
-                    <img src="classic-tee-1.jpg" alt="Classic Tee" class="h-full w-auto object-contain">
+            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
+                <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
+                    <img src="classic-tee-1.jpg" alt="Classic Tee Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="classic-tee-2.jpg" alt="Classic Tee Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
@@ -131,9 +134,10 @@
             </div>
 
             <!-- Long Sleeve -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden">
-                    <img src="long-sleeve-1.jpg" alt="Long Sleeve" class="h-full w-auto object-contain">
+            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
+                <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
+                    <img src="long-sleeve-1.jpg" alt="Long Sleeve Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="long-sleeve-2.jpg" alt="Long Sleeve Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
@@ -153,9 +157,10 @@
             </div>
 
             <!-- Hoodie -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
-                <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden">
-                    <img src="hoodie-1.jpg" alt="Signature Hoodie" class="h-full w-auto object-contain">
+            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
+                <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
+                    <img src="hoodie-1.jpg" alt="Hoodie Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="hoodie-2.jpg" alt="Hoodie Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
@@ -175,10 +180,10 @@
             </div>
 
             <!-- Ballcap -->
-            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+            <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
-                    <img src="ballcap-1.jpg" alt="Signature Ballcap" class="h-full w-auto object-contain">
-                    <div class="absolute top-5 right-5 bg-[#D4AF37] text-black text-xs font-black px-3 py-1 rounded-full">NEW</div>
+                    <img src="ballcap-1.jpg" alt="Ballcap Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="ballcap-2.jpg" alt="Ballcap Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
