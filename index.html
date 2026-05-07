@@ -30,7 +30,7 @@
 </head>
 <body class="bg-zinc-950 text-white">
 
-    <!-- Navbar with Mobile Menu -->
+    <!-- Navbar -->
     <nav class="bg-black border-b border-zinc-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex items-center justify-between h-20">
@@ -46,11 +46,12 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
-                    <a href="#mission" class="hover:text-[#D4AF37] transition-colors">Mission</a>
-                    <a href="#shop" class="hover:text-[#D4AF37] transition-colors">Shop</a>
-                    <a href="#impact" class="hover:text-[#D4AF37] transition-colors">Impact</a>
-                    <a href="#donate" class="hover:text-[#D4AF37] transition-colors">Donate</a>
-                    <a href="about.html" class="hover:text-[#D4AF37] transition-colors font-semibold">About</a>
+                    <a href="#mission" class="hover:text-[#D4AF37]">Mission</a>
+                    <a href="#shop" class="hover:text-[#D4AF37]">Shop</a>
+                    <a href="#impact" class="hover:text-[#D4AF37]">Impact</a>
+                    <a href="#donate" class="hover:text-[#D4AF37]">Donate</a>
+                    <a href="about.html" class="hover:text-[#D4AF37]">About</a>
+                    <a href="contact.html" class="hover:text-[#D4AF37] font-semibold">Contact</a>
                 </div>
 
                 <!-- Right Side -->
@@ -61,7 +62,6 @@
                     </div>
                     <button onclick="window.location.reload()" class="hidden md:block px-6 py-2 text-sm font-semibold border border-zinc-700 hover:bg-zinc-900 transition-colors rounded-2xl">Account</button>
                     
-                    <!-- Hamburger -->
                     <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-white focus:outline-none">
                         <i class="fa-solid fa-bars"></i>
                     </button>
@@ -71,11 +71,12 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-black border-t border-zinc-800 px-6 py-6">
                 <div class="flex flex-col gap-y-4 text-lg">
-                    <a href="#mission" class="hover:text-[#D4AF37] transition-colors py-1">Mission</a>
-                    <a href="#shop" class="hover:text-[#D4AF37] transition-colors py-1">Shop</a>
-                    <a href="#impact" class="hover:text-[#D4AF37] transition-colors py-1">Impact</a>
-                    <a href="#donate" class="hover:text-[#D4AF37] transition-colors py-1">Donate</a>
-                    <a href="about.html" class="hover:text-[#D4AF37] transition-colors font-semibold py-1">About</a>
+                    <a href="#mission" class="hover:text-[#D4AF37] py-1">Mission</a>
+                    <a href="#shop" class="hover:text-[#D4AF37] py-1">Shop</a>
+                    <a href="#impact" class="hover:text-[#D4AF37] py-1">Impact</a>
+                    <a href="#donate" class="hover:text-[#D4AF37] py-1">Donate</a>
+                    <a href="about.html" class="hover:text-[#D4AF37] py-1">About</a>
+                    <a href="contact.html" class="hover:text-[#D4AF37] font-semibold py-1">Contact</a>
                     <div class="pt-4 border-t border-zinc-800">
                         <button onclick="window.location.reload()" class="w-full py-3 text-sm font-semibold border border-zinc-700 hover:bg-zinc-900 transition-colors rounded-2xl">Account</button>
                     </div>
@@ -84,20 +85,17 @@
         </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero with Big Glowing Logo -->
     <div class="max-w-7xl mx-auto px-6 pt-12 pb-20 text-center">
         <div class="flex justify-center mb-8">
             <div class="relative logo-container">
                 <img src="logo.png" alt="Dads of God" class="h-52 w-auto logo-glow">
             </div>
         </div>
-        
         <h1 class="text-7xl md:text-[92px] font-black leading-none tracking-tighter mb-6">
             WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span>
         </h1>
-        
         <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Premium gear for men who stand in the gap.</p>
-        
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#shop" class="inline-flex items-center justify-center px-14 py-5 gold-bg text-black font-black text-xl rounded-3xl hover:bg-yellow-400 transition-all">SHOP THE COLLECTION</a>
             <a href="#donate" class="inline-flex items-center justify-center px-10 py-5 border border-zinc-700 hover:bg-zinc-900 transition-all font-bold text-xl rounded-3xl">DONATE NOW</a>
@@ -140,93 +138,84 @@
             <!-- Classic Tee -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
-                    <img src="classic-tee-1.jpg" alt="Classic Tee Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
-                    <img src="classic-tee-2.jpg" alt="Classic Tee Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <img src="classic-tee-1.jpg" alt="Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="classic-tee-2.jpg" alt="Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
                         <div><h3 class="font-bold text-2xl">Classic Tee</h3><p class="text-sm text-zinc-400">Heavyweight cotton</p></div>
                         <div class="text-right"><div class="font-black text-3xl">$35</div></div>
                     </div>
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
-                        </div>
+                    <div class="mt-6 flex gap-2 flex-wrap">
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
                     </div>
-                    <button onclick="addToCart(1, 'Classic Tee', 35, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(1, 'Classic Tee', 35)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
             <!-- Long Sleeve -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
-                    <img src="long-sleeve-1.jpg" alt="Long Sleeve Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
-                    <img src="long-sleeve-2.jpg" alt="Long Sleeve Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <img src="long-sleeve-1.jpg" alt="Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="long-sleeve-2.jpg" alt="Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
                         <div><h3 class="font-bold text-2xl">Long Sleeve</h3><p class="text-sm text-zinc-400">Premium thermal</p></div>
                         <div class="text-right"><div class="font-black text-3xl">$45</div></div>
                     </div>
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
-                        </div>
+                    <div class="mt-6 flex gap-2 flex-wrap">
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
                     </div>
-                    <button onclick="addToCart(2, 'Long Sleeve', 45, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(2, 'Long Sleeve', 45)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
             <!-- Hoodie -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
-                    <img src="hoodie-1.jpg" alt="Hoodie Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
-                    <img src="hoodie-2.jpg" alt="Hoodie Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <img src="hoodie-1.jpg" alt="Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="hoodie-2.jpg" alt="Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
                         <div><h3 class="font-bold text-2xl">Signature Hoodie</h3><p class="text-sm text-zinc-400">Heavy fleece</p></div>
                         <div class="text-right"><div class="font-black text-3xl">$65</div></div>
                     </div>
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
-                        </div>
+                    <div class="mt-6 flex gap-2 flex-wrap">
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">M</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">XL</div>
                     </div>
-                    <button onclick="addToCart(3, 'Signature Hoodie', 65, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(3, 'Signature Hoodie', 65)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
 
             <!-- Ballcap -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
-                    <img src="ballcap-1.jpg" alt="Ballcap Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
-                    <img src="ballcap-2.jpg" alt="Ballcap Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <img src="ballcap-1.jpg" alt="Front" class="h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0">
+                    <img src="ballcap-2.jpg" alt="Back" class="absolute h-full w-auto object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 </div>
                 <div class="p-8">
                     <div class="flex justify-between">
                         <div><h3 class="font-bold text-2xl">Signature Ballcap</h3><p class="text-sm text-zinc-400">Embroidered DoG logo</p></div>
                         <div class="text-right"><div class="font-black text-3xl">$29</div></div>
                     </div>
-                    <div class="mt-6">
-                        <div class="flex gap-2 flex-wrap">
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S/M</div>
-                            <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L/XL</div>
-                        </div>
+                    <div class="mt-6 flex gap-2 flex-wrap">
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">S/M</div>
+                        <div onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl cursor-pointer hover:border-[#D4AF37]">L/XL</div>
                     </div>
-                    <button onclick="addToCart(4, 'Signature Ballcap', 29, 1)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
+                    <button onclick="addToCart(4, 'Signature Ballcap', 29)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl hover:bg-yellow-300 transition-all">ADD TO CART</button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -275,7 +264,7 @@
             <div class="flex gap-x-8 mt-4 md:mt-0">
                 <a href="#" class="hover:text-white">Impact Reports</a>
                 <a href="#" class="hover:text-white">Partner Organizations</a>
-                <a href="#" class="hover:text-white">Contact</a>
+                <a href="contact.html" class="hover:text-white">Contact</a>
             </div>
         </div>
     </footer>
@@ -321,8 +310,8 @@
             el.classList.add('!border-[#D4AF37]', 'bg-[#D4AF37]/10');
         }
 
-        function addToCart(id, name, price, rescueValue = 1) {
-            cart.push({ id, name, price, size: 'M', qty: 1, rescueValue });
+        function addToCart(id, name, price) {
+            cart.push({ id, name, price, size: 'M', qty: 1 });
             updateCartCount();
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#D4AF37] px-8 py-3 rounded-2xl flex items-center gap-x-3 shadow-2xl z-[200]';
@@ -367,14 +356,10 @@
         function checkout() {
             if (cart.length === 0) return;
             let total = 0;
-            let rescued = 0;
-            cart.forEach(item => {
-                total += item.price;
-                rescued += item.rescueValue || 1;
-            });
+            cart.forEach(item => total += item.price);
             
             impact.raised += total;
-            impact.rescued += rescued;
+            impact.rescued += Math.floor(total / 4);
             impact.operations += 1;
             updateImpact();
             
@@ -417,8 +402,7 @@
         }
 
         function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         }
 
         function init() {
