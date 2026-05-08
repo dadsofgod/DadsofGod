@@ -6,6 +6,8 @@
     <title>DoG | Dads of God</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- PayPal SDK with your Client ID -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AQO0Z2BWlEf_YLIhhpij-VKiRKSPvi-J2XF1QvNWI146srDm2_PL_ebVUiGAU_r4m7w9qviBUjinKLrh&currency=USD"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
         body { font-family: 'Inter', system_ui, sans-serif; }
@@ -34,8 +36,6 @@
     <nav class="bg-black border-b border-zinc-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex items-center justify-between h-20">
-                
-                <!-- Logo -->
                 <div class="flex items-center gap-x-3 cursor-pointer logo-container" onclick="window.location.href='index.html'">
                     <img src="logo.png" alt="Dads of God" class="h-11 w-auto logo-glow">
                     <div>
@@ -44,7 +44,6 @@
                     </div>
                 </div>
 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
                     <a href="#mission" class="hover:text-[#D4AF37]">Mission</a>
                     <a href="#shop" class="hover:text-[#D4AF37]">Shop</a>
@@ -54,17 +53,13 @@
                     <a href="contact.html" class="hover:text-[#D4AF37] font-semibold">Contact</a>
                 </div>
 
-                <!-- Right Side -->
                 <div class="flex items-center gap-x-4">
                     <div onclick="showCart()" class="flex items-center gap-x-2 cursor-pointer hover:text-[#D4AF37] transition-colors relative">
                         <i class="fa-solid fa-shopping-cart text-2xl"></i>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span>
                     </div>
                     <button onclick="window.location.reload()" class="hidden md:block px-6 py-2 text-sm font-semibold border border-zinc-700 hover:bg-zinc-900 transition-colors rounded-2xl">Account</button>
-                    
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-white focus:outline-none">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-white"><i class="fa-solid fa-bars"></i></button>
                 </div>
             </div>
 
@@ -77,15 +72,12 @@
                     <a href="#donate" class="hover:text-[#D4AF37] py-1">Donate</a>
                     <a href="about.html" class="hover:text-[#D4AF37] py-1">About</a>
                     <a href="contact.html" class="hover:text-[#D4AF37] font-semibold py-1">Contact</a>
-                    <div class="pt-4 border-t border-zinc-800">
-                        <button onclick="window.location.reload()" class="w-full py-3 text-sm font-semibold border border-zinc-700 hover:bg-zinc-900 transition-colors rounded-2xl">Account</button>
-                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero with Big Glowing Logo -->
+    <!-- Hero -->
     <div class="max-w-7xl mx-auto px-6 pt-12 pb-20 text-center">
         <div class="flex justify-center mb-8">
             <div class="relative logo-container">
@@ -134,7 +126,6 @@
         </div>
 
         <div class="grid md:grid-cols-4 gap-8">
-            
             <!-- Classic Tee -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
@@ -239,7 +230,6 @@
         <div class="max-w-5xl mx-auto px-6 text-center">
             <div class="gold text-sm font-bold tracking-[4px]">THE IMPACT</div>
             <h2 class="text-5xl font-bold tracking-tight mt-4">Real rescue.<br>Real results.</h2>
-            
             <div class="grid md:grid-cols-3 gap-6 mt-14">
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="raised">$0</div>
@@ -282,21 +272,13 @@
                     <span>Total</span>
                     <span id="cart-total">$0</span>
                 </div>
-                <div class="text-emerald-400 text-sm mt-1">25% of this order goes to rescue teams</div>
-                <button onclick="checkout()" class="mt-7 w-full py-4 gold-bg text-black font-black text-xl rounded-2xl hover:bg-yellow-300 transition-all">PROCEED TO CHECKOUT</button>
+                <div id="paypal-button-container" class="mt-6"></div>
             </div>
         </div>
     </div>
 
     <script>
         let cart = [];
-        let impact = { raised: 0, rescued: 0, operations: 0 };
-
-        function updateImpact() {
-            document.getElementById('raised').textContent = '$' + impact.raised.toLocaleString();
-            document.getElementById('rescued').textContent = impact.rescued;
-            document.getElementById('operations').textContent = impact.operations;
-        }
 
         function updateCartCount() {
             document.getElementById('cart-count').textContent = cart.length;
@@ -311,7 +293,7 @@
         }
 
         function addToCart(id, name, price) {
-            cart.push({ id, name, price, size: 'M', qty: 1 });
+            cart.push({ id, name, price, size: 'M' });
             updateCartCount();
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#D4AF37] px-8 py-3 rounded-2xl flex items-center gap-x-3 shadow-2xl z-[200]';
@@ -326,9 +308,9 @@
             const totalEl = document.getElementById('cart-total');
             container.innerHTML = '';
             let total = 0;
+
             if (cart.length === 0) {
                 container.innerHTML = `<div class="text-center py-12 text-zinc-400"><i class="fa-solid fa-shopping-cart text-6xl mb-4"></i><p>Your cart is empty</p></div>`;
-                totalEl.textContent = '$0';
             } else {
                 cart.forEach((item, index) => {
                     total += item.price;
@@ -338,9 +320,30 @@
                             <div class="text-right"><div class="font-bold">$${item.price}</div><button onclick="removeFromCart(${index})" class="text-xs text-red-400 hover:text-red-500">Remove</button></div>
                         </div>`;
                 });
-                totalEl.textContent = `$${total}`;
             }
+            totalEl.textContent = `$${total}`;
             modal.style.display = 'flex';
+
+            renderPayPalButtons(total);
+        }
+
+        function renderPayPalButtons(total) {
+            document.getElementById('paypal-button-container').innerHTML = '';
+            paypal.Buttons({
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [{ amount: { value: total.toFixed(2) } }]
+                    });
+                },
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then((details) => {
+                        alert('✅ Payment successful! Thank you for supporting the mission.');
+                        cart = [];
+                        updateCartCount();
+                        hideCart();
+                    });
+                }
+            }).render('#paypal-button-container');
         }
 
         function removeFromCart(index) {
@@ -353,66 +356,12 @@
             document.getElementById('cart-modal').style.display = 'none';
         }
 
-        function checkout() {
-            if (cart.length === 0) return;
-            let total = 0;
-            cart.forEach(item => total += item.price);
-            
-            impact.raised += total;
-            impact.rescued += Math.floor(total / 4);
-            impact.operations += 1;
-            updateImpact();
-            
-            const modal = document.getElementById('cart-modal');
-            modal.innerHTML = `
-                <div class="bg-zinc-950 w-full md:w-[440px] md:rounded-3xl md:m-4 rounded-t-3xl p-10 text-center border border-zinc-800">
-                    <div class="mx-auto w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
-                        <i class="fa-solid fa-check text-5xl text-emerald-400"></i>
-                    </div>
-                    <h3 class="font-black text-4xl mb-4">Thank you, brother.</h3>
-                    <p class="text-zinc-300 mb-8">Your order has been placed.<br>Thank you for helping rescue children.</p>
-                    <button onclick="completeOrder()" class="w-full py-4 gold-bg text-black font-black text-xl rounded-2xl">RETURN TO SITE</button>
-                </div>`;
-        }
-
-        function completeOrder() {
-            cart = [];
-            updateCartCount();
-            window.location.reload();
-        }
-
-        function makeDonation(amount) {
-            impact.raised += amount;
-            impact.rescued += Math.floor(amount / 25);
-            impact.operations += 1;
-            updateImpact();
-            
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-8 py-3 rounded-2xl flex items-center gap-x-3 shadow-2xl z-[200]';
-            toast.innerHTML = `<span class="font-semibold">Thank you! $${amount} added to the fight.</span>`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
-        }
-
-        function showCustomDonation() {
-            const amount = prompt("Enter donation amount ($):");
-            if (amount && !isNaN(amount) && amount > 0) {
-                makeDonation(parseInt(amount));
-            }
-        }
-
         function toggleMobileMenu() {
             document.getElementById('mobile-menu').classList.toggle('hidden');
         }
 
         function init() {
             updateCartCount();
-            updateImpact();
-            setTimeout(() => {
-                document.querySelectorAll('.size-btn').forEach((btn, i) => {
-                    if (i % 4 === 0) btn.classList.add('!border-[#D4AF37]', 'bg-[#D4AF37]/10');
-                });
-            }, 600);
         }
 
         window.onload = init;
