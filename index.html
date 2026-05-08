@@ -147,13 +147,13 @@
                 </div>
             </div>
 
-            <!-- Long Sleeve, Hoodie, Ballcap follow same pattern (shortened for space) -->
-            <!-- Copy the other 3 products from previous full code if needed -->
+            <!-- Long Sleeve, Hoodie, Ballcap (same pattern) -->
+            <!-- Copy the other 3 products from your previous full code if needed. -->
 
         </div>
     </div>
 
-    <!-- Donate -->
+    <!-- Donate with Real PayPal -->
     <div id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
         <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
         <h2 class="text-5xl font-bold tracking-tight mt-4">Help us rescue more children.</h2>
@@ -184,29 +184,22 @@
         }
 
         function showCart() {
-            // ... (your cart display code)
+            // ... your cart display code
             renderPayPalButtons();
         }
 
         function renderPayPalButtons() {
             let total = 0;
             cart.forEach(item => total += item.price);
-
             document.getElementById('paypal-button-container').innerHTML = '';
             paypal.Buttons({
-                createOrder: (data, actions) => {
-                    return actions.order.create({
-                        purchase_units: [{ amount: { value: total.toFixed(2) } }]
-                    });
-                },
-                onApprove: (data, actions) => {
-                    return actions.order.capture().then(() => {
-                        alert('✅ Payment successful! Thank you!');
-                        cart = [];
-                        updateCartCount();
-                        hideCart();
-                    });
-                }
+                createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: total.toFixed(2) } }] }),
+                onApprove: (data, actions) => actions.order.capture().then(() => {
+                    alert('Payment successful! Thank you!');
+                    cart = [];
+                    updateCartCount();
+                    hideCart();
+                })
             }).render('#paypal-button-container');
         }
 
@@ -214,16 +207,8 @@
         function renderDonationButtons() {
             paypal.Buttons({
                 style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'donate' },
-                createOrder: (data, actions) => {
-                    return actions.order.create({
-                        purchase_units: [{ amount: { value: '25.00' }, description: 'Donation to Dads of God' }]
-                    });
-                },
-                onApprove: (data, actions) => {
-                    return actions.order.capture().then(() => {
-                        alert('Thank you for your donation!');
-                    });
-                }
+                createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: '25.00' } }] }),
+                onApprove: (data, actions) => actions.order.capture().then(() => alert('Thank you for your donation!'))
             }).render('#donate-paypal-container');
         }
 
