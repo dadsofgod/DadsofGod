@@ -210,14 +210,13 @@
         </div>
     </div>
 
-    <!-- Donate Section - FIXED CENTERING -->
+    <!-- Donate Section -->
     <div id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
         <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
         <h2 class="text-5xl font-bold tracking-tight mt-4">Help us rescue more children.</h2>
         <p class="text-xl text-zinc-400 mt-4 max-w-lg mx-auto">100% of every donation goes straight to vetted rescue teams.</p>
         
         <div class="mt-12">
-            <!-- Preset Amounts -->
             <div class="flex flex-wrap justify-center gap-4 mb-8">
                 <button onclick="setDonationAmount(10)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$10</button>
                 <button onclick="setDonationAmount(25)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$25</button>
@@ -225,7 +224,6 @@
                 <button onclick="setDonationAmount(100)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$100</button>
             </div>
 
-            <!-- Custom Amount - FIXED CENTERING -->
             <div class="max-w-xs mx-auto mb-8">
                 <div class="flex items-center justify-center border border-zinc-700 rounded-3xl px-6 py-4 bg-zinc-900">
                     <span class="text-2xl font-bold text-[#D4AF37] mr-3">$</span>
@@ -234,34 +232,41 @@
                 </div>
             </div>
 
-            <!-- PayPal Donate Button -->
             <div id="donate-paypal-container" class="max-w-md mx-auto"></div>
         </div>
 
-        <!-- Live Total Donated -->
         <div class="mt-12 pt-8 border-t border-zinc-800">
             <p class="text-sm uppercase tracking-widest text-zinc-400">Total Raised So Far</p>
             <div id="total-donated" class="text-6xl font-black gold mt-2">$0</div>
         </div>
     </div>
 
-    <!-- Impact -->
+    <!-- Impact Section -->
     <div id="impact" class="bg-[#111111] py-24 border-y border-zinc-800">
         <div class="max-w-5xl mx-auto px-6 text-center">
             <div class="gold text-sm font-bold tracking-[4px]">THE IMPACT</div>
             <h2 class="text-5xl font-bold tracking-tight mt-4">Real rescue.<br>Real results.</h2>
+            
             <div class="grid md:grid-cols-3 gap-6 mt-14">
+                <!-- Raised for Rescue -->
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="raised">$0</div>
-                    <div class="mt-3 text-xl font-semibold">Raised for rescue</div>
+                    <div class="mt-3 text-xl font-semibold">Raised for Rescue</div>
+                    <div class="text-xs text-zinc-400 mt-1">Includes 25% of merch sales + donations</div>
                 </div>
+                
+                <!-- Children Rescued (Manual) -->
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="rescued">0</div>
-                    <div class="mt-3 text-xl font-semibold">Children rescued</div>
+                    <div class="mt-3 text-xl font-semibold">Children Rescued</div>
+                    <div class="text-xs text-zinc-400 mt-1">Updated with real data</div>
                 </div>
+                
+                <!-- Operations Funded (Manual) -->
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="operations">0</div>
-                    <div class="mt-3 text-xl font-semibold">Rescue operations funded</div>
+                    <div class="mt-3 text-xl font-semibold">Rescue Operations Funded</div>
+                    <div class="text-xs text-zinc-400 mt-1">Updated with real data</div>
                 </div>
             </div>
         </div>
@@ -300,6 +305,7 @@
     <script>
         let cart = [];
         let totalDonated = 0;
+        let merchTotal = 0;
         let currentDonationAmount = 25;
 
         function updateCartCount() {
@@ -358,6 +364,9 @@
                 },
                 onApprove: (data, actions) => {
                     return actions.order.capture().then(() => {
+                        merchTotal += total;
+                        updateRaisedAmount();
+                        
                         alert('✅ Payment successful! Thank you for supporting the mission.');
                         cart = [];
                         updateCartCount();
@@ -381,7 +390,6 @@
             document.getElementById('mobile-menu').classList.toggle('hidden');
         }
 
-        // === Donation Functions ===
         function setDonationAmount(amount) {
             currentDonationAmount = amount;
             document.getElementById('custom-amount').value = '';
@@ -407,6 +415,8 @@
                     return actions.order.capture().then(() => {
                         let amount = parseFloat(document.getElementById('custom-amount').value) || currentDonationAmount;
                         totalDonated += amount;
+                        updateRaisedAmount();
+                        
                         document.getElementById('total-donated').textContent = '$' + Math.floor(totalDonated);
                         alert(`Thank you! Your $${amount} donation will help rescue children. God bless you!`);
                         document.getElementById('custom-amount').value = '';
@@ -415,9 +425,16 @@
             }).render('#donate-paypal-container');
         }
 
+        function updateRaisedAmount() {
+            const raisedFromMerch = merchTotal * 0.25;
+            const totalRaised = totalDonated + raisedFromMerch;
+            document.getElementById('raised').textContent = '$' + Math.floor(totalRaised);
+        }
+
         function init() {
             updateCartCount();
             renderDonationButtons();
+            updateRaisedAmount();
         }
 
         window.onload = init;
