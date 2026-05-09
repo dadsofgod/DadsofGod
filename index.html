@@ -355,13 +355,9 @@
             document.getElementById('paypal-button-container').innerHTML = '';
             
             paypal.Buttons({
-                style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'paypal' },
                 createOrder: (data, actions) => {
                     return actions.order.create({
-                        purchase_units: [{ 
-                            amount: { value: total.toFixed(2) },
-                            description: 'Dads of God Merch Purchase'
-                        }]
+                        purchase_units: [{ amount: { value: total.toFixed(2) } }]
                     });
                 },
                 onApprove: (data, actions) => {
@@ -375,10 +371,6 @@
                         updateCartCount();
                         hideCart();
                     });
-                },
-                onError: (err) => {
-                    console.error('PayPal Error:', err);
-                    alert('Payment failed. Please try again or contact support.');
                 }
             }).render('#paypal-button-container');
         }
