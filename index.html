@@ -370,6 +370,13 @@
                         updateCartCount();
                         hideCart();
                     });
+                },
+                onError: (err) => {
+                    console.error('PayPal Error:', err);
+                    alert('Payment failed. Please try the main PayPal login button instead of "Pay with debit card", or use a different card.');
+                },
+                onCancel: (data) => {
+                    console.log('Payment cancelled');
                 }
             }).render('#paypal-button-container');
         }
