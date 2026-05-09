@@ -248,21 +248,18 @@
             <h2 class="text-5xl font-bold tracking-tight mt-4">Real rescue.<br>Real results.</h2>
             
             <div class="grid md:grid-cols-3 gap-6 mt-14">
-                <!-- Raised for Rescue -->
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="raised">$0</div>
                     <div class="mt-3 text-xl font-semibold">Raised for Rescue</div>
                     <div class="text-xs text-zinc-400 mt-1">Includes 25% of merch sales + donations</div>
                 </div>
                 
-                <!-- Children Rescued (Manual) -->
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="rescued">0</div>
                     <div class="mt-3 text-xl font-semibold">Children Rescued</div>
                     <div class="text-xs text-zinc-400 mt-1">Updated with real data</div>
                 </div>
                 
-                <!-- Operations Funded (Manual) -->
                 <div class="bg-black border border-zinc-800 p-10 rounded-3xl">
                     <div class="text-7xl font-black gold" id="operations">0</div>
                     <div class="mt-3 text-xl font-semibold">Rescue Operations Funded</div>
@@ -304,8 +301,8 @@
 
     <script>
         let cart = [];
-        let totalDonated = 0;
-        let merchTotal = 0;
+        let totalDonated = parseInt(localStorage.getItem('totalDonated')) || 0;
+        let merchTotal = parseInt(localStorage.getItem('merchTotal')) || 0;
         let currentDonationAmount = 25;
 
         function updateCartCount() {
@@ -365,6 +362,7 @@
                 onApprove: (data, actions) => {
                     return actions.order.capture().then(() => {
                         merchTotal += total;
+                        localStorage.setItem('merchTotal', merchTotal);
                         updateRaisedAmount();
                         
                         alert('✅ Payment successful! Thank you for supporting the mission.');
@@ -388,6 +386,13 @@
 
         function toggleMobileMenu() {
             document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // === Donation Functions with localStorage ===
+        function updateTotalDonated(amount) {
+            totalDonated += amount;
+            localStorage.setItem('totalDonated', totalDonated);
+            document.getElementById('total-donated').textContent = '$' + Math.floor(totalDonated);
         }
 
         function setDonationAmount(amount) {
@@ -414,10 +419,8 @@
                 onApprove: (data, actions) => {
                     return actions.order.capture().then(() => {
                         let amount = parseFloat(document.getElementById('custom-amount').value) || currentDonationAmount;
-                        totalDonated += amount;
-                        updateRaisedAmount();
+                        updateTotalDonated(amount);
                         
-                        document.getElementById('total-donated').textContent = '$' + Math.floor(totalDonated);
                         alert(`Thank you! Your $${amount} donation will help rescue children. God bless you!`);
                         document.getElementById('custom-amount').value = '';
                     });
@@ -433,6 +436,7 @@
 
         function init() {
             updateCartCount();
+            document.getElementById('total-donated').textContent = '$' + Math.floor(totalDonated);
             renderDonationButtons();
             updateRaisedAmount();
         }
