@@ -126,7 +126,6 @@
         </div>
 
         <div class="grid md:grid-cols-4 gap-8">
-
             <!-- Classic Tee -->
             <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden group">
                 <div class="h-80 bg-zinc-800 flex items-center justify-center overflow-hidden relative">
@@ -211,14 +210,38 @@
         </div>
     </div>
 
-    <!-- Donate -->
+    <!-- Donate Section - Updated -->
     <div id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
         <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
         <h2 class="text-5xl font-bold tracking-tight mt-4">Help us rescue more children.</h2>
         <p class="text-xl text-zinc-400 mt-4 max-w-lg mx-auto">100% of every donation goes straight to vetted rescue teams.</p>
         
-        <div class="mt-10">
+        <div class="mt-12">
+            <!-- Preset Amounts -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <button onclick="setDonationAmount(10)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$10</button>
+                <button onclick="setDonationAmount(25)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$25</button>
+                <button onclick="setDonationAmount(50)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$50</button>
+                <button onclick="setDonationAmount(100)" class="donate-btn px-8 py-4 border border-zinc-700 hover:bg-zinc-900 rounded-2xl text-lg font-semibold">$100</button>
+            </div>
+
+            <!-- Custom Amount -->
+            <div class="max-w-xs mx-auto mb-8">
+                <div class="flex items-center border border-zinc-700 rounded-3xl px-6 py-4">
+                    <span class="text-2xl font-bold">$</span>
+                    <input id="custom-amount" type="number" placeholder="Other amount" 
+                           class="flex-1 bg-transparent text-center text-3xl font-bold focus:outline-none">
+                </div>
+            </div>
+
+            <!-- PayPal Donate Button -->
             <div id="donate-paypal-container" class="max-w-md mx-auto"></div>
+        </div>
+
+        <!-- Live Total Donated -->
+        <div class="mt-12 pt-8 border-t border-zinc-800">
+            <p class="text-sm uppercase tracking-widest text-zinc-400">Total Raised So Far</p>
+            <div id="total-donated" class="text-6xl font-black gold mt-2">$0</div>
         </div>
     </div>
 
@@ -276,6 +299,8 @@
 
     <script>
         let cart = [];
+        let totalDonated = 0;
+        let currentDonationAmount = 25;
 
         function updateCartCount() {
             document.getElementById('cart-count').textContent = cart.length;
@@ -356,18 +381,35 @@
             document.getElementById('mobile-menu').classList.toggle('hidden');
         }
 
-        // Donation Buttons
+        // === Donation Functions ===
+        function setDonationAmount(amount) {
+            currentDonationAmount = amount;
+            document.getElementById('custom-amount').value = '';
+            renderDonationButtons();
+        }
+
         function renderDonationButtons() {
+            const container = document.getElementById('donate-paypal-container');
+            container.innerHTML = '';
+
             paypal.Buttons({
                 style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'donate' },
                 createOrder: (data, actions) => {
+                    let amount = parseFloat(document.getElementById('custom-amount').value) || currentDonationAmount;
                     return actions.order.create({
-                        purchase_units: [{ amount: { value: '25.00' }, description: 'Donation to Dads of God' }]
+                        purchase_units: [{ 
+                            amount: { value: amount.toFixed(2) },
+                            description: 'Donation to Dads of God - Child Rescue'
+                        }]
                     });
                 },
                 onApprove: (data, actions) => {
                     return actions.order.capture().then(() => {
-                        alert('Thank you for your donation! God bless you.');
+                        let amount = parseFloat(document.getElementById('custom-amount').value) || currentDonationAmount;
+                        totalDonated += amount;
+                        document.getElementById('total-donated').textContent = '$' + Math.floor(totalDonated);
+                        alert(`Thank you! Your $${amount} donation will help rescue children. God bless you!`);
+                        document.getElementById('custom-amount').value = '';
                     });
                 }
             }).render('#donate-paypal-container');
