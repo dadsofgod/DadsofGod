@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DoG | Dads of God — We Were Made To Protect</title>
-<meta name="description" content="Dads of God rallies men as protectors of the innocent. 25% of every sale funds vetted organizations fighting child trafficking.">
+<meta name="description" content="Dads of God rallies men as protectors of the innocent. 25% of profits after print, shipping, and fees funds vetted organizations fighting child trafficking.">
 <link rel="icon" href="logo.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -65,14 +65,14 @@ body{font-family:Inter,system-ui,sans-serif}
 <div class="md:col-span-5 mt-12 md:mt-0">
 <div class="bg-black border border-zinc-800 p-9 rounded-3xl flex items-start gap-x-4">
 <i class="fa-solid fa-shield-halved text-5xl gold mt-1"></i>
-<div><div class="font-black text-3xl">25% of every sale</div>
-<div class="text-lg text-zinc-300 mt-1">is set aside for vetted organizations fighting child trafficking. We will name those partners here before we claim specific rescue numbers.</div></div>
+<div><div class="font-black text-3xl">25% of profits</div>
+<div class="text-lg text-zinc-300 mt-1">after print, shipping, and payment fees is set aside for vetted organizations fighting child trafficking. We will name those partners before we claim rescue numbers.</div></div>
 </div></div></div></section>
 <section id="shop" class="max-w-7xl mx-auto px-6 py-24">
 <div class="text-center mb-14">
 <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
 <h2 class="text-5xl font-bold tracking-tight mt-4">The <span class="gold">DoG</span> Collection</h2>
-<p class="text-zinc-400 mt-3">Tap a photo for the back. Pick a size. Checkout stays on this site.</p>
+<p class="text-zinc-400 mt-3">Tap a photo for the back. Pick a size. US shipping $5.99 at checkout.</p>
 </div>
 <div class="grid md:grid-cols-4 gap-8">
 <article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden" data-sku="DOG-TEE">
@@ -141,9 +141,10 @@ body{font-family:Inter,system-ui,sans-serif}
 <div class="flex justify-between items-center mb-6"><h3 class="font-black text-3xl">Your Cart</h3><button type="button" onclick="hideCart()" class="text-4xl text-zinc-400">×</button></div>
 <div id="cart-items" class="space-y-4"></div>
 <div class="border-t border-zinc-800 pt-5 mt-5">
+<div id="ship-line" class="flex justify-between text-zinc-400 mb-2 hidden"><span>Shipping (US)</span><span>$5.99</span></div>
 <div class="flex justify-between font-black text-2xl mb-6"><span>Total</span><span id="cart-total">$0</span></div>
 <div id="ship-fields" class="space-y-3 mb-6">
-<p class="text-sm text-zinc-400">Shipping — required.</p>
+<p class="text-sm text-zinc-400">Address required.</p>
 <input id="ship-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Full name">
 <input id="ship-email" type="email" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Email">
 <input id="ship-phone" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Phone">
@@ -155,7 +156,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <div id="cart-paypal-container"></div>
 </div></div></div>
 <script>
-const FULFILL='https://dadsofgod-fulfill-leavens123-6711s-projects.vercel.app/api/fulfill';
+const FULFILL='https://dadsofgod-fulfill.vercel.app/api/fulfill';
 let cart=[];try{cart=JSON.parse(localStorage.getItem('dogCart')||'[]')}catch(e){cart=[]}
 let currentDonationAmount=25;
 function saveCart(){localStorage.setItem('dogCart',JSON.stringify(cart));updateCartCount()}
@@ -164,13 +165,13 @@ function toast(msg){const el=document.createElement('div');el.className='fixed b
 function selectSize(el){el.parentElement.querySelectorAll('.size-btn').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');el.closest('.product-card').dataset.size=el.textContent.trim()}
 function addToCart(btn,sku,name,price){const size=btn.closest('.product-card').dataset.size;if(!size){toast('Pick a size first');return}cart.push({sku,name,price,size,quantity:1});saveCart();toast(name+' ('+size+') added');showCart()}
 function removeFromCart(i){cart.splice(i,1);saveCart();showCart()}
-function cartTotal(){return cart.reduce((s,i)=>s+Number(i.price),0)}
+const SHIP=5.99;function merchTotal(){return cart.reduce((s,i)=>s+Number(i.price),0)}function cartTotal(){return cart.length?merchTotal()+SHIP:0}
 function getShip(){const g=id=>(document.getElementById(id).value||'').trim();return{name:g('ship-name'),email:g('ship-email'),phone:g('ship-phone'),address:g('ship-address'),city:g('ship-city'),state:g('ship-state'),zip:g('ship-zip'),country:g('ship-country')}}
 function shipValid(){const s=getShip();const ok=s.name&&s.email.includes('@')&&s.address&&s.city&&s.state&&s.zip&&s.country;const err=document.getElementById('ship-error');if(!ok){err.textContent='Fill name, email, and full address.';err.classList.remove('hidden');return false}err.classList.add('hidden');localStorage.setItem('dogShip',JSON.stringify(s));return true}
 function fillShip(){try{const s=JSON.parse(localStorage.getItem('dogShip')||'{}');['name','email','phone','address','city','state','zip','country'].forEach(k=>{const el=document.getElementById('ship-'+k);if(el&&s[k])el.value=s[k]})}catch(e){}}
-function showCart(){const box=document.getElementById('cart-items');box.innerHTML='';if(!cart.length){box.innerHTML='<div class="text-center py-10 text-zinc-400">Your cart is empty</div>';document.getElementById('ship-fields').classList.add('hidden');document.getElementById('cart-paypal-container').innerHTML=''}else{document.getElementById('ship-fields').classList.remove('hidden');cart.forEach((item,index)=>{box.innerHTML+='<div class="flex justify-between items-center border-b border-zinc-800 pb-4"><div><div class="font-semibold">'+item.name+'</div><div class="text-sm text-zinc-400">Size '+item.size+'</div></div><div class="text-right"><div class="font-bold">$'+item.price+'</div><button type="button" onclick="removeFromCart('+index+')" class="text-xs text-red-400">Remove</button></div></div>'});fillShip();renderCartPaypal()}document.getElementById('cart-total').textContent='$'+cartTotal();document.getElementById('cart-modal').classList.remove('hidden')}
+function showCart(){const box=document.getElementById('cart-items');box.innerHTML='';if(!cart.length){box.innerHTML='<div class="text-center py-10 text-zinc-400">Your cart is empty</div>';document.getElementById('ship-fields').classList.add('hidden');document.getElementById('ship-line').classList.add('hidden');document.getElementById('cart-paypal-container').innerHTML=''}else{document.getElementById('ship-fields').classList.remove('hidden');document.getElementById('ship-line').classList.remove('hidden');cart.forEach((item,index)=>{box.innerHTML+='<div class="flex justify-between items-center border-b border-zinc-800 pb-4"><div><div class="font-semibold">'+item.name+'</div><div class="text-sm text-zinc-400">Size '+item.size+'</div></div><div class="text-right"><div class="font-bold">$'+item.price+'</div><button type="button" onclick="removeFromCart('+index+')" class="text-xs text-red-400">Remove</button></div></div>'});fillShip();renderCartPaypal()}document.getElementById('cart-total').textContent='$'+cartTotal().toFixed(2);document.getElementById('cart-modal').classList.remove('hidden')}
 function hideCart(){document.getElementById('cart-modal').classList.add('hidden')}
-function renderCartPaypal(){const box=document.getElementById('cart-paypal-container');box.innerHTML='';if(!cart.length||typeof paypal==='undefined')return;paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'paypal'},onClick:function(d,a){return shipValid()?a.resolve():a.reject()},createOrder:function(d,a){if(!shipValid())return a.reject();return a.order.create({purchase_units:[{amount:{value:cartTotal().toFixed(2)},description:('DoG: '+cart.map(i=>i.name+' '+i.size).join(', ')).slice(0,120)}]})},onApprove:function(d,a){return a.order.capture().then(function(details){const payload={paypalOrderId:d.orderID,items:cart.map(i=>({sku:i.sku,quantity:1,size:i.size})),address:getShip()};fetch(FULFILL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});toast('Paid. We have your order.');cart=[];saveCart();hideCart()})}}).render('#cart-paypal-container')}
+function renderCartPaypal(){const box=document.getElementById('cart-paypal-container');box.innerHTML='';if(!cart.length||typeof paypal==='undefined')return;paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'paypal'},onClick:function(d,a){return shipValid()?a.resolve():a.reject()},createOrder:function(d,a){if(!shipValid())return a.reject();return a.order.create({purchase_units:[{amount:{value:cartTotal().toFixed(2)},description:('DoG +$5.99 ship: '+cart.map(i=>i.name+' '+i.size).join(', ')).slice(0,120)}]})},onApprove:function(d,a){return a.order.capture().then(function(){fetch(FULFILL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paypalOrderId:d.orderID,items:cart.map(i=>({sku:i.sku,quantity:1,size:i.size})),address:getShip()})}).catch(function(){});toast('Paid. We have your order.');cart=[];saveCart();hideCart()})}}).render('#cart-paypal-container')}
 function donationAmount(){const c=parseFloat(document.getElementById('custom-amount').value);return(!isNaN(c)&&c>0)?c:currentDonationAmount}
 function setDonationAmount(n){currentDonationAmount=n;document.getElementById('custom-amount').value='';document.querySelectorAll('.donate-btn').forEach(b=>b.classList.toggle('selected',b.textContent.replace('$','')===String(n)))}
 function renderDonationButtons(){const el=document.getElementById('donate-paypal-container');if(!el||typeof paypal==='undefined')return;el.innerHTML='';paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'donate'},createOrder:function(d,a){const amount=donationAmount();if(!amount||amount<1)return a.reject();return a.order.create({purchase_units:[{amount:{value:amount.toFixed(2)},description:'DoG donation — reserved for rescue partners'}]})},onApprove:function(d,a){return a.order.capture().then(function(){toast('Thank you.')})}}).render('#donate-paypal-container')}
