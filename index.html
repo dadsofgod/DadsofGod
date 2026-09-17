@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DoG | Dads of God — We Were Made To Protect</title>
 <meta name="description" content="Dads of God rallies men as protectors of the innocent. 25% of every sale funds vetted organizations fighting child trafficking.">
-<meta property="og:title" content="DoG | Dads of God">
-<meta property="og:description" content="We were made to protect. Premium gear for men who stand in the gap.">
-<meta property="og:image" content="https://www.dadsofgod.com/logo.png">
 <link rel="icon" href="logo.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -44,7 +41,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <a href="contact.html" class="hover:text-[#D4AF37]">Contact</a>
 </div>
 <div class="flex items-center gap-x-4">
-<button type="button" onclick="window.location.href='https://dadsofgod.printify.me/cart'" class="relative hover:text-[#D4AF37]" aria-label="Open Printify cart"><i class="fa-solid fa-shopping-cart text-2xl"></i><span id="cart-count" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
+<button type="button" onclick="showCart()" class="relative hover:text-[#D4AF37]" aria-label="Open cart"><i class="fa-solid fa-shopping-cart text-2xl"></i><span id="cart-count" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
 <button type="button" onclick="toggleMobileMenu()" class="md:hidden text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
 </div></div>
 <div id="mobile-menu" class="hidden md:hidden py-6 flex flex-col gap-y-4 text-lg">
@@ -75,46 +72,46 @@ body{font-family:Inter,system-ui,sans-serif}
 <div class="text-center mb-14">
 <div class="uppercase tracking-[4px] gold text-sm font-bold">PREMIUM GEAR WITH PURPOSE</div>
 <h2 class="text-5xl font-bold tracking-tight mt-4">The <span class="gold">DoG</span> Collection</h2>
-<p class="text-zinc-400 mt-3">Tap a photo to see the back. Buy on the DoG Printify shop — they print and ship. <a href="https://dadsofgod.printify.me/" class="text-[#D4AF37] underline">Open store</a></p>
+<p class="text-zinc-400 mt-3">Tap a photo for the back. Pick a size. Checkout stays on this site.</p>
 </div>
 <div class="grid md:grid-cols-4 gap-8">
-<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden" data-sku="DOG-TEE">
 <button type="button" class="product-media h-80 w-full bg-zinc-800 flex items-center justify-center overflow-hidden relative" onclick="this.classList.toggle('show-back')">
 <img src="classic-tee-1.jpg" alt="Classic Tee front" class="img-front h-full w-auto object-contain transition-opacity">
 <img src="classic-tee-2.jpg" alt="Classic Tee back" class="img-back absolute h-full w-auto object-contain transition-opacity">
 </button>
-<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Classic Tee</h3><p class="text-sm text-zinc-400">Heavyweight cotton</p></div><div class="font-black text-3xl">$26</div></div>
+<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Classic Tee</h3><p class="text-sm text-zinc-400">Heavyweight cotton</p></div><div class="font-black text-3xl">$35</div></div>
 <div class="mt-6 flex gap-2 flex-wrap"><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">S</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">M</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">L</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">XL</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">2XL</button></div>
-<a href="https://dadsofgod.printify.me/product/28512128" class="mt-6 block text-center w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">BUY — PRINTIFY SHIPS</a></div></article>
-<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+<button type="button" onclick="addToCart(this,'DOG-TEE','Classic Tee',35)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">ADD TO CART</button></div></article>
+<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden" data-sku="DOG-LS">
 <button type="button" class="product-media h-80 w-full bg-zinc-800 flex items-center justify-center overflow-hidden relative" onclick="this.classList.toggle('show-back')">
 <img src="long-sleeve-1.jpg" alt="Long Sleeve front" class="img-front h-full w-auto object-contain transition-opacity">
 <img src="long-sleeve-2.jpg" alt="Long Sleeve back" class="img-back absolute h-full w-auto object-contain transition-opacity">
 </button>
-<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Long Sleeve</h3><p class="text-sm text-zinc-400">Premium thermal</p></div><div class="font-black text-3xl">$31</div></div>
+<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Long Sleeve</h3><p class="text-sm text-zinc-400">Premium thermal</p></div><div class="font-black text-3xl">$45</div></div>
 <div class="mt-6 flex gap-2 flex-wrap"><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">S</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">M</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">L</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">XL</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">2XL</button></div>
-<a href="https://dadsofgod.printify.me/product/28512125" class="mt-6 block text-center w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">BUY — PRINTIFY SHIPS</a></div></article>
-<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+<button type="button" onclick="addToCart(this,'DOG-LS','Long Sleeve',45)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">ADD TO CART</button></div></article>
+<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden" data-sku="DOG-HOOD">
 <button type="button" class="product-media h-80 w-full bg-zinc-800 flex items-center justify-center overflow-hidden relative" onclick="this.classList.toggle('show-back')">
 <img src="hoodie-1.jpg" alt="Signature Hoodie front" class="img-front h-full w-auto object-contain transition-opacity">
 <img src="hoodie-2.jpg" alt="Signature Hoodie back" class="img-back absolute h-full w-auto object-contain transition-opacity">
 </button>
-<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Signature Hoodie</h3><p class="text-sm text-zinc-400">Heavy fleece</p></div><div class="font-black text-3xl">$50</div></div>
+<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Signature Hoodie</h3><p class="text-sm text-zinc-400">Heavy fleece</p></div><div class="font-black text-3xl">$65</div></div>
 <div class="mt-6 flex gap-2 flex-wrap"><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">S</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">M</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">L</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">XL</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">2XL</button></div>
-<a href="https://dadsofgod.printify.me/product/28512124" class="mt-6 block text-center w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">BUY — PRINTIFY SHIPS</a></div></article>
-<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+<button type="button" onclick="addToCart(this,'DOG-HOOD','Signature Hoodie',65)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">ADD TO CART</button></div></article>
+<article class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden" data-sku="DOG-CAP">
 <button type="button" class="product-media h-80 w-full bg-zinc-800 flex items-center justify-center overflow-hidden relative" onclick="this.classList.toggle('show-back')">
 <img src="ballcap-1.jpg" alt="Signature Ballcap front" class="img-front h-full w-auto object-contain transition-opacity">
 <img src="ballcap-2.jpg" alt="Signature Ballcap side" class="img-back absolute h-full w-auto object-contain transition-opacity">
 </button>
-<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Signature Ballcap</h3><p class="text-sm text-zinc-400">Embroidered DoG logo</p></div><div class="font-black text-3xl">$28</div></div>
+<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Signature Ballcap</h3><p class="text-sm text-zinc-400">Embroidered DoG logo</p></div><div class="font-black text-3xl">$29</div></div>
 <div class="mt-6 flex gap-2 flex-wrap"><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">S/M</button><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">L/XL</button></div>
-<a href="https://dadsofgod.printify.me/product/28512126" class="mt-6 block text-center w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">BUY — PRINTIFY SHIPS</a></div></article>
+<button type="button" onclick="addToCart(this,'DOG-CAP','Signature Ballcap',29)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">ADD TO CART</button></div></article>
 </div></section>
 <section id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
 <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
 <h2 class="text-5xl font-bold tracking-tight mt-4">Fund the rescue work.</h2>
-<p class="text-xl text-zinc-400 mt-4 max-w-xl mx-auto">100% of donations are reserved for rescue partners. Official public totals publish after the first transfer to a named organization — not from your browser.</p>
+<p class="text-xl text-zinc-400 mt-4 max-w-xl mx-auto">100% of donations are reserved for rescue partners.</p>
 <div class="mt-12">
 <div class="flex flex-wrap justify-center gap-4 mb-8">
 <button type="button" onclick="setDonationAmount(10)" class="donate-btn px-8 py-4 border border-zinc-700 rounded-2xl text-lg font-semibold">$10</button>
@@ -133,27 +130,52 @@ body{font-family:Inter,system-ui,sans-serif}
 <div class="max-w-5xl mx-auto px-6 text-center">
 <div class="gold text-sm font-bold tracking-[4px]">THE IMPACT</div>
 <h2 class="text-5xl font-bold tracking-tight mt-4">We will not fake the numbers.</h2>
-<p class="text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">Partner names, dollars transferred, and rescue counts will be published only when we can stand behind them.</p>
-<div class="grid md:grid-cols-3 gap-6 mt-14">
-<div class="bg-black border border-zinc-800 p-10 rounded-3xl"><div class="text-3xl font-black gold">Pending first transfer</div><div class="mt-3 text-xl font-semibold">Raised for Rescue</div><div class="text-sm text-zinc-400 mt-2">25% of merch + 100% of donations.</div></div>
-<div class="bg-black border border-zinc-800 p-10 rounded-3xl"><div class="text-3xl font-black gold">Not claimed yet</div><div class="mt-3 text-xl font-semibold">Children Rescued</div><div class="text-sm text-zinc-400 mt-2">No number until a partner reports it.</div></div>
-<div class="bg-black border border-zinc-800 p-10 rounded-3xl"><div class="text-3xl font-black gold">Partners next</div><div class="mt-3 text-xl font-semibold">Named Organizations</div><div class="text-sm text-zinc-400 mt-2"><a href="partners.html" class="text-[#D4AF37] underline">How we will vet and list them</a></div></div>
-</div>
-<a href="impact.html" class="inline-block mt-10 text-[#D4AF37] font-semibold underline">Read the impact standard</a>
+<p class="text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">Partner names and dollars transferred publish only when we can stand behind them.</p>
 </div></section>
 <footer class="max-w-7xl mx-auto px-6 py-16 text-sm text-zinc-400 flex flex-col md:flex-row justify-between gap-6">
-<div>© 2026 <span class="gold">DoG</span> — Dads of God. All rights reserved.</div>
+<div>© 2026 <span class="gold">DoG</span> — Dads of God.</div>
 <div class="flex flex-wrap gap-x-6 gap-y-2"><a href="impact.html">Impact</a><a href="partners.html">Partners</a><a href="shipping.html">Shipping</a><a href="returns.html">Returns</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></div>
 </footer>
+<div id="cart-modal" onclick="if(event.target.id==='cart-modal')hideCart()" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-end md:items-center justify-center md:p-4">
+<div class="bg-zinc-950 w-full md:w-[520px] max-h-[92vh] overflow-y-auto md:rounded-3xl rounded-t-3xl p-8 border border-zinc-800">
+<div class="flex justify-between items-center mb-6"><h3 class="font-black text-3xl">Your Cart</h3><button type="button" onclick="hideCart()" class="text-4xl text-zinc-400">×</button></div>
+<div id="cart-items" class="space-y-4"></div>
+<div class="border-t border-zinc-800 pt-5 mt-5">
+<div class="flex justify-between font-black text-2xl mb-6"><span>Total</span><span id="cart-total">$0</span></div>
+<div id="ship-fields" class="space-y-3 mb-6">
+<p class="text-sm text-zinc-400">Shipping — required.</p>
+<input id="ship-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Full name">
+<input id="ship-email" type="email" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Email">
+<input id="ship-phone" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Phone">
+<input id="ship-address" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Street address">
+<div class="grid grid-cols-2 gap-3"><input id="ship-city" class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="City"><input id="ship-state" class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="State"></div>
+<div class="grid grid-cols-2 gap-3"><input id="ship-zip" class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="ZIP"><input id="ship-country" class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="Country" value="United States"></div>
+<p id="ship-error" class="text-red-400 text-sm hidden"></p>
+</div>
+<div id="cart-paypal-container"></div>
+</div></div></div>
 <script>
-function selectSize(el){el.parentElement.querySelectorAll('.size-btn').forEach(s=>s.classList.remove('selected'));el.classList.add('selected')}
+const FULFILL='https://dadsofgod-fulfill-leavens123-6711s-projects.vercel.app/api/fulfill';
+let cart=[];try{cart=JSON.parse(localStorage.getItem('dogCart')||'[]')}catch(e){cart=[]}
 let currentDonationAmount=25;
-function toast(msg){const el=document.createElement('div');el.className='fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#D4AF37] px-8 py-3 rounded-2xl z-[200]';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1800)}
+function saveCart(){localStorage.setItem('dogCart',JSON.stringify(cart));updateCartCount()}
+function updateCartCount(){const el=document.getElementById('cart-count');if(el)el.textContent=cart.length}
+function toast(msg){const el=document.createElement('div');el.className='fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#D4AF37] px-8 py-3 rounded-2xl z-[200]';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+function selectSize(el){el.parentElement.querySelectorAll('.size-btn').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');el.closest('.product-card').dataset.size=el.textContent.trim()}
+function addToCart(btn,sku,name,price){const size=btn.closest('.product-card').dataset.size;if(!size){toast('Pick a size first');return}cart.push({sku,name,price,size,quantity:1});saveCart();toast(name+' ('+size+') added');showCart()}
+function removeFromCart(i){cart.splice(i,1);saveCart();showCart()}
+function cartTotal(){return cart.reduce((s,i)=>s+Number(i.price),0)}
+function getShip(){const g=id=>(document.getElementById(id).value||'').trim();return{name:g('ship-name'),email:g('ship-email'),phone:g('ship-phone'),address:g('ship-address'),city:g('ship-city'),state:g('ship-state'),zip:g('ship-zip'),country:g('ship-country')}}
+function shipValid(){const s=getShip();const ok=s.name&&s.email.includes('@')&&s.address&&s.city&&s.state&&s.zip&&s.country;const err=document.getElementById('ship-error');if(!ok){err.textContent='Fill name, email, and full address.';err.classList.remove('hidden');return false}err.classList.add('hidden');localStorage.setItem('dogShip',JSON.stringify(s));return true}
+function fillShip(){try{const s=JSON.parse(localStorage.getItem('dogShip')||'{}');['name','email','phone','address','city','state','zip','country'].forEach(k=>{const el=document.getElementById('ship-'+k);if(el&&s[k])el.value=s[k]})}catch(e){}}
+function showCart(){const box=document.getElementById('cart-items');box.innerHTML='';if(!cart.length){box.innerHTML='<div class="text-center py-10 text-zinc-400">Your cart is empty</div>';document.getElementById('ship-fields').classList.add('hidden');document.getElementById('cart-paypal-container').innerHTML=''}else{document.getElementById('ship-fields').classList.remove('hidden');cart.forEach((item,index)=>{box.innerHTML+='<div class="flex justify-between items-center border-b border-zinc-800 pb-4"><div><div class="font-semibold">'+item.name+'</div><div class="text-sm text-zinc-400">Size '+item.size+'</div></div><div class="text-right"><div class="font-bold">$'+item.price+'</div><button type="button" onclick="removeFromCart('+index+')" class="text-xs text-red-400">Remove</button></div></div>'});fillShip();renderCartPaypal()}document.getElementById('cart-total').textContent='$'+cartTotal();document.getElementById('cart-modal').classList.remove('hidden')}
+function hideCart(){document.getElementById('cart-modal').classList.add('hidden')}
+function renderCartPaypal(){const box=document.getElementById('cart-paypal-container');box.innerHTML='';if(!cart.length||typeof paypal==='undefined')return;paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'paypal'},onClick:function(d,a){return shipValid()?a.resolve():a.reject()},createOrder:function(d,a){if(!shipValid())return a.reject();return a.order.create({purchase_units:[{amount:{value:cartTotal().toFixed(2)},description:('DoG: '+cart.map(i=>i.name+' '+i.size).join(', ')).slice(0,120)}]})},onApprove:function(d,a){return a.order.capture().then(function(details){const payload={paypalOrderId:d.orderID,items:cart.map(i=>({sku:i.sku,quantity:1,size:i.size})),address:getShip()};fetch(FULFILL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});toast('Paid. We have your order.');cart=[];saveCart();hideCart()})}}).render('#cart-paypal-container')}
 function donationAmount(){const c=parseFloat(document.getElementById('custom-amount').value);return(!isNaN(c)&&c>0)?c:currentDonationAmount}
 function setDonationAmount(n){currentDonationAmount=n;document.getElementById('custom-amount').value='';document.querySelectorAll('.donate-btn').forEach(b=>b.classList.toggle('selected',b.textContent.replace('$','')===String(n)))}
-function renderDonationButtons(){const el=document.getElementById('donate-paypal-container');el.innerHTML='';if(typeof paypal==='undefined')return;paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'donate'},onClick:function(d,a){const amt=donationAmount();const err=document.getElementById('donate-error');if(!amt||amt<1){err.textContent='Enter a donation of at least $1.';err.classList.remove('hidden');return a.reject()}err.classList.add('hidden');return a.resolve()},createOrder:function(d,a){const amount=donationAmount();if(!amount||amount<1)return a.reject();return a.order.create({purchase_units:[{amount:{value:amount.toFixed(2)},description:'Donation to Dads of God — reserved for child rescue partners'}]})},onApprove:function(d,a){return a.order.capture().then(function(){toast('Thank you. Your donation is reserved for rescue partners.');document.getElementById('custom-amount').value=''})}}).render('#donate-paypal-container')}
+function renderDonationButtons(){const el=document.getElementById('donate-paypal-container');if(!el||typeof paypal==='undefined')return;el.innerHTML='';paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'donate'},createOrder:function(d,a){const amount=donationAmount();if(!amount||amount<1)return a.reject();return a.order.create({purchase_units:[{amount:{value:amount.toFixed(2)},description:'DoG donation — reserved for rescue partners'}]})},onApprove:function(d,a){return a.order.capture().then(function(){toast('Thank you.')})}}).render('#donate-paypal-container')}
 function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('hidden')}
-window.onload=function(){renderDonationButtons()}
+window.onload=function(){updateCartCount();renderDonationButtons()}
 </script>
 </body>
 </html>
