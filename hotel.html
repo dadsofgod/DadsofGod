@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Randa & Dusty — Book Your Stay</title>
+  <meta name="description" content="A cozy pretend hotel for family overnight stays. Check in after 6 PM. Love, Randa & Dusty." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --navy:#3a4d72; --navy-deep:#2c3c5a; --paper:#f4ead6; --paper-dark:#e8d9bb; --ink:#2b2416; --heart:#c45c6a; }
+    * { box-sizing: border-box; }
+    body { margin:0; color:var(--ink); font-family:"Source Sans 3",system-ui,sans-serif; background: repeating-linear-gradient(90deg,#c9d6e6 0 18px,#eef3f8 18px 36px), repeating-linear-gradient(0deg,#c9d6e6 0 18px,#eef3f8 18px 36px); background-blend-mode:multiply; min-height:100vh; }
+    .wrap { max-width:980px; margin:0 auto; padding:24px 16px 64px; }
+    header.hero { background:var(--paper); border:2px solid #d6c6a4; box-shadow:4px 6px 0 rgba(43,36,22,.12); padding:28px 24px 22px; text-align:center; position:relative; transform:rotate(-0.4deg); }
+    header.hero::before { content:""; position:absolute; inset:8px; border:1px dashed #cbb896; pointer-events:none; }
+    .welcome { font-family:Caveat,cursive; font-size:1.6rem; margin:0; }
+    h1 { font-family:"Playfair Display",serif; font-size:clamp(2rem,6vw,3.4rem); letter-spacing:.04em; margin:6px 0 4px; line-height:1.05; }
+    h1 span { display:block; font-size:.55em; letter-spacing:.18em; }
+    .excited { font-family:Caveat,cursive; font-size:1.45rem; color:#5a4a32; }
+    .heart { color:var(--heart); }
+    .grid { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; margin-top:22px; }
+    @media (max-width:760px){ .grid { grid-template-columns:1fr; } }
+    .card { background:#3d5076; color:#f4ead6; border-radius:4px; padding:22px; box-shadow:0 10px 24px rgba(30,40,60,.25); }
+    .card h2 { font-family:"Playfair Display",serif; margin:0 0 12px; }
+    .note { background:var(--paper); padding:16px 18px; transform:rotate(1deg); box-shadow:3px 4px 0 rgba(43,36,22,.1); margin-top:14px; font-family:Caveat,cursive; font-size:1.45rem; color:var(--ink); }
+    form.book { background:var(--paper); padding:22px 20px; box-shadow:4px 6px 0 rgba(43,36,22,.12); }
+    form.book h2 { font-family:"Playfair Display",serif; margin:0 0 6px; }
+    label { display:block; font-size:.82rem; font-weight:600; margin:12px 0 4px; }
+    input, select, textarea { width:100%; padding:10px 12px; border:1.5px solid #cbb896; background:#fffdf7; font:inherit; border-radius:2px; }
+    textarea { min-height:72px; resize:vertical; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:520px){ .row { grid-template-columns:1fr; } }
+    button.book-btn { width:100%; margin-top:16px; background:var(--navy-deep); color:var(--paper); border:0; padding:14px; font-family:"Playfair Display",serif; font-size:1.15rem; cursor:pointer; }
+    .fine { font-size:.8rem; color:#6a5a40; margin-top:10px; }
+    .confirm { display:none; background:#fffdf7; border:2px solid #d6c6a4; padding:22px; margin-top:12px; }
+    .confirm.show { display:block; }
+    .confirm h2 { font-family:"Playfair Display",serif; margin-top:0; }
+    .conf-id { font-family:ui-monospace,monospace; background:var(--paper-dark); padding:6px 10px; display:inline-block; }
+    .sms-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .sms-row a { background:var(--navy); color:#fff; text-decoration:none; padding:10px 12px; }
+    footer { text-align:center; margin-top:28px; font-family:Caveat,cursive; font-size:1.5rem; }
+    .settings { margin-top:28px; background:rgba(244,234,214,.85); padding:16px; font-size:.9rem; }
+    .settings summary { cursor:pointer; font-weight:600; }
+    .polaroids { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+    .polaroid { background:#fff; color:#333; padding:8px 8px 22px; transform:rotate(-1.2deg); font-family:Caveat,cursive; font-size:1.15rem; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,.18); }
+    .polaroid:nth-child(even){ transform:rotate(1.4deg); }
+    .polaroid .pic { height:88px; background:linear-gradient(160deg,#4a5e86,#2d3d5c); margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#f4ead6; font-size:1.8rem; }
+    .list { margin:0; padding-left:18px; line-height:1.55; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="welcome">Welcome to</p>
+      <h1>HOTEL <span>RANDA & DUSTY</span></h1>
+      <p class="excited">We’re so excited for your stay! <span class="heart">♡</span></p>
+    </header>
+    <div class="grid">
+      <section class="card">
+        <h2>The Blue Room</h2>
+        <p>Quilted bed, nightstand lamp, rocking chair for snuggles, books for quiet time, and a little friend for Bloomy. Refreshments on the nightstand. Towels in the bathroom.</p>
+        <ul class="list">
+          <li>Check-in after 6 PM</li>
+          <li>Towels & washcloths are in the bathroom</li>
+          <li>Need anything? Use the phone on the nightstand & have Bain call room service</li>
+          <li>Refreshments are provided</li>
+        </ul>
+        <div class="polaroids">
+          <div class="polaroid"><div class="pic">🦇</div>Perfect spot for snuggles ♡</div>
+          <div class="polaroid"><div class="pic">💧</div>Refreshments are provided ♡</div>
+          <div class="polaroid"><div class="pic">📚</div>Books for quiet time ♡</div>
+          <div class="polaroid"><div class="pic">👻</div>A little friend for Bloomy ♡</div>
+        </div>
+        <div class="note">Relax, unwind, enjoy your night with the kiddos! ♡</div>
+      </section>
+      <section>
+        <form class="book" id="bookForm">
+          <h2>Book a reservation</h2>
+          <p class="fine">Just for fun — a real confirmation you can share. Not a commercial hotel.</p>
+          <label for="guest">Guest name(s)</label>
+          <input id="guest" name="guest" required placeholder="Who is checking in?" />
+          <div class="row">
+            <div>
+              <label for="nights">Nights</label>
+              <select id="nights" name="nights">
+                <option value="1" selected>1 night</option>
+                <option value="2">2 nights</option>
+                <option value="3">3 nights</option>
+              </select>
+            </div>
+            <div>
+              <label for="checkin">Check-in date</label>
+              <input id="checkin" name="checkin" type="date" required />
+            </div>
+          </div>
+          <label for="kids">Kiddos in the party</label>
+          <input id="kids" name="kids" placeholder="Names or just a number" />
+          <label for="phone">Your phone (for the confirmation text)</label>
+          <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="555-123-4567" />
+          <label for="notes">Special requests</label>
+          <textarea id="notes" name="notes" placeholder="Extra pillows, late snack, Bloomy bedtime story…"></textarea>
+          <button class="book-btn" type="submit">Reserve the Blue Room</button>
+          <p class="fine">Confirmation stays on this device and opens a text you can send to Randa & Bain.</p>
+        </form>
+        <div class="confirm" id="confirm">
+          <h2>You’re booked. <span class="heart">♡</span></h2>
+          <p>Confirmation <span class="conf-id" id="confId"></span></p>
+          <p id="confCopy"></p>
+          <p class="fine">Tap a button to open a pre-written text. Send it to both phones.</p>
+          <div class="sms-row" id="smsRow"></div>
+        </div>
+      </section>
+    </div>
+    <footer>So glad you’re here! ♡ &nbsp; Love, Randa & Dusty</footer>
+    <details class="settings">
+      <summary>Host phones (save once so confirmations can text both of you)</summary>
+      <p>Numbers stay only on this phone/browser. No server, no spam, no real hotel charges.</p>
+      <label for="host1">Host phone 1 (Randa / house)</label>
+      <input id="host1" type="tel" placeholder="Randa’s number" />
+      <label for="host2">Host phone 2 (Bain / guests)</label>
+      <input id="host2" type="tel" placeholder="Bain’s number" />
+      <button class="book-btn" type="button" id="saveHosts" style="margin-top:12px">Save numbers on this device</button>
+      <p class="fine" id="hostStatus"></p>
+    </details>
+  </div>
+  <script>
+    document.getElementById("checkin").value = new Date().toISOString().slice(0,10);
+    function digits(n){ return (n||"").replace(/\D/g,""); }
+    document.getElementById("host1").value = localStorage.getItem("hrd_host1")||"";
+    document.getElementById("host2").value = localStorage.getItem("hrd_host2")||"";
+    document.getElementById("saveHosts").onclick = function(){
+      localStorage.setItem("hrd_host1", document.getElementById("host1").value.trim());
+      localStorage.setItem("hrd_host2", document.getElementById("host2").value.trim());
+      document.getElementById("hostStatus").textContent = "Saved on this device.";
+    };
+    function smsHref(num, body){
+      var d = digits(num);
+      if(!d) return null;
+      return "sms:" + d + "?&body=" + encodeURIComponent(body);
+    }
+    document.getElementById("bookForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      var guest = document.getElementById("guest").value.trim();
+      var nights = document.getElementById("nights").value;
+      var checkin = document.getElementById("checkin").value;
+      var kids = document.getElementById("kids").value.trim() || "the kiddos";
+      var phone = document.getElementById("phone").value.trim();
+      var notes = document.getElementById("notes").value.trim() || "none";
+      var id = "HRD-" + Date.now().toString(36).toUpperCase();
+      var checkoutDate = new Date(checkin + "T12:00:00");
+      checkoutDate.setDate(checkoutDate.getDate() + Number(nights));
+      var checkout = checkoutDate.toISOString().slice(0,10);
+      var all = JSON.parse(localStorage.getItem("hrd_bookings")||"[]");
+      all.unshift({id:id,guest:guest,nights:nights,checkin:checkin,checkout:checkout,kids:kids,phone:phone,notes:notes});
+      localStorage.setItem("hrd_bookings", JSON.stringify(all));
+      var body = "Hotel Randa & Dusty confirmation " + id + "\nGuest: " + guest + "\nCheck-in: " + checkin + " after 6 PM\nCheck-out: " + checkout + "\nNights: " + nights + "\nKiddos: " + kids + "\nGuest phone: " + (phone||"not given") + "\nNotes: " + notes + "\nSo glad you're here! Love Randa & Dusty";
+      document.getElementById("confId").textContent = id;
+      document.getElementById("confCopy").textContent = guest + " is reserved in the Blue Room " + checkin + " through " + checkout + ". Check-in after 6 PM. Bloomy is waiting.";
+      var row = document.getElementById("smsRow");
+      row.innerHTML = "";
+      [{"label":"Text Randa / house","num":document.getElementById("host1").value},{"label":"Text Bain","num":document.getElementById("host2").value},{"label":"Text guest phone","num":phone}].forEach(function(h){
+        var href = smsHref(h.num, body);
+        if(!href) return;
+        var a = document.createElement("a"); a.href = href; a.textContent = h.label; row.appendChild(a);
+      });
+      if(!row.children.length){
+        var p = document.createElement("p"); p.className="fine"; p.textContent="Add host numbers below so the text buttons appear."; row.appendChild(p);
+      }
+      document.getElementById("confirm").classList.add("show");
+      document.getElementById("confirm").scrollIntoView({behavior:"smooth"});
+    });
+  </script>
+</body>
+</html>
