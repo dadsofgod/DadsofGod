@@ -8,7 +8,7 @@
 //   ORDER_EMAIL_REPLY_TO  (optional) defaults to contact@dadsofgod.com
 // If no sender is configured the email is skipped (onboarding@resend.dev cannot deliver to customers).
 
-export const LOGO_URL = 'https://www.dadsofgod.com/logo.png';
+export const LOGO_URL = 'https://www.dadsofgod.com/email-logo.png';
 export const CONTACT_EMAIL = 'contact@dadsofgod.com';
 export const SHAWN_NOTE = 'Thank you for your purchase with purpose. The Kingdom can only come when children are free.';
 export const SHAWN_SIGNOFF = '— Shawn, Dads of God';
