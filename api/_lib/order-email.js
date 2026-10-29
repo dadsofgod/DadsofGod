@@ -44,21 +44,21 @@ export const TEMPLATE = `<!DOCTYPE html>
 
   <tr><td align="center" style="padding:8px 0 24px;">
     <img src="{{logo_url}}" width="150" alt="Dads of God logo" style="display:block;width:150px;max-width:150px;height:auto;border:0;margin:0 auto;">
-    <div style="font-weight:900;font-size:32px;letter-spacing:-1px;color:#D4AF37;margin-top:12px;line-height:1;">DoG</div>
+    <div style="font-weight:900;font-size:32px;letter-spacing:-1px;color:#FDD10C;margin-top:12px;line-height:1;">DoG</div>
     <div style="font-size:10px;letter-spacing:4px;color:#a1a1aa;margin-top:4px;">DADS OF GOD</div>
   </td></tr>
 
   <tr><td class="card" style="background:#18181b;border:1px solid #27272a;border-radius:24px;padding:36px 36px;">
-    <div style="text-transform:uppercase;letter-spacing:4px;color:#D4AF37;font-size:12px;font-weight:700;">Order confirmed</div>
+    <div style="text-transform:uppercase;letter-spacing:4px;color:#FDD10C;font-size:12px;font-weight:700;">Order confirmed</div>
     <h1 class="h1" style="margin:10px 0 12px;font-size:36px;line-height:1.05;font-weight:900;letter-spacing:-1px;color:#ffffff;">Thank you, {{first_name}}.</h1>
     <p style="margin:0 0 6px;font-size:16px;line-height:1.6;color:#d4d4d8;">We received your payment and sent your order to be printed.</p>
     <p style="margin:0 0 28px;font-size:13px;color:#a1a1aa;">PayPal order {{order_id}} &middot; {{order_date}}</p>
 
     <!-- Personal note from Shawn -->
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 28px;">
-      <tr><td style="border-left:3px solid #D4AF37;background:#09090b;border-radius:0 16px 16px 0;padding:18px 20px;">
+      <tr><td style="border-left:3px solid #FDD10C;background:#09090b;border-radius:0 16px 16px 0;padding:18px 20px;">
         <p style="margin:0 0 10px;font-size:17px;line-height:1.6;color:#ffffff;font-style:italic;">&ldquo;{{personal_note}}&rdquo;</p>
-        <p style="margin:0;font-size:14px;font-weight:600;color:#D4AF37;">{{personal_signoff}}</p>
+        <p style="margin:0;font-size:14px;font-weight:600;color:#FDD10C;">{{personal_signoff}}</p>
       </td></tr>
     </table>
 
@@ -77,7 +77,7 @@ export const TEMPLATE = `<!DOCTYPE html>
       {{donation_row}}
       <tr>
         <td colspan="2" style="padding:12px 0 0;border-top:1px solid #27272a;font-weight:900;font-size:18px;color:#ffffff;">Total paid</td>
-        <td align="right" style="padding:12px 0 0;border-top:1px solid #27272a;font-weight:900;font-size:18px;color:#D4AF37;">{{total}}</td>
+        <td align="right" style="padding:12px 0 0;border-top:1px solid #27272a;font-weight:900;font-size:18px;color:#FDD10C;">{{total}}</td>
       </tr>
     </table>
     {{donation_note}}
@@ -91,16 +91,16 @@ export const TEMPLATE = `<!DOCTYPE html>
 
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:28px;">
       <tr><td style="background:#27272a;border-radius:16px;padding:16px 18px;">
-        <div style="font-weight:700;font-size:14px;color:#D4AF37;margin-bottom:4px;">What happens next</div>
+        <div style="font-weight:700;font-size:14px;color:#FDD10C;margin-bottom:4px;">What happens next</div>
         <p style="margin:0;font-size:14px;line-height:1.6;color:#d4d4d8;">{{fulfillment_note}}</p>
       </td></tr>
     </table>
 
-    <p style="margin:28px 0 0;font-size:14px;line-height:1.6;color:#d4d4d8;">Questions about your order? Email us at <a href="mailto:{{contact_email}}" style="color:#D4AF37;text-decoration:underline;">{{contact_email}}</a> and include your PayPal order number.</p>
+    <p style="margin:28px 0 0;font-size:14px;line-height:1.6;color:#d4d4d8;">Questions about your order? Email us at <a href="mailto:{{contact_email}}" style="color:#FDD10C;text-decoration:underline;">{{contact_email}}</a> and include your PayPal order number.</p>
   </td></tr>
 
   <tr><td align="center" style="padding:24px 8px 8px;font-size:12px;line-height:1.6;color:#71717a;">
-    &copy; 2026 <span style="color:#D4AF37;">DoG</span> &mdash; Dads of God.<br>
+    &copy; 2026 <span style="color:#FDD10C;">DoG</span> &mdash; Dads of God.<br>
     <a href="https://www.dadsofgod.com/shipping.html" style="color:#a1a1aa;">Shipping</a> &middot;
     <a href="https://www.dadsofgod.com/returns.html" style="color:#a1a1aa;">Returns</a> &middot;
     <a href="https://www.dadsofgod.com/terms.html" style="color:#a1a1aa;">Terms</a> &middot;
