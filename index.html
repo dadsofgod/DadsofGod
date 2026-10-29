@@ -12,16 +12,16 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 body{font-family:Inter,system-ui,sans-serif}
-.gold{color:#D4AF37}.gold-bg{background-color:#D4AF37}
+.gold{color:#FDD10C}.gold-bg{background-color:#FDD10C}
 .product-card{transition:all .4s}
 .product-card:hover{transform:translateY(-8px)}
-.logo-glow{filter:drop-shadow(0 0 20px rgba(212,175,55,.6));animation:halo-pulse 2.6s ease-in-out infinite}
-@keyframes halo-pulse{0%,100%{filter:drop-shadow(0 0 20px rgba(212,175,55,.6))}50%{filter:drop-shadow(0 0 42px rgba(212,175,55,.9))}}
+.logo-glow{filter:drop-shadow(0 0 20px rgba(253,209,12,.6));animation:halo-pulse 2.6s ease-in-out infinite}
+@keyframes halo-pulse{0%,100%{filter:drop-shadow(0 0 20px rgba(253,209,12,.6))}50%{filter:drop-shadow(0 0 42px rgba(253,209,12,.9))}}
 .img-back{opacity:0}
 .product-media.show-back .img-front{opacity:0}
 .product-media.show-back .img-back{opacity:1}
 @media (hover:hover){.product-card:hover .img-front{opacity:0}.product-card:hover .img-back{opacity:1}}
-.size-btn.selected,.donate-btn.selected{border-color:#D4AF37;background:rgba(212,175,55,.12)}
+.size-btn.selected,.donate-btn.selected{border-color:#FDD10C;background:rgba(253,209,12,.12)}
 </style>
 </head>
 <body class="bg-zinc-950 text-white">
@@ -33,15 +33,15 @@ body{font-family:Inter,system-ui,sans-serif}
 <div><div class="font-black text-4xl tracking-tighter gold">DoG</div><div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div></div>
 </a>
 <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
-<a href="#mission" class="hover:text-[#D4AF37]">Mission</a>
-<a href="#shop" class="hover:text-[#D4AF37]">Shop</a>
-<a href="#impact" class="hover:text-[#D4AF37]">Impact</a>
-<a href="#donate" class="hover:text-[#D4AF37]">Donate</a>
-<a href="about.html" class="hover:text-[#D4AF37]">About</a>
-<a href="contact.html" class="hover:text-[#D4AF37]">Contact</a>
+<a href="#mission" class="hover:text-[#FDD10C]">Mission</a>
+<a href="#shop" class="hover:text-[#FDD10C]">Shop</a>
+<a href="#impact" class="hover:text-[#FDD10C]">Impact</a>
+<a href="#donate" class="hover:text-[#FDD10C]">Donate</a>
+<a href="about.html" class="hover:text-[#FDD10C]">About</a>
+<a href="contact.html" class="hover:text-[#FDD10C]">Contact</a>
 </div>
 <div class="flex items-center gap-x-4">
-<button type="button" onclick="showCart()" class="relative hover:text-[#D4AF37]" aria-label="Open cart"><i class="fa-solid fa-shopping-cart text-2xl"></i><span id="cart-count" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
+<button type="button" onclick="showCart()" class="relative hover:text-[#FDD10C]" aria-label="Open cart"><i class="fa-solid fa-shopping-cart text-2xl"></i><span id="cart-count" class="absolute -top-1 -right-1 bg-[#FDD10C] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
 <button type="button" onclick="toggleMobileMenu()" class="md:hidden text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
 </div></div>
 <div id="mobile-menu" class="hidden md:hidden py-6 flex flex-col gap-y-4 text-lg">
@@ -120,7 +120,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <button type="button" onclick="setDonationAmount(100)" class="donate-btn px-8 py-4 border border-zinc-700 rounded-2xl text-lg font-semibold">$100</button>
 </div>
 <div class="max-w-xs mx-auto mb-8 flex items-center justify-center border border-zinc-700 rounded-3xl px-6 py-4 bg-zinc-900">
-<span class="text-2xl font-bold text-[#D4AF37] mr-3">$</span>
+<span class="text-2xl font-bold text-[#FDD10C] mr-3">$</span>
 <input id="custom-amount" type="number" min="1" step="1" placeholder="Other amount" class="flex-1 bg-transparent text-center text-3xl font-bold focus:outline-none text-white placeholder-zinc-400">
 </div>
 <p id="donate-error" class="text-red-400 text-sm mb-4 hidden"></p>
@@ -155,7 +155,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <div class="grid grid-cols-2 gap-3"><input id="ship-zip" class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3" placeholder="ZIP"><input id="ship-country" class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-400" value="United States" readonly aria-label="Country (US shipping only)"></div>
 <p id="ship-error" class="text-red-400 text-sm hidden"></p>
 </div>
-<div id="order-result" class="hidden rounded-2xl border border-[#D4AF37] p-5 mb-4 text-zinc-200"></div>
+<div id="order-result" class="hidden rounded-2xl border border-[#FDD10C] p-5 mb-4 text-zinc-200"></div>
 <div id="cart-paypal-container"></div>
 </div></div></div>
 <script>
@@ -164,7 +164,7 @@ let cart=[];try{cart=JSON.parse(localStorage.getItem('dogCart')||'[]')}catch(e){
 let currentDonationAmount=25;
 function saveCart(){localStorage.setItem('dogCart',JSON.stringify(cart));updateCartCount()}
 function updateCartCount(){const el=document.getElementById('cart-count');if(el)el.textContent=cart.length}
-function toast(msg){const el=document.createElement('div');el.className='fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#D4AF37] px-8 py-3 rounded-2xl z-[200]';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+function toast(msg){const el=document.createElement('div');el.className='fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#FDD10C] px-8 py-3 rounded-2xl z-[200]';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
 function selectSize(el){el.parentElement.querySelectorAll('.size-btn').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');el.closest('.product-card').dataset.size=el.textContent.trim()}
 function addToCart(btn,sku,name,price){const size=btn.closest('.product-card').dataset.size;if(!size){toast('Pick a size first');return}cart.push({sku,name,price,size,quantity:1});saveCart();toast(name+' ('+size+') added');showCart()}
 function removeFromCart(i){cart.splice(i,1);saveCart();showCart()}
