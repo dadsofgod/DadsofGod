@@ -23,8 +23,14 @@
 //                          validate the address, optionally look for duplicates, then return the
 //                          Printify payload WITHOUT creating or sending any Printify order.
 //                          Ignored when VERCEL_ENV === 'production'.
+//   ORDER_EMAIL_FROM      (optional) sender for the customer order-confirmation email, e.g.
+//                          'Dads of God <orders@dadsofgod.com>' (Resend-verified domain). Falls back to
+//                          ALERT_EMAIL_FROM; if neither is set the confirmation is skipped. Uses RESEND_API_KEY.
+//   ORDER_EMAIL_REPLY_TO  (optional) reply-to for the confirmation, default contact@dadsofgod.com
 //   EXTRA_ALLOWED_ORIGINS (optional, NON-PRODUCTION ONLY) comma list of extra CORS origins,
 //                          e.g. a preview URL. Ignored when VERCEL_ENV === 'production'.
+
+import { sendOrderConfirmation } from './_lib/order-email.js';
 
 const SHOP = process.env.PRINTIFY_SHOP_ID || '27166805';
 const SHIPPING_CENTS = 599; // flat US shipping per order
@@ -272,7 +278,7 @@ async function alertWebhook(text, extra) {
 
 async function alertEmail(text, extra) {
   const to = String(process.env.ALERT_EMAIL_TO || '').split(',').map((s) => s.trim()).filter(Boolean);
-  const key = process.env.RESEND_API_KEY;
+  const key = String(process.env.RESEND_API_KEY || '').trim(); // tolerate pasted whitespace/newline
   if (!to.length) return false;
   if (!key) {
     log('warn', 'ALERT_EMAIL_TO set but no RESEND_API_KEY; alert email not sent', {});
@@ -289,7 +295,10 @@ async function alertEmail(text, extra) {
       body: JSON.stringify({ from, to, subject: '[DoG] Order needs attention' + (extra && extra.paypalOrderId ? ' ' + extra.paypalOrderId : ''), text: lines.join('\n') }),
       signal: AbortSignal.timeout(5000),
     });
-    if (!r.ok) log('error', 'alert email failed', { status: r.status });
+    let rb = null;
+    try { rb = await r.json(); } catch (_) { rb = null; }
+    if (!r.ok) log('error', 'alert email failed', { status: r.status, name: rb && rb.name, message: rb && String(rb.message || '').slice(0, 300) });
+    else log('info', 'alert email sent', { resendId: rb && rb.id });
     return r.ok;
   } catch (e) {
     log('error', 'alert email failed', { err: String(e && e.message) });
@@ -389,6 +398,21 @@ export default async function handler(req, res) {
       throw new FulfillError(502, 'Order service unavailable', 'send_to_production failed ' + sent.status + ' printifyId=' + printifyId + ' ' + JSON.stringify(sent.body).slice(0, 300), { paid: true });
     }
     log('info', 'order fulfilled', { ...ctx, printifyId, paidCents: pp.paidCents });
+    // Customer confirmation: only after Printify create + send_to_production succeeded, never in dry-run.
+    // Awaited (so the serverless instance is not frozen mid-request) but it never throws and has its own
+    // 5 s timeout; a failure is logged and does not change the order result.
+    if (!dryRun) {
+      await sendOrderConfirmation(pp.payerEmail, {
+        orderId: paypalOrderId,
+        date: new Date(),
+        firstName: address_to.first_name,
+        lines: cart.lines.map((l) => ({ name: CATALOG[l.sku].name, size: l.size, quantity: l.quantity, priceCents: CATALOG[l.sku].priceCents })),
+        shippingCents: SHIPPING_CENTS,
+        donationCents: 0, // donations are separate PayPal orders and never pass through this endpoint
+        totalCents: pp.paidCents,
+        address: address_to,
+      }, { log });
+    }
     return res.status(200).json({ ok: true, printifyId });
   } catch (e) {
     const fe = e instanceof FulfillError ? e : new FulfillError(500, 'Order service unavailable', String((e && e.message) || e), { paid: true });
