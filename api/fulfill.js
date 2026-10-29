@@ -180,18 +180,39 @@ function printifyHeaders(token, json) {
   return h;
 }
 
-// Idempotency pre-check: look through recent Printify orders for this PayPal order ID.
-// Printify has no external_id filter and caps pages at 10 orders, so we scan the newest pages.
+// Idempotency pre-check. Printify has no shop_order_id filter.
+// GET /v1/shops/{shop_id}/orders.json accepts page and limit (limit max 10) and returns
+// { current_page, data, last_page, per_page, total, next_page_url, ... }.
+// The external_id we send on create is returned as metadata.shop_order_id, not as a
+// top-level external_id. metadata.shop_order_label is only a display label (the optional
+// `label` we send, otherwise a copy of external_id) and must not be used for matching.
+// A lookup error must not fall through to create: a missed duplicate would place a second order.
 const PRECHECK_PAGES = 3;
+const PAGE_LIMIT = 10;
 async function findExistingOrder(token, orderId) {
-  const ids = new Set([orderId, 'dog-' + orderId]); // 'dog-' prefix = legacy format
+  const ids = new Set([String(orderId), 'dog-' + orderId]); // 'dog-' = legacy external_id we used to send
   for (let page = 1; page <= PRECHECK_PAGES; page++) {
-    const r = await fetchJson('https://api.printify.com/v1/shops/' + SHOP + '/orders.json?limit=10&page=' + page, { headers: printifyHeaders(token) });
-    if (!r.ok || !r.body) throw new FulfillError(502, 'Order service unavailable', 'Printify list orders failed ' + r.status, { paid: true });
-    const data = r.body.data || [];
-    const hit = data.find((o) => ids.has(String(o.external_id || '')) || ids.has(String((o.metadata || {}).shop_order_label || '')));
+    const url = 'https://api.printify.com/v1/shops/' + SHOP + '/orders.json?limit=' + PAGE_LIMIT + '&page=' + page;
+    let r;
+    try {
+      r = await fetchJson(url, { headers: printifyHeaders(token) });
+    } catch (e) {
+      throw new FulfillError(502, 'Order service unavailable', 'Printify list orders failed: ' + String(e && e.message || e), { paid: true });
+    }
+    if (!r.ok || !r.body || !Array.isArray(r.body.data)) {
+      throw new FulfillError(502, 'Order service unavailable', 'Printify list orders failed ' + (r && r.status), { paid: true });
+    }
+    const hit = r.body.data.find((o) => {
+      const shopOrderId = o && o.metadata ? o.metadata.shop_order_id : undefined;
+      return shopOrderId != null && shopOrderId !== '' && ids.has(String(shopOrderId));
+    });
     if (hit) return hit;
-    if (!r.body.next_page_url || data.length < 10) break;
+    const last = Number(r.body.last_page);
+    if (Number.isFinite(last)) {
+      if (page >= last) break;
+    } else if (r.body.data.length < PAGE_LIMIT || !r.body.next_page_url) {
+      break;
+    }
   }
   return null;
 }
@@ -275,6 +296,7 @@ export default async function handler(req, res) {
     }
 
     const order = {
+      // Printify surfaces this as metadata.shop_order_id on GET .../orders.json.
       external_id: paypalOrderId,
       label: 'DoG web ' + paypalOrderId,
       line_items: cart.lines.map(({ product_id, variant_id, quantity }) => ({ product_id, variant_id, quantity })),
