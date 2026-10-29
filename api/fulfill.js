@@ -13,10 +13,32 @@
 //   PAYPAL_ENV            (optional) 'live' (default) or 'sandbox'
 //   ALERT_WEBHOOK_URL     (optional) receives a JSON POST { text, ... } when a PAID order fails
 //                          to reach Printify (Slack/Discord/Zapier-compatible "text" field)
+//   ALERT_EMAIL_TO        (optional) comma list of addresses that get an alert email (e.g.
+//                          contact@dadsofgod.com). Sent via Resend's HTTP API, so it only sends
+//                          when RESEND_API_KEY is also set; otherwise it is a no-op.
+//   RESEND_API_KEY        (optional, secret) Resend API key used for ALERT_EMAIL_TO
+//   ALERT_EMAIL_FROM      (optional) sender, default 'DoG Alerts <onboarding@resend.dev>'
+//                          (Resend's test sender; use an address on a verified domain later)
+//   FULFILL_DRY_RUN       (optional, NON-PRODUCTION ONLY) '1' = verify PayPal, price the cart,
+//                          validate the address, optionally look for duplicates, then return the
+//                          Printify payload WITHOUT creating or sending any Printify order.
+//                          Ignored when VERCEL_ENV === 'production'.
+//   EXTRA_ALLOWED_ORIGINS (optional, NON-PRODUCTION ONLY) comma list of extra CORS origins,
+//                          e.g. a preview URL. Ignored when VERCEL_ENV === 'production'.
 
 const SHOP = process.env.PRINTIFY_SHOP_ID || '27166805';
 const SHIPPING_CENTS = 599; // flat US shipping per order
-const ALLOWED_ORIGINS = ['https://www.dadsofgod.com', 'https://dadsofgod.com'];
+const BASE_ORIGINS = ['https://www.dadsofgod.com', 'https://dadsofgod.com'];
+
+// Read per request so tests (and env changes) take effect without a module reload.
+const isProduction = () => process.env.VERCEL_ENV === 'production';
+const isDryRun = () => process.env.FULFILL_DRY_RUN === '1' && !isProduction();
+function allowedOrigins() {
+  if (isProduction()) return BASE_ORIGINS;
+  const extra = String(process.env.EXTRA_ALLOWED_ORIGINS || '')
+    .split(',').map((o) => o.trim().replace(/\/+$/, '')).filter((o) => /^https?:\/\/[^\s/]+$/i.test(o));
+  return BASE_ORIGINS.concat(extra);
+}
 
 // ============================================================================
 // CATALOG + PRINTIFY VARIANT MAP — single source of truth for prices and IDs.
@@ -228,33 +250,73 @@ async function paypalOrderIsPaid(orderId) {
   }
 }
 
-async function alertHuman(text, extra) {
+// Alerts: webhook and/or email. Each channel is a no-op when not configured; failures are
+// logged and never change the response to the buyer.
+async function alertWebhook(text, extra) {
   const url = process.env.ALERT_WEBHOOK_URL;
-  if (!url) return;
+  if (!url) return false;
   try {
-    await fetch(url, {
+    const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, ...extra }),
       signal: AbortSignal.timeout(5000),
     });
+    if (!r.ok) log('error', 'alert webhook failed', { status: r.status });
+    return r.ok;
   } catch (e) {
     log('error', 'alert webhook failed', { err: String(e && e.message) });
+    return false;
   }
+}
+
+async function alertEmail(text, extra) {
+  const to = String(process.env.ALERT_EMAIL_TO || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const key = process.env.RESEND_API_KEY;
+  if (!to.length) return false;
+  if (!key) {
+    log('warn', 'ALERT_EMAIL_TO set but no RESEND_API_KEY; alert email not sent', {});
+    return false;
+  }
+  const from = process.env.ALERT_EMAIL_FROM || 'DoG Alerts <onboarding@resend.dev>';
+  const lines = [text, ''];
+  for (const [k, v] of Object.entries(extra || {})) lines.push(k + ': ' + (v == null ? '' : String(v)));
+  lines.push('', 'env: ' + (process.env.VERCEL_ENV || 'unknown'));
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to, subject: '[DoG] Order needs attention' + (extra && extra.paypalOrderId ? ' ' + extra.paypalOrderId : ''), text: lines.join('\n') }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!r.ok) log('error', 'alert email failed', { status: r.status });
+    return r.ok;
+  } catch (e) {
+    log('error', 'alert email failed', { err: String(e && e.message) });
+    return false;
+  }
+}
+
+async function alertHuman(text, extra) {
+  await Promise.all([alertWebhook(text, extra), alertEmail(text, extra)]);
 }
 
 export default async function handler(req, res) {
   const origin = req.headers && req.headers.origin;
-  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]);
+  const origins = allowedOrigins();
+  res.setHeader('Access-Control-Allow-Origin', origins.includes(origin) ? origin : origins[0]);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(200).end();
   const token = process.env.PRINTIFY_TOKEN;
+  const dryRun = isDryRun();
   if (req.method !== 'POST') {
-    // Health check — same shape as the version deployed before this change.
-    return res.status(200).json({ ok: true, service: 'dog-fulfill', shop: SHOP, hasToken: !!token });
+    // Health check — same shape as the version deployed before this change (+ dryRun outside production).
+    const health = { ok: true, service: 'dog-fulfill', shop: SHOP, hasToken: !!token };
+    if (dryRun) health.dryRun = true;
+    return res.status(200).json(health);
   }
 
   let body = req.body;
@@ -262,10 +324,12 @@ export default async function handler(req, res) {
   body = body || {};
   const paypalOrderId = str(body.paypalOrderId, 64);
   const ctx = { paypalOrderId, email: str(body.address && body.address.email, 200) };
+  if (dryRun) ctx.dryRun = true;
 
   try {
     if (!/^[A-Z0-9]{8,64}$/i.test(paypalOrderId)) throw new FulfillError(400, 'Invalid order', 'missing/bad paypalOrderId');
-    if (!token) throw new FulfillError(503, 'Order service unavailable', 'PRINTIFY_TOKEN missing', { paid: true });
+    // In dry-run a missing token is expected (PRINTIFY_TOKEN must never be set on Preview).
+    if (!token && !dryRun) throw new FulfillError(503, 'Order service unavailable', 'PRINTIFY_TOKEN missing', { paid: true });
 
     const cart = buildCart(body.items);
     const address_to = buildAddress(body.address);
@@ -289,7 +353,8 @@ export default async function handler(req, res) {
       }
     }
 
-    const existing = await findExistingOrder(token, paypalOrderId);
+    // Duplicate lookup is read-only; in dry-run it only runs if a token happens to be present.
+    const existing = token ? await findExistingOrder(token, paypalOrderId) : null;
     if (existing) {
       log('info', 'duplicate request; order already exists', { ...ctx, printifyId: existing.id });
       return res.status(200).json({ ok: true, duplicate: true, printifyId: existing.id });
@@ -304,6 +369,11 @@ export default async function handler(req, res) {
       send_shipping_notification: true,
       address_to,
     };
+    if (dryRun) {
+      // Never reach Printify create/send in dry-run.
+      log('info', 'dry run: Printify order NOT created', { ...ctx, paidCents: pp.paidCents });
+      return res.status(200).json({ ok: true, dryRun: true, paidCents: pp.paidCents, wouldCreate: order });
+    }
     const created = await fetchJson('https://api.printify.com/v1/shops/' + SHOP + '/orders.json', {
       method: 'POST', headers: printifyHeaders(token, true), body: JSON.stringify(order),
     });
