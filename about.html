@@ -11,7 +11,8 @@
     <style>
         body { font-family: Inter, system-ui, sans-serif; }
         .gold { color: #FDD10C; }
-        .logo-glow { filter: drop-shadow(0 0 16px rgba(253,209,12,.55)); }
+.logo-glow{filter:drop-shadow(0 0 6px rgba(253,209,12,.9)) drop-shadow(0 0 22px rgba(253,209,12,.7));animation:halo-pulse 2.6s ease-in-out infinite}
+@keyframes halo-pulse{0%,100%{filter:drop-shadow(0 0 6px rgba(253,209,12,.9)) drop-shadow(0 0 22px rgba(253,209,12,.7))}50%{filter:drop-shadow(0 0 12px rgba(253,209,12,1)) drop-shadow(0 0 48px rgba(253,209,12,.95))}}
     </style>
 </head>
 <body class="bg-zinc-950 text-white">
