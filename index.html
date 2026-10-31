@@ -105,9 +105,9 @@ body{font-family:Inter,system-ui,sans-serif}
 <img src="ballcap-1.jpg" alt="Signature Ballcap front" class="img-front h-full w-auto object-contain transition-opacity">
 <img src="ballcap-2.jpg" alt="Signature Ballcap side" class="img-back absolute h-full w-auto object-contain transition-opacity">
 </button>
-<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Signature Ballcap</h3><p class="text-sm text-zinc-400">Embroidered DoG logo</p></div><div class="font-black text-3xl">$29</div></div>
+<div class="p-8"><div class="flex justify-between"><div><h3 class="font-bold text-2xl">Signature Ballcap</h3><p class="text-sm text-zinc-400">Embroidered DoG logo</p></div><div class="font-black text-3xl">$35</div></div>
 <div class="mt-6 flex gap-2 flex-wrap"><button type="button" onclick="selectSize(this)" class="size-btn px-4 py-1 text-sm border border-zinc-700 rounded-2xl">One size</button></div>
-<button type="button" onclick="addToCart(this,'DOG-CAP','Signature Ballcap',29)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">ADD TO CART</button></div></article>
+<button type="button" onclick="addToCart(this,'DOG-CAP','Signature Ballcap',35)" class="mt-6 w-full py-4 gold-bg text-black font-black text-lg rounded-2xl">ADD TO CART</button></div></article>
 </div></section>
 <section id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
 <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
@@ -171,7 +171,7 @@ function selectSize(el){el.parentElement.querySelectorAll('.size-btn').forEach(s
 function addToCart(btn,sku,name,price){const size=btn.closest('.product-card').dataset.size;if(!size){toast('Pick a size first');return}cart.push({sku,name,price,size,quantity:1});saveCart();toast(name+' ('+size+') added');showCart()}
 function removeFromCart(i){cart.splice(i,1);saveCart();showCart()}
 const SHIP=5.99;
-const PRICES={'DOG-TEE':35,'DOG-LS':45,'DOG-HOOD':65,'DOG-CAP':29};// must match api/fulfill.js CATALOG
+const PRICES={'DOG-TEE':35,'DOG-LS':45,'DOG-HOOD':65,'DOG-CAP':35};// must match api/fulfill.js CATALOG
 // Migrate carts saved before the ballcap became one size; drop anything no longer sold.
 cart=cart.filter(i=>PRICES[i.sku]).map(i=>Object.assign({},i,{price:PRICES[i.sku],size:i.sku==='DOG-CAP'?'One size':i.size}));
 function merchTotal(){return cart.reduce((s,i)=>s+Number(i.price),0)}function cartTotal(){return cart.length?merchTotal()+SHIP:0}

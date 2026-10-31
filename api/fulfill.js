@@ -67,7 +67,7 @@ const CATALOG = {
     sizes: { S: 109373, M: 109396, L: 109419, XL: 109442, '2XL': 109465 },
   },
   'DOG-CAP': {
-    name: 'Signature Ballcap', priceCents: 2900, product: '69f6f9549eacb75844020e88',
+    name: 'Signature Ballcap', priceCents: 3500, product: '69f6f9549eacb75844020e88',
     sizes: { 'One size': 118238 },
   },
 };
