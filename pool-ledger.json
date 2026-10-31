@@ -1,0 +1,5 @@
+{
+  "_readme": "Manual entries for the partner pool (see api/pool.js). refunds: {orderId: PayPal order id, reverse: true, date, note} removes that order's 25% from set_aside. payouts: {date: YYYY-MM-DD, partner, amount: dollars, reference} counts toward paid_out. Pool money only: donation transfers are tracked separately. No customer names, emails, or addresses here: this file is public.",
+  "refunds": [],
+  "payouts": []
+}

@@ -424,3 +424,6 @@ export default async function handler(req, res) {
     return res.status(fe.status).json({ ok: false, error: fe.publicMsg });
   }
 }
+
+// Read-only re-export for api/pool.js (fallback revenue when PayPal cannot be read).
+export { CATALOG, SHIPPING_CENTS };
