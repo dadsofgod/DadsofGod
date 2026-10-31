@@ -11,9 +11,9 @@
     <style>
         body { font-family: Inter, system-ui, sans-serif; }
         .gold { color: #FDD10C; }
-.logo-glow{filter:drop-shadow(0 0 20px rgba(253,209,12,.6));animation:halo-pulse 2.6s ease-in-out infinite}
-@keyframes halo-pulse{0%,100%{filter:drop-shadow(0 0 20px rgba(253,209,12,.6))}50%{filter:drop-shadow(0 0 42px rgba(253,209,12,.9))}}
-@media (prefers-reduced-motion:reduce){.logo-glow{animation:none}}
+.logo-glow{box-shadow:0 0 20px rgba(253,209,12,.6);-webkit-animation:halo-pulse 2.6s ease-in-out infinite;animation:halo-pulse 2.6s ease-in-out infinite}
+@-webkit-keyframes halo-pulse{0%,100%{box-shadow:0 0 20px rgba(253,209,12,.6)}50%{box-shadow:0 0 42px 6px rgba(253,209,12,.9)}}
+@keyframes halo-pulse{0%,100%{box-shadow:0 0 20px rgba(253,209,12,.6)}50%{box-shadow:0 0 42px 6px rgba(253,209,12,.9)}}
     </style>
 </head>
 <body class="bg-zinc-950 text-white">
