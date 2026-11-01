@@ -5,7 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DoG | Dads of God — We Were Made To Protect</title>
 <meta name="description" content="Dads of God rallies men as protectors of the innocent. 25% of profits after print, shipping, and fees is reserved for vetted organizations fighting child trafficking.">
-<link rel="icon" href="logo.png">
+<link rel="canonical" href="https://www.dadsofgod.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dads of God">
+<meta property="og:title" content="Dads of God — We Were Made To Protect">
+<meta property="og:description" content="Dads of God rallies men as protectors of the innocent. 25% of profits after print, shipping, and fees is reserved for vetted organizations fighting child trafficking.">
+<meta property="og:url" content="https://www.dadsofgod.com/">
+<meta property="og:image" content="https://www.dadsofgod.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Dads of God logo with the words: We were made to protect.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dads of God — We Were Made To Protect">
+<meta name="twitter:description" content="Dads of God rallies men as protectors of the innocent. 25% of profits after print, shipping, and fees is reserved for vetted organizations fighting child trafficking.">
+<meta name="twitter:image" content="https://www.dadsofgod.com/og-image.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://www.paypal.com/sdk/js?client-id=Af4xNnTyx97bit9CV_8JPNMIYiV1dQzQv8qDDehdV62GyuSnHG2KAGpf884aK5WF7p646XIuuX8JzKvX&currency=USD"></script>
@@ -111,8 +127,8 @@ body{font-family:Inter,system-ui,sans-serif}
 </div></section>
 <section id="donate" class="max-w-5xl mx-auto px-6 py-24 text-center">
 <div class="gold text-sm font-bold tracking-[4px]">DIRECT IMPACT</div>
-<h2 class="text-5xl font-bold tracking-tight mt-4">Fund the partners.</h2>
-<p class="text-xl text-zinc-400 mt-4 max-w-xl mx-auto">100% of donations, after PayPal's processing fee, go to our nonprofit partners.</p>
+<h2 class="text-5xl font-bold tracking-tight mt-4">Fund the fight.</h2>
+<p class="text-xl text-zinc-400 mt-4 max-w-xl mx-auto">100% of donations, after PayPal's processing fee, will go to vetted nonprofit partners fighting child trafficking, named before we claim any impact.</p>
 <div class="mt-12">
 <div class="flex flex-wrap justify-center gap-4 mb-8">
 <button type="button" onclick="setDonationAmount(10)" class="donate-btn px-8 py-4 border border-zinc-700 rounded-2xl text-lg font-semibold">$10</button>
@@ -125,7 +141,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <input id="custom-amount" type="number" min="1" step="1" placeholder="Other amount" class="flex-1 bg-transparent text-center text-3xl font-bold focus:outline-none text-white placeholder-zinc-400">
 </div>
 <p id="donate-error" class="text-red-400 text-sm mb-4 hidden"></p>
-<p class="text-sm text-zinc-500 max-w-2xl mx-auto mb-6">Dads of God is a for-profit company, not a registered charity, so donations are not tax-deductible. Donations are held in Dads of God's PayPal account, labeled separately from product orders. 100% of donations, after PayPal's processing fee, go to our nonprofit partners. We'll name those partners here once they're confirmed. See our <a href="terms.html" class="underline">Terms</a>.</p>
+<p class="text-sm text-zinc-500 max-w-2xl mx-auto mb-6">Dads of God is a for-profit company, not a registered charity, so donations are not tax-deductible. Donations are held in Dads of God's PayPal account, labeled separately from product orders. 100% of donations, after PayPal's processing fee, will go to vetted nonprofit partners fighting child trafficking. We'll name those partners before we claim any impact. See our <a href="terms.html" class="underline">Terms</a>.</p>
 <div id="donate-paypal-container" class="max-w-md mx-auto"></div>
 </div></section>
 <section id="impact" class="bg-[#111] py-24 border-y border-zinc-800">
@@ -192,7 +208,7 @@ onApprove:function(d,a){return a.order.capture().then(function(cap){const orderI
 onError:function(e){console.error('PayPal error',e);shipError('PayPal had a problem. You were not charged. Please try again.')}}).render('#cart-paypal-container')}
 function donationAmount(){const c=parseFloat(document.getElementById('custom-amount').value);return(!isNaN(c)&&c>0)?c:currentDonationAmount}
 function setDonationAmount(n){currentDonationAmount=n;document.getElementById('custom-amount').value='';document.querySelectorAll('.donate-btn').forEach(b=>b.classList.toggle('selected',b.textContent.replace('$','')===String(n)))}
-function renderDonationButtons(){const el=document.getElementById('donate-paypal-container');if(!el||typeof paypal==='undefined')return;el.innerHTML='';paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'donate'},createOrder:function(d,a){const amount=donationAmount();if(!amount||amount<1)return a.reject();var money=function(v){return{currency_code:'USD',value:Number(v).toFixed(2)}};return a.order.create({purchase_units:[{reference_id:'donation-pool',custom_id:'donation-pool',description:'Donation – DoG donation pool',amount:{currency_code:'USD',value:amount.toFixed(2),breakdown:{item_total:money(amount)}},items:[{name:'Donation – DoG donation pool',description:'100% of donations, after PayPal\'s processing fee, go to our nonprofit partners. Not tax-deductible.',unit_amount:money(amount),quantity:'1',category:'DONATION'}]}]})},onApprove:function(d,a){return a.order.capture().then(function(cap){toast('Thank you.');try{fetch(DONATION_THANKS,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({paypalOrderId:(cap&&cap.id)||d.orderID}),keepalive:true}).catch(function(){})}catch(_){}},function(e){console.error('Donation capture failed',e);const el=document.getElementById('donate-error');el.textContent='Your donation did not complete. Please try again.';el.classList.remove('hidden')})}}).render('#donate-paypal-container')}
+function renderDonationButtons(){const el=document.getElementById('donate-paypal-container');if(!el||typeof paypal==='undefined')return;el.innerHTML='';paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'donate'},createOrder:function(d,a){const amount=donationAmount();if(!amount||amount<1)return a.reject();var money=function(v){return{currency_code:'USD',value:Number(v).toFixed(2)}};return a.order.create({purchase_units:[{reference_id:'donation-pool',custom_id:'donation-pool',description:'Donation – DoG donation pool',amount:{currency_code:'USD',value:amount.toFixed(2),breakdown:{item_total:money(amount)}},items:[{name:'Donation – DoG donation pool',description:'100% after PayPal\'s fee will go to vetted anti-trafficking nonprofits, named before we claim impact. Not tax-deductible.',unit_amount:money(amount),quantity:'1',category:'DONATION'}]}]})},onApprove:function(d,a){return a.order.capture().then(function(cap){toast('Thank you.');try{fetch(DONATION_THANKS,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({paypalOrderId:(cap&&cap.id)||d.orderID}),keepalive:true}).catch(function(){})}catch(_){}},function(e){console.error('Donation capture failed',e);const el=document.getElementById('donate-error');el.textContent='Your donation did not complete. Please try again.';el.classList.remove('hidden')})}}).render('#donate-paypal-container')}
 function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('hidden')}
 window.onload=function(){updateCartCount();renderDonationButtons()}
 </script>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /test/
+
+Sitemap: https://www.dadsofgod.com/sitemap.xml

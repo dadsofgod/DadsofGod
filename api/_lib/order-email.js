@@ -12,7 +12,7 @@ export const LOGO_URL = 'https://www.dadsofgod.com/email-logo.png';
 export const CONTACT_EMAIL = 'contact@dadsofgod.com';
 export const SHAWN_NOTE = 'Thank you for your purchase with purpose. The Kingdom can only come when children are free.';
 export const SHAWN_SIGNOFF = '— Shawn, Dads of God';
-export const DONATION_WORDING = "100% of donations, after PayPal's processing fee, go to our nonprofit partners. Not tax-deductible.";
+export const DONATION_WORDING = "100% of donations, after PayPal's processing fee, will go to vetted nonprofit partners fighting child trafficking, named before we claim any impact. Not tax-deductible.";
 // Wording from terms.html (main): "Each item is printed to order by our print partner, Printify, after you pay.
 // Typical fulfillment is 5–12 business days before it ships."
 export const FULFILLMENT_NOTE = 'Each item is printed to order by our print partner, Printify, after you pay. Typical fulfillment is 5–12 business days before it ships.';
