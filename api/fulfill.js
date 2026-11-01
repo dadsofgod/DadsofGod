@@ -146,7 +146,13 @@ function buildCart(items) {
   return { lines, totalCents: merch + SHIPPING_CENTS };
 }
 
-// Validate the US shipping address. Name is required; phone is optional.
+// Validate the US shipping address. Name and phone are required (Printify needs a phone to ship).
+// NOTE: this endpoint runs AFTER the browser has captured the PayPal payment, so a rejection here
+// cannot stop a charge. The real guard is shipValid() in index.html, which blocks before createOrder.
+// A rejection here on a paid order is flagged paid (via paypalOrderIsPaid) and alerts a human.
+const MIN_PHONE_DIGITS = 10;
+const MAX_PHONE_DIGITS = 15;
+function normalizePhone(v) { return str(v, 30).replace(/\D/g, ''); }
 function buildAddress(a) {
   a = a || {};
   const name = str(a.name, 100).replace(/\s+/g, ' ');
@@ -166,11 +172,12 @@ function buildAddress(a) {
     city: str(a.city, 100),
     zip,
   };
-  const phone = str(a.phone, 30);
-  if (phone) out.phone = phone;
+  const phone = normalizePhone(a.phone);
+  out.phone = phone; // always sent to Printify address_to.phone (digits only)
   if (!['US', 'USA', 'UNITED STATES'].includes(country)) throw new FulfillError(400, 'We currently ship to US addresses only', 'non-US country ' + country, { input: true });
   if (parts.length < 2) throw new FulfillError(400, 'Please enter your first and last name', 'name missing/single word', { input: true });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new FulfillError(400, 'Please enter a valid email', 'bad email', { input: true });
+  if (phone.length < MIN_PHONE_DIGITS || phone.length > MAX_PHONE_DIGITS) throw new FulfillError(400, 'Please enter a valid phone number', 'phone missing/bad (' + phone.length + ' digits)', { input: true });
   if (!out.address1 || !out.city) throw new FulfillError(400, 'Please enter a full address', 'address/city missing', { input: true });
   if (!US_STATES.has(state)) throw new FulfillError(400, 'Please choose a US state', 'bad state ' + state, { input: true });
   if (!/^\d{5}(-\d{4})?$/.test(zip)) throw new FulfillError(400, 'Please enter a valid ZIP code', 'bad zip', { input: true });
