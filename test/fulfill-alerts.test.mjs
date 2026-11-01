@@ -9,7 +9,7 @@ const ORDER = 'TESTORDER12345678';
 const body = (id = ORDER) => ({
   paypalOrderId: id,
   items: [{ sku: 'DOG-CAP', size: 'One size' }],
-  address: { name: 'Test Buyer', address: '123 Test St', city: 'Austin', state: 'TX', zip: '78701', country: 'US', email: 'form@example.com' },
+  address: { name: 'Test Buyer', address: '123 Test St', city: 'Austin', state: 'TX', zip: '78701', country: 'US', email: 'form@example.com', phone: '(512) 555-0123' },
 });
 let calls, logs, pp;
 const json = (status, obj) => new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json' } });
@@ -130,4 +130,49 @@ test('happy path: 200, no alert, confirmation from orders@', async () => {
   assert.equal(alerts().length, 0);
   const conf = mails().filter((m) => m.subject.startsWith('Your Dads of God order'));
   assert.equal(conf.length, 1); assert.equal(conf[0].from, 'Dads of God <orders@dadsofgod.com>');
+});
+
+// ---- Phone required (Printify needs address_to.phone) ----
+const withPhone = (phone) => { const b = body(); if (phone === undefined) delete b.address.phone; else b.address.phone = phone; return b; };
+const printifyCreates = () => calls.filter((c) => c.url.endsWith('/orders.json') && c.o.method === 'POST');
+const paypalGets = () => calls.filter((c) => c.url.includes('/v2/checkout/orders/'));
+
+for (const [name, phone] of [['missing', undefined], ['empty', ''], ['whitespace', '   '], ['9 digits', '512-555-012'], ['letters only', 'call me'], ['16 digits', '1234567890123456']]) {
+  test('phone ' + name + ': 400 "Please enter a valid phone number", no Printify call', async () => {
+    const r = await run(withPhone(phone));
+    assert.equal(r.s, 400);
+    assert.deepEqual(r.j, { ok: false, error: 'Please enter a valid phone number' });
+    assert.equal(printifyCreates().length, 0, 'no Printify order created');
+    assert.ok(!calls.some((c) => c.url.includes('printify.com')), 'no Printify call at all');
+    // Rejected in buildAddress, before verifyPaypal: the only PayPal GET is the "did they already pay?" check.
+    assert.equal(paypalGets().length, 1);
+  });
+}
+
+test('phone missing on an already-paid order: alerts a human (buyer was charged in the browser)', async () => {
+  await run(withPhone(undefined));
+  const a = alerts(); assert.equal(a.length, 1);
+  assert.match(a[0].text, /phone missing\/bad/);
+});
+
+test('phone missing on an unpaid order: 400, no alert', async () => {
+  pp = { body: completed('COMPLETED', 'APPROVED') };
+  const r = await run(withPhone(undefined));
+  assert.equal(r.s, 400); assert.equal(alerts().length, 0);
+});
+
+for (const [phone, digits] of [['(512) 555-0123', '5125550123'], ['512.555.0123', '5125550123'], ['+1 512 555 0123', '15125550123'], ['5125550123', '5125550123']]) {
+  test('valid phone ' + JSON.stringify(phone) + ' is passed to Printify address_to.phone as ' + digits, async () => {
+    const r = await run(withPhone(phone));
+    assert.equal(r.s, 200); assert.deepEqual(r.j, { ok: true, printifyId: 'pfy123' });
+    const c = printifyCreates(); assert.equal(c.length, 1);
+    assert.equal(JSON.parse(c[0].o.body).address_to.phone, digits);
+  });
+}
+
+test('dry run payload includes the phone', async () => {
+  process.env.VERCEL_ENV = 'preview'; process.env.FULFILL_DRY_RUN = '1';
+  const r = await run(withPhone('512-555-0123'));
+  assert.equal(r.s, 200); assert.equal(r.j.wouldCreate.address_to.phone, '5125550123');
+  assert.equal(printifyCreates().length, 0);
 });
