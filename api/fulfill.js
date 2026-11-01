@@ -13,12 +13,12 @@
 //   PAYPAL_ENV            (optional) 'live' (default) or 'sandbox'
 //   ALERT_WEBHOOK_URL     (optional) receives a JSON POST { text, ... } when a PAID order fails
 //                          to reach Printify (Slack/Discord/Zapier-compatible "text" field)
-//   ALERT_EMAIL_TO        (optional) comma list of addresses that get an alert email (e.g.
-//                          contact@dadsofgod.com). Sent via Resend's HTTP API, so it only sends
+//   ALERT_EMAIL_TO        (optional) comma list of addresses that get an alert email, default
+//                          contact@dadsofgod.com. Sent via Resend's HTTP API, so it only sends
 //                          when RESEND_API_KEY is also set; otherwise it is a no-op.
 //   RESEND_API_KEY        (optional, secret) Resend API key used for ALERT_EMAIL_TO
-//   ALERT_EMAIL_FROM      (optional) sender, default 'DoG Alerts <onboarding@resend.dev>'
-//                          (Resend's test sender; use an address on a verified domain later)
+//   ALERT_EMAIL_FROM      (optional) sender, default 'DoG Alerts <alerts@dadsofgod.com>'
+//                          (dadsofgod.com is a Resend-verified domain)
 //   FULFILL_DRY_RUN       (optional, NON-PRODUCTION ONLY) '1' = verify PayPal, price the cart,
 //                          validate the address, optionally look for duplicates, then return the
 //                          Printify payload WITHOUT creating or sending any Printify order.
@@ -35,6 +35,8 @@ import { sendOrderConfirmation } from './_lib/order-email.js';
 const SHOP = process.env.PRINTIFY_SHOP_ID || '27166805';
 const SHIPPING_CENTS = 599; // flat US shipping per order
 const BASE_ORIGINS = ['https://www.dadsofgod.com', 'https://dadsofgod.com'];
+const DEFAULT_ALERT_FROM = 'DoG Alerts <alerts@dadsofgod.com>';
+const DEFAULT_ALERT_TO = 'contact@dadsofgod.com';
 
 // Read per request so tests (and env changes) take effect without a module reload.
 const isProduction = () => process.env.VERCEL_ENV === 'production';
@@ -79,12 +81,16 @@ const MAX_LINES = 20;
 const TIMEOUT_MS = 8000;
 
 class FulfillError extends Error {
-  constructor(status, publicMsg, detail, { paid = false, input = false } = {}) {
+  constructor(status, publicMsg, detail, { paid = false, input = false, verify = false } = {}) {
     super(detail || publicMsg);
     this.status = status;
     this.publicMsg = publicMsg;
     this.paid = paid; // true => money was (or may have been) taken; alert a human
     this.input = input; // true => bad cart/address; check PayPal in case the buyer already paid
+    // true => PayPal verification failed after the buyer approved in the PayPal popup (order not found,
+    // not COMPLETED, no completed capture). Alert a human too, but throttled (see shouldAlertVerify),
+    // because anyone can POST a made-up order id.
+    this.verify = verify;
   }
 }
 
@@ -177,13 +183,16 @@ async function verifyPaypal(orderId, cart) {
   const r = await fetchJson(paypalBase() + '/v2/checkout/orders/' + encodeURIComponent(orderId), {
     headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
   });
-  if (r.status === 404) throw new FulfillError(400, 'Payment not found', 'PayPal order not found ' + orderId);
+  if (r.status === 404) throw new FulfillError(400, 'Payment not found', 'PayPal order not found ' + orderId, { verify: true });
   if (!r.ok || !r.body) throw new FulfillError(502, 'Order service unavailable', 'PayPal GET order failed ' + r.status, { paid: true });
   const o = r.body;
-  if (o.status !== 'COMPLETED') throw new FulfillError(402, 'Payment not completed', 'PayPal status ' + o.status);
+  if (o.status !== 'COMPLETED') throw new FulfillError(402, 'Payment not completed', 'PayPal status ' + o.status, { verify: true });
   const pu = (o.purchase_units || [])[0] || {};
   const captures = ((pu.payments || {}).captures || []).filter((c) => c.status === 'COMPLETED');
-  if (!captures.length) throw new FulfillError(402, 'Payment not completed', 'no COMPLETED capture');
+  if (!captures.length) {
+    const st = ((pu.payments || {}).captures || []).map((c) => c && c.status).filter(Boolean).join(',') || 'none';
+    throw new FulfillError(402, 'Payment not completed', 'no COMPLETED capture (capture status ' + st + ')', { verify: true });
+  }
   let paidCents = 0;
   for (const c of captures) {
     if (!c.amount || c.amount.currency_code !== 'USD') throw new FulfillError(400, 'Payment mismatch', 'non-USD capture', { paid: true });
@@ -277,14 +286,14 @@ async function alertWebhook(text, extra) {
 }
 
 async function alertEmail(text, extra) {
-  const to = String(process.env.ALERT_EMAIL_TO || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const to = String(process.env.ALERT_EMAIL_TO || DEFAULT_ALERT_TO).split(',').map((s) => s.trim()).filter(Boolean);
   const key = String(process.env.RESEND_API_KEY || '').trim(); // tolerate pasted whitespace/newline
   if (!to.length) return false;
   if (!key) {
     log('warn', 'ALERT_EMAIL_TO set but no RESEND_API_KEY; alert email not sent', {});
     return false;
   }
-  const from = process.env.ALERT_EMAIL_FROM || 'DoG Alerts <onboarding@resend.dev>';
+  const from = String(process.env.ALERT_EMAIL_FROM || '').trim() || DEFAULT_ALERT_FROM;
   const lines = [text, ''];
   for (const [k, v] of Object.entries(extra || {})) lines.push(k + ': ' + (v == null ? '' : String(v)));
   lines.push('', 'env: ' + (process.env.VERCEL_ENV || 'unknown'));
@@ -309,6 +318,19 @@ async function alertEmail(text, extra) {
 async function alertHuman(text, extra) {
   await Promise.all([alertWebhook(text, extra), alertEmail(text, extra)]);
 }
+
+// Throttle for verify-only alerts (fe.verify && !fe.paid), per warm instance: one alert per PayPal
+// order id, at most VERIFY_ALERT_MAX per VERIFY_ALERT_WINDOW_MS. Paid alerts are never throttled.
+const VERIFY_ALERT_MAX = 10;
+const VERIFY_ALERT_WINDOW_MS = 10 * 60 * 1000;
+const verifyAlerted = new Map(); // paypalOrderId -> ms
+function shouldAlertVerify(orderId, now = Date.now()) {
+  for (const [id, t] of verifyAlerted) if (now - t > VERIFY_ALERT_WINDOW_MS) verifyAlerted.delete(id);
+  if (verifyAlerted.has(orderId) || verifyAlerted.size >= VERIFY_ALERT_MAX) return false;
+  verifyAlerted.set(orderId, now);
+  return true;
+}
+export function _resetAlertThrottle() { verifyAlerted.clear(); } // tests only
 
 export default async function handler(req, res) {
   const origin = req.headers && req.headers.origin;
@@ -417,9 +439,15 @@ export default async function handler(req, res) {
   } catch (e) {
     const fe = e instanceof FulfillError ? e : new FulfillError(500, 'Order service unavailable', String((e && e.message) || e), { paid: true });
     if (fe.input && /^[A-Z0-9]{8,64}$/i.test(paypalOrderId) && (await paypalOrderIsPaid(paypalOrderId))) fe.paid = true;
-    log(fe.paid ? 'error' : 'warn', 'fulfill failed', { ...ctx, status: fe.status, detail: fe.message });
+    log(fe.paid || fe.verify ? 'error' : 'warn', 'fulfill failed', { ...ctx, status: fe.status, detail: fe.message });
     if (fe.paid) {
-      await alertHuman('DoG order needs attention: PayPal ' + (paypalOrderId || '(none)') + ' — ' + fe.message, { paypalOrderId, email: ctx.email });
+      await alertHuman('DoG order needs attention: PayPal ' + (paypalOrderId || '(none)') + ' — ' + fe.message, { paypalOrderId, email: ctx.email, error: fe.message });
+    } else if (fe.verify) {
+      if (shouldAlertVerify(paypalOrderId)) {
+        await alertHuman('DoG order needs attention: PayPal verification failed after checkout for ' + paypalOrderId + ' — ' + fe.message + '. The buyer may have been charged; check PayPal.', { paypalOrderId, email: ctx.email, error: fe.message, stage: 'paypal-verify' });
+      } else {
+        log('warn', 'verify alert throttled', { paypalOrderId });
+      }
     }
     return res.status(fe.status).json({ ok: false, error: fe.publicMsg });
   }
