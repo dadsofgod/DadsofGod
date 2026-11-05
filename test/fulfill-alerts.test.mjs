@@ -28,6 +28,7 @@ globalThis.fetch = async (url, o = {}) => {
   }
   if (url.includes('/orders.json?')) return json(200, { data: [], last_page: 1 });
   if (url.endsWith('/orders.json')) return json(200, { id: 'pfy123' });
+  if (/\/orders\/[^/]+\.json$/.test(url)) return json(200, { id: 'pfy123', status: 'on-hold' });
   if (url.includes('/send_to_production.json')) return json(200, {});
   if (url === 'https://api.resend.com/emails') return json(200, { id: 'resend-mock' });
   if (url === 'https://hooks.example.com/alert') return json(200, {});
@@ -126,7 +127,7 @@ test('bad order id format: 400, no PayPal call, no alert (unchanged)', async () 
 
 test('happy path: 200, no alert, confirmation from orders@', async () => {
   const r = await run();
-  assert.equal(r.s, 200); assert.deepEqual(r.j, { ok: true, printifyId: 'pfy123' });
+  assert.equal(r.s, 200); assert.deepEqual(r.j, { ok: true, printifyId: 'pfy123', sentToProduction: true });
   assert.equal(alerts().length, 0);
   const conf = mails().filter((m) => m.subject.startsWith('Your Dads of God order'));
   assert.equal(conf.length, 1); assert.equal(conf[0].from, 'Dads of God <orders@dadsofgod.com>');
@@ -164,7 +165,7 @@ test('phone missing on an unpaid order: 400, no alert', async () => {
 for (const [phone, digits] of [['(512) 555-0123', '5125550123'], ['512.555.0123', '5125550123'], ['+1 512 555 0123', '15125550123'], ['5125550123', '5125550123']]) {
   test('valid phone ' + JSON.stringify(phone) + ' is passed to Printify address_to.phone as ' + digits, async () => {
     const r = await run(withPhone(phone));
-    assert.equal(r.s, 200); assert.deepEqual(r.j, { ok: true, printifyId: 'pfy123' });
+    assert.equal(r.s, 200); assert.deepEqual(r.j, { ok: true, printifyId: 'pfy123', sentToProduction: true });
     const c = printifyCreates(); assert.equal(c.length, 1);
     assert.equal(JSON.parse(c[0].o.body).address_to.phone, digits);
   });
