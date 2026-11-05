@@ -16,7 +16,17 @@
 //
 // Counted orders: metadata.order_type 'api', metadata.shop_order_id is a PayPal order id (as sent by
 // api/fulfill.js as external_id; legacy 'dog-' prefix accepted), status not canceled, not a reprint,
-// created_at >= POOL_START. Everything else (manual orders, old test orders, Pop-Up store) is ignored.
+// not on EXCLUDED_ORDERS, created_at >= POOL_START. Everything else (manual orders, old test orders,
+// Pop-Up store) is ignored.
+
+// Owner/test orders. These went through checkout for real, but they are not customer sales,
+// so they never count toward the 25% partner pool. Match the PayPal id on
+// metadata.shop_order_id (legacy dog- prefix ok) or metadata.shop_order_label, and/or the Printify order id.
+//   PayPal 7EB80097MS8075732 = Printify 6aebdf95180e54fa3305b862
+//   (shop order 27166805.6, owner test order, Nov 4 2026)
+export const EXCLUDED_ORDERS = [
+  { paypalId: '7EB80097MS8075732', printifyId: '6aebdf95180e54fa3305b862' },
+];
 
 export const POOL_RATE = 0.25;
 // Launch: 2026-11-01 00:00 America/Chicago (CDT, UTC-5). Orders before this are never counted.
@@ -60,9 +70,20 @@ export function websiteOrderId(o) {
   return hit ? hit[1].toUpperCase() : null;
 }
 
+export function isExcludedOrder(o) {
+  const paypalId = (websiteOrderId(o) || '').toUpperCase();
+  const label = String((o && o.metadata && o.metadata.shop_order_label) || '').toUpperCase();
+  const printifyId = String((o && o.id) || '');
+  return EXCLUDED_ORDERS.some((ex) => {
+    const id = ex.paypalId.toUpperCase();
+    return paypalId === id || label === id || label.includes(id) || printifyId === ex.printifyId;
+  });
+}
+
 export function isCounted(o, startMs) {
   if (!websiteOrderId(o)) return false;
   if (String(o.status || '').toLowerCase() === 'canceled' || String(o.status || '').toLowerCase() === 'cancelled') return false;
+  if (isExcludedOrder(o)) return false;
   const t = parseTs(o.created_at);
   return Number.isFinite(t) && t >= startMs;
 }
