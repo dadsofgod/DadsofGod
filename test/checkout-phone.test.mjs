@@ -32,6 +32,20 @@ test('shipValid() checks the phone, and PayPal onClick + createOrder call shipVa
   assert.match(co, /^if\(!shipValid\(\)\)return a\.reject\(\);/);
 });
 
+test('continue shopping closes the cart and goes to #shop without clearing dogCart', () => {
+  const btn = html.match(/<button type="button" id="continue-shopping"[^>]*>Continue shopping<\/button>/);
+  assert.ok(btn, 'continue shopping button exists');
+  assert.match(btn[0], /border-\[#FDD10C\]/);
+  assert.ok(!/gold-bg/.test(btn[0]), 'secondary, not the solid PayPal-style fill');
+  const fn = html.slice(html.indexOf('function continueShopping()'), html.indexOf('function showOrderResult'));
+  assert.match(fn, /hideCart\(\)/);
+  assert.match(fn, /getElementById\('shop'\)/);
+  assert.match(fn, /scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
+  assert.match(fn, /location\.href='\/#shop'/);
+  assert.ok(!fn.includes('saveCart'));
+  assert.match(html, /if\(keep\)keep\.classList\.toggle\('hidden',!cart\.length\)/);
+});
+
 test('successful fulfill closes the cart, confirms the order, then returns home', () => {
   assert.match(html, /function showOrderConfirmed\(orderId,email\)/);
   assert.match(html, /cart=\[\];saveCart\(\);hideCart\(\)/);
