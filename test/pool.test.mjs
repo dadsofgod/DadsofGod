@@ -96,6 +96,29 @@ test('filters: before START, canceled, manual, reprint, non-site ids, duplicates
   assert.equal((await run([first], { NOV10000NOV10000: ppOrder(40.99, 1.92) })).orders_counted, 1);
 });
 
+test('owner test order is excluded; canceled orders stay excluded', async () => {
+  // PayPal 7EB80097MS8075732 = Printify 6aebdf95180e54fa3305b862 (shop 27166805.6, Nov 4 2026).
+  const byPaypal = pOrder({ ppId: '7EB80097MS8075732' });
+  byPaypal.id = '6aebdf95180e54fa3305b862';
+  const byLabel = pOrder({ ppId: 'LABEL000LABEL000' });
+  byLabel.metadata.shop_order_label = 'DoG web 7EB80097MS8075732';
+  const byPrintify = pOrder({ ppId: 'OTHER000OTHER000' });
+  byPrintify.id = '6aebdf95180e54fa3305b862';
+  const canceled = pOrder({ ppId: 'CANC0000CANC0000', status: 'canceled' });
+  const real = pOrder({ ppId: 'REAL0000REAL0000' });
+  const pp = {
+    '7EB80097MS8075732': ppOrder(40.99, 1.92),
+    LABEL000LABEL000: ppOrder(40.99, 1.92),
+    OTHER000OTHER000: ppOrder(40.99, 1.92),
+    CANC0000CANC0000: ppOrder(40.99, 1.92),
+    REAL0000REAL0000: ppOrder(40.99, 1.92),
+  };
+  const only = await run([byPaypal], pp);
+  assert.equal(only.orders_counted, 0); assert.equal(only.set_aside, 0);
+  const mixed = await run([byPaypal, byLabel, byPrintify, canceled, real], pp);
+  assert.equal(mixed.orders_counted, 1); assert.equal(mixed.set_aside, 4.27);
+});
+
 test('zero orders -> honest zeros, no estimates', async () => {
   const r = await run([], {});
   assert.deepEqual({ ...r, as_of: 0 }, { set_aside: 0, paid_out: 0, held: 0, orders_counted: 0, pending_estimates: false, fee_estimates: false, refunds_reversed: 0, currency: 'USD', as_of: 0, start_date: POOL_START, basis: '25% of profit after print, shipping, and PayPal fees' });
