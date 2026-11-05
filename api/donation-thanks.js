@@ -70,16 +70,33 @@ async function paypalAccessToken() {
   return ppToken.token;
 }
 
+// Same marker the donate button sets: custom_id/reference_id === 'donation-pool', and every
+// line item (if any) is category DONATION with no sku. Product orders carry sku 'DOG-XXX:size'.
+export function isDonationOrder(o) {
+  if (!o || typeof o !== 'object') return false;
+  const units = Array.isArray(o.purchase_units) ? o.purchase_units : [];
+  if (units.length !== 1) return false;
+  const pu = units[0] || {};
+  if (pu.custom_id !== DONATION_MARKER && pu.reference_id !== DONATION_MARKER) return false;
+  const items = Array.isArray(pu.items) ? pu.items : [];
+  if (items.some((it) => !it || it.category !== 'DONATION' || (it.sku != null && it.sku !== ''))) return false;
+  return true;
+}
+
+function donationShapeReason(o) {
+  const units = Array.isArray(o.purchase_units) ? o.purchase_units : [];
+  if (units.length !== 1) return 'purchase_units ' + units.length;
+  const pu = units[0] || {};
+  if (pu.custom_id !== DONATION_MARKER && pu.reference_id !== DONATION_MARKER) return 'not a donation (no marker)';
+  return 'not a donation (items)';
+}
+
 // Returns { ok: true, donation } or { ok: false, reason }.
 export function checkDonationOrder(o, now = Date.now()) {
   if (!o || typeof o !== 'object') return { ok: false, reason: 'no order body' };
   if (o.status !== 'COMPLETED') return { ok: false, reason: 'status ' + o.status };
-  const units = Array.isArray(o.purchase_units) ? o.purchase_units : [];
-  if (units.length !== 1) return { ok: false, reason: 'purchase_units ' + units.length };
-  const pu = units[0] || {};
-  if (pu.custom_id !== DONATION_MARKER && pu.reference_id !== DONATION_MARKER) return { ok: false, reason: 'not a donation (no marker)' };
-  const items = Array.isArray(pu.items) ? pu.items : [];
-  if (items.some((it) => !it || it.category !== 'DONATION' || (it.sku != null && it.sku !== ''))) return { ok: false, reason: 'not a donation (items)' };
+  if (!isDonationOrder(o)) return { ok: false, reason: donationShapeReason(o) };
+  const pu = o.purchase_units[0] || {};
   const captures = ((pu.payments || {}).captures || []).filter((c) => c && c.status === 'COMPLETED');
   if (!captures.length) return { ok: false, reason: 'no COMPLETED capture' };
   let cents = 0;

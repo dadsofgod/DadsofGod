@@ -3,6 +3,9 @@
   "functions": {
     "api/fulfill.js": {
       "maxDuration": 60
+    },
+    "api/paypal-webhook.js": {
+      "maxDuration": 60
     }
   },
   "redirects": [
