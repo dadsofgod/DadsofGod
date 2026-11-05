@@ -26,9 +26,13 @@ globalThis.fetch = async (url, o = {}) => {
     if (pp.throw) throw new TypeError('fetch failed');
     return json(pp.status || 200, pp.body || {});
   }
-  if (url.includes('/orders.json?')) return json(200, { data: [], last_page: 1 });
+  if (url.includes('/orders.json?')) return json(200, { data: pp.existing || [], last_page: 1 });
   if (url.endsWith('/orders.json')) return json(200, { id: 'pfy123' });
-  if (/\/orders\/[^/]+\.json$/.test(url)) return json(200, { id: 'pfy123', status: 'on-hold' });
+  if (/\/orders\/[^/]+\.json$/.test(url)) {
+    const q = pp.pf || ['on-hold'];
+    const st = q.length > 1 ? q.shift() : q[0];
+    return json(200, { id: 'pfy123', status: st });
+  }
   if (url.includes('/send_to_production.json')) return json(200, {});
   if (url === 'https://api.resend.com/emails') return json(200, { id: 'resend-mock' });
   if (url === 'https://hooks.example.com/alert') return json(200, {});
@@ -48,7 +52,7 @@ beforeEach(() => {
   _resetAlertThrottle();
   Object.assign(process.env, { VERCEL_ENV: 'production', PRINTIFY_TOKEN: 'FAKE', PAYPAL_CLIENT_ID: 'FAKE', PAYPAL_CLIENT_SECRET: 'FAKE',
     RESEND_API_KEY: 'FAKE_KEY', ORDER_EMAIL_FROM: 'Dads of God <orders@dadsofgod.com>' });
-  for (const k of ['FULFILL_DRY_RUN', 'ALERT_EMAIL_FROM', 'ALERT_EMAIL_TO', 'ORDER_EMAIL_REPLY_TO', 'PAYPAL_ENV', 'ALERT_WEBHOOK_URL']) delete process.env[k];
+  for (const k of ['FULFILL_DRY_RUN', 'ALERT_EMAIL_FROM', 'ALERT_EMAIL_TO', 'ORDER_EMAIL_REPLY_TO', 'PAYPAL_ENV', 'ALERT_WEBHOOK_URL', 'PRINTIFY_READY_WAIT_MS', 'PRINTIFY_READY_POLL_MS']) delete process.env[k];
 });
 
 test('alert defaults: from alerts@dadsofgod.com to contact@dadsofgod.com when env is unset', async () => {
@@ -131,6 +135,61 @@ test('happy path: 200, no alert, confirmation from orders@', async () => {
   assert.equal(alerts().length, 0);
   const conf = mails().filter((m) => m.subject.startsWith('Your Dads of God order'));
   assert.equal(conf.length, 1); assert.equal(conf[0].from, 'Dads of God <orders@dadsofgod.com>');
+  assert.match(conf[0].html, /sent your order to be printed/);
+  assert.match(conf[0].text, /sent your order to be printed/);
+  assert.ok(!/being prepared for printing/.test(conf[0].html));
+});
+
+test('cost-calculation then on-hold is sent to production', async () => {
+  process.env.PRINTIFY_READY_POLL_MS = '5';
+  process.env.PRINTIFY_READY_WAIT_MS = '500';
+  pp.pf = ['cost-calculation', 'on-hold'];
+  const r = await run();
+  assert.equal(r.s, 200); assert.equal(r.j.sentToProduction, true);
+  assert.ok(calls.filter((c) => /\/orders\/pfy123\.json$/.test(c.url)).length >= 2);
+  assert.ok(calls.some((c) => c.url.includes('send_to_production')));
+  assert.ok(logs.some((l) => l.msg === 'printify order status' && l.status === 'cost-calculation'));
+  const conf = mails().find((m) => m.subject.startsWith('Your Dads of God order'));
+  assert.match(conf.html, /sent your order to be printed/);
+});
+
+test('unknown status keeps polling, then confirms without saying it was sent to print', async () => {
+  process.env.PRINTIFY_READY_POLL_MS = '5';
+  process.env.PRINTIFY_READY_WAIT_MS = '40';
+  pp.pf = ['mystery-status'];
+  const r = await run();
+  assert.equal(r.s, 200); assert.equal(r.j.sentToProduction, false);
+  assert.ok(calls.filter((c) => /\/orders\/pfy123\.json$/.test(c.url)).length >= 2);
+  assert.ok(!calls.some((c) => c.url.includes('send_to_production')));
+  assert.ok(alerts().some((m) => /Send to production/.test(m.text)));
+  const conf = mails().find((m) => m.subject.startsWith('Your Dads of God order'));
+  assert.match(conf.html, /being prepared for printing/);
+  assert.match(conf.text, /being prepared for printing/);
+  assert.ok(!/sent your order to be printed/.test(conf.html));
+});
+
+for (const st of ['canceled', 'has-issues', 'unfulfillable', 'payment-not-received']) {
+  test('terminal status ' + st + ' stops immediately and alerts', async () => {
+    process.env.PRINTIFY_READY_POLL_MS = '5';
+    process.env.PRINTIFY_READY_WAIT_MS = '5000';
+    pp.pf = [st];
+    const r = await run();
+    assert.equal(r.s, 200); assert.equal(r.j.sentToProduction, false);
+    assert.equal(calls.filter((c) => /\/orders\/pfy123\.json$/.test(c.url)).length, 1);
+    assert.ok(!calls.some((c) => c.url.includes('send_to_production')));
+    assert.ok(alerts().some((m) => m.text.includes('terminal status ' + st)));
+  });
+}
+
+test('duplicate cost-calculation order is polled and sent', async () => {
+  process.env.PRINTIFY_READY_POLL_MS = '5';
+  process.env.PRINTIFY_READY_WAIT_MS = '500';
+  pp.existing = [{ id: 'pfy123', status: 'cost-calculation', metadata: { shop_order_id: ORDER } }];
+  pp.pf = ['cost-calculation', 'on-hold'];
+  const r = await run();
+  assert.equal(r.s, 200); assert.equal(r.j.duplicate, true);
+  assert.ok(calls.some((c) => c.url.includes('send_to_production')));
+  assert.ok(!calls.some((c) => c.url.endsWith('/orders.json') && c.o.method === 'POST'));
 });
 
 // ---- Phone required (Printify needs address_to.phone) ----

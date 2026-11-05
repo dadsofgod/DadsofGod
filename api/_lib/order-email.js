@@ -51,7 +51,7 @@ export const TEMPLATE = `<!DOCTYPE html>
   <tr><td class="card" style="background:#18181b;border:1px solid #27272a;border-radius:24px;padding:36px 36px;">
     <div style="text-transform:uppercase;letter-spacing:4px;color:#FDD10C;font-size:12px;font-weight:700;">Order confirmed</div>
     <h1 class="h1" style="margin:10px 0 12px;font-size:36px;line-height:1.05;font-weight:900;letter-spacing:-1px;color:#ffffff;">Thank you, {{first_name}}.</h1>
-    <p style="margin:0 0 6px;font-size:16px;line-height:1.6;color:#d4d4d8;">We received your payment and sent your order to be printed.</p>
+    <p style="margin:0 0 6px;font-size:16px;line-height:1.6;color:#d4d4d8;">{{status_line}}</p>
     <p style="margin:0 0 28px;font-size:13px;color:#a1a1aa;">PayPal order {{order_id}} &middot; {{order_date}}</p>
 
     <!-- Personal note from Shawn -->
@@ -138,8 +138,12 @@ export function renderOrderEmail(data) {
   ].filter(Boolean).map(esc).join('<br>');
   const d = data.date instanceof Date ? data.date : new Date();
   const dateStr = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Chicago' });
+  const statusLine = data.sentToProduction
+    ? 'We received your payment and sent your order to be printed.'
+    : "We've received your order and it's being prepared for printing.";
   const vals = {
     logo_url: esc(LOGO_URL),
+    status_line: esc(statusLine),
     first_name: esc(data.firstName || 'friend'),
     order_id: esc(data.orderId),
     order_date: esc(dateStr),
@@ -157,7 +161,7 @@ export function renderOrderEmail(data) {
   const html = TEMPLATE.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in vals ? vals[k] : m));
   const text = [
     `Thank you, ${data.firstName || 'friend'}.`,
-    'We received your payment and sent your order to be printed.',
+    statusLine,
     `PayPal order ${data.orderId} - ${dateStr}`,
     '',
     `"${SHAWN_NOTE}"`,
