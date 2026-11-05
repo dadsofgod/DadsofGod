@@ -29,6 +29,8 @@
 //   ORDER_EMAIL_REPLY_TO  (optional) reply-to for the confirmation, default contact@dadsofgod.com
 //   EXTRA_ALLOWED_ORIGINS (optional, NON-PRODUCTION ONLY) comma list of extra CORS origins,
 //                          e.g. a preview URL. Ignored when VERCEL_ENV === 'production'.
+//   PAYPAL_WEBHOOK_ID     (optional) PayPal webhook id. Read only by api/paypal-webhook.js.
+//                          When unset, that endpoint acknowledges and does nothing.
 
 import { sendOrderConfirmation } from './_lib/order-email.js';
 
@@ -79,6 +81,10 @@ const US_STATES = new Set(['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA
 const MAX_QTY_PER_LINE = 10;
 const MAX_LINES = 20;
 const TIMEOUT_MS = 8000;
+// PayPal v2 checkout order ids are 17 alphanumeric characters (5O190127TN364715T).
+const PAYPAL_ORDER_ID_RE = /^[A-Z0-9]{17}$/i;
+const MAX_CAPTURE_AGE_MS = 24 * 60 * 60 * 1000;
+export function isPaypalOrderId(id) { return PAYPAL_ORDER_ID_RE.test(String(id || '')); }
 
 class FulfillError extends Error {
   constructor(status, publicMsg, detail, { paid = false, input = false, verify = false } = {}) {
@@ -88,7 +94,7 @@ class FulfillError extends Error {
     this.paid = paid; // true => money was (or may have been) taken; alert a human
     this.input = input; // true => bad cart/address; check PayPal in case the buyer already paid
     // true => PayPal verification failed after the buyer approved in the PayPal popup (order not found,
-    // not COMPLETED, no completed capture). Alert a human too, but throttled (see shouldAlertVerify),
+    // not COMPLETED, no completed capture). Alert a human too, throttled like every other alert,
     // because anyone can POST a made-up order id.
     this.verify = verify;
   }
@@ -191,6 +197,8 @@ async function verifyPaypal(orderId, cart) {
     headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
   });
   if (r.status === 404) throw new FulfillError(400, 'Payment not found', 'PayPal order not found ' + orderId, { verify: true });
+  // 429/5xx on an id we have never verified is not evidence the buyer paid. Do not alert.
+  if (r.status === 429 || r.status >= 500) throw new FulfillError(503, 'Order service unavailable', 'PayPal GET order failed ' + r.status);
   if (!r.ok || !r.body) throw new FulfillError(502, 'Order service unavailable', 'PayPal GET order failed ' + r.status, { paid: true });
   const o = r.body;
   if (o.status !== 'COMPLETED') throw new FulfillError(402, 'Payment not completed', 'PayPal status ' + o.status, { verify: true });
@@ -215,7 +223,59 @@ async function verifyPaypal(orderId, cart) {
     const got = pu.items.map((it) => key(String(it.sku || ''), Number(it.quantity || 1))).sort().join('|');
     if (want !== got) throw new FulfillError(400, 'Payment mismatch', 'PayPal items differ from cart', { paid: true });
   }
-  return { paidCents, shipping: pu.shipping || null, payerEmail: (o.payer || {}).email_address || '' };
+  return { paidCents, shipping: pu.shipping || null, payerEmail: (o.payer || {}).email_address || '', order: o };
+}
+
+// null when the capture has no parseable create_time (do not treat missing time as stale).
+function captureAgeMs(order, now = Date.now()) {
+  const pu = ((order && order.purchase_units) || [])[0] || {};
+  const caps = ((pu.payments || {}).captures || []).filter((c) => c && c.status === 'COMPLETED');
+  let newest = null;
+  for (const c of caps) {
+    const t = Date.parse(c.create_time || '');
+    if (!Number.isFinite(t)) return null;
+    if (newest == null || t > newest) newest = t;
+  }
+  return newest == null ? null : now - newest;
+}
+
+// Cart lines from a PayPal order item sku "DOG-TEE:M". Used by the webhook, which has no browser body.
+export function itemsFromPaypalOrder(order) {
+  const pu = ((order && order.purchase_units) || [])[0] || {};
+  const items = Array.isArray(pu.items) ? pu.items : [];
+  return items.map((it) => {
+    const raw = String((it && it.sku) || '');
+    const i = raw.indexOf(':');
+    const quantity = Number(it && it.quantity != null ? it.quantity : 1);
+    return {
+      sku: i >= 0 ? raw.slice(0, i) : raw,
+      size: i >= 0 ? raw.slice(i + 1) : '',
+      quantity: Number.isFinite(quantity) ? quantity : 1,
+    };
+  });
+}
+
+// Shipping address + payer email from the PayPal order. Phone is included only when PayPal has one.
+export function addressFromPaypalOrder(order) {
+  const pu = ((order && order.purchase_units) || [])[0] || {};
+  const ship = pu.shipping || {};
+  const addr = ship.address || {};
+  const payer = (order && order.payer) || {};
+  const phoneObj = (payer.phone && payer.phone.phone_number) || ship.phone_number || null;
+  const phone = phoneObj && typeof phoneObj === 'object' ? phoneObj.national_number : (typeof phoneObj === 'string' ? phoneObj : '');
+  const payerName = payer.name || {};
+  const name = (ship.name && ship.name.full_name) || [payerName.given_name, payerName.surname].filter(Boolean).join(' ');
+  return {
+    name,
+    email: payer.email_address || '',
+    phone: phone || '',
+    address: addr.address_line_1 || '',
+    address2: addr.address_line_2 || '',
+    city: addr.admin_area_2 || '',
+    state: addr.admin_area_1 || '',
+    zip: addr.postal_code || '',
+    country: addr.country_code || '',
+  };
 }
 
 function printifyHeaders(token, json) {
@@ -227,14 +287,37 @@ function printifyHeaders(token, json) {
 // Idempotency pre-check. Printify has no shop_order_id filter.
 // GET /v1/shops/{shop_id}/orders.json accepts page and limit (limit max 10) and returns
 // { current_page, data, last_page, per_page, total, next_page_url, ... }.
-// The external_id we send on create is returned as metadata.shop_order_id, not as a
-// top-level external_id. metadata.shop_order_label is only a display label (the optional
-// `label` we send, otherwise a copy of external_id) and must not be used for matching.
-// A lookup error must not fall through to create: a missed duplicate would place a second order.
-const PRECHECK_PAGES = 3;
+// The external_id we send on create is returned as metadata.shop_order_id. Some responses also
+// echo a top-level external_id. metadata.shop_order_label is only a display label and must not
+// be used for matching. A lookup error must not fall through to create.
+// Page through the shop (Printify has no external_id filter). Cap the scan so it still fits
+// beside the production-ready wait inside the 60s function limit.
+const PRECHECK_PAGES = 20;
 const PAGE_LIMIT = 10;
-async function findExistingOrder(token, orderId) {
-  const ids = new Set([String(orderId), 'dog-' + orderId]); // 'dog-' = legacy external_id we used to send
+const CANCELED_STATUS = new Set(['canceled', 'cancelled']);
+const CANCELABLE_STATUS = new Set(['on-hold', 'pending', 'cost-calculation']);
+
+function orderExternalIds(o) {
+  const ids = [];
+  if (o && o.external_id != null && o.external_id !== '') ids.push(String(o.external_id));
+  const shopOrderId = o && o.metadata ? o.metadata.shop_order_id : undefined;
+  if (shopOrderId != null && shopOrderId !== '') ids.push(String(shopOrderId));
+  return ids;
+}
+function matchesPaypalOrder(o, paypalOrderId) {
+  const want = new Set([String(paypalOrderId), 'dog-' + paypalOrderId]); // 'dog-' = legacy external_id
+  return orderExternalIds(o).some((id) => want.has(id));
+}
+function isCanceledStatus(status) { return CANCELED_STATUS.has(String(status || '')); }
+function oldestFirst(a, b) {
+  const ta = Date.parse((a && a.created_at) || '') || 0;
+  const tb = Date.parse((b && b.created_at) || '') || 0;
+  if (ta !== tb) return ta - tb;
+  return String(a && a.id).localeCompare(String(b && b.id));
+}
+async function listMatchingOrders(token, orderId) {
+  const hits = [];
+  const seen = new Set();
   for (let page = 1; page <= PRECHECK_PAGES; page++) {
     const url = 'https://api.printify.com/v1/shops/' + SHOP + '/orders.json?limit=' + PAGE_LIMIT + '&page=' + page;
     let r;
@@ -246,11 +329,13 @@ async function findExistingOrder(token, orderId) {
     if (!r.ok || !r.body || !Array.isArray(r.body.data)) {
       throw new FulfillError(502, 'Order service unavailable', 'Printify list orders failed ' + (r && r.status), { paid: true });
     }
-    const hit = r.body.data.find((o) => {
-      const shopOrderId = o && o.metadata ? o.metadata.shop_order_id : undefined;
-      return shopOrderId != null && shopOrderId !== '' && ids.has(String(shopOrderId));
-    });
-    if (hit) return hit;
+    for (const o of r.body.data) {
+      if (!o || o.id == null || !matchesPaypalOrder(o, orderId)) continue;
+      const id = String(o.id);
+      if (seen.has(id)) continue;
+      seen.add(id);
+      hits.push(o);
+    }
     const last = Number(r.body.last_page);
     if (Number.isFinite(last)) {
       if (page >= last) break;
@@ -258,7 +343,21 @@ async function findExistingOrder(token, orderId) {
       break;
     }
   }
-  return null;
+  return hits;
+}
+async function findExistingOrder(token, orderId) {
+  const live = (await listMatchingOrders(token, orderId)).filter((o) => !isCanceledStatus(o.status));
+  if (!live.length) return null;
+  live.sort(oldestFirst);
+  return live[0];
+}
+async function cancelPrintifyOrder(token, printifyId) {
+  const url = 'https://api.printify.com/v1/shops/' + SHOP + '/orders/' + printifyId + '/cancel.json';
+  try {
+    return await fetchJson(url, { method: 'POST', headers: printifyHeaders(token, true) });
+  } catch (e) {
+    return { ok: false, status: 0, body: { error: String(e && e.message || e) } };
+  }
 }
 
 // Used only when the cart/address was rejected: did the buyer already pay for this order?
@@ -323,18 +422,27 @@ async function alertEmail(text, extra) {
 }
 
 async function alertHuman(text, extra) {
+  const stage = (extra && extra.stage) || 'paid';
+  const id = (extra && extra.paypalOrderId) || '';
+  if (!shouldSendAlert(id, stage)) {
+    log('warn', 'alert throttled', { paypalOrderId: id, stage });
+    return;
+  }
   await Promise.all([alertWebhook(text, extra), alertEmail(text, extra)]);
 }
 
-// Throttle for verify-only alerts (fe.verify && !fe.paid), per warm instance: one alert per PayPal
-// order id, at most VERIFY_ALERT_MAX per VERIFY_ALERT_WINDOW_MS. Paid alerts are never throttled.
-const VERIFY_ALERT_MAX = 10;
-const VERIFY_ALERT_WINDOW_MS = 10 * 60 * 1000;
-const verifyAlerted = new Map(); // paypalOrderId -> ms
-function shouldAlertVerify(orderId, now = Date.now()) {
-  for (const [id, t] of verifyAlerted) if (now - t > VERIFY_ALERT_WINDOW_MS) verifyAlerted.delete(id);
-  if (verifyAlerted.has(orderId) || verifyAlerted.size >= VERIFY_ALERT_MAX) return false;
-  verifyAlerted.set(orderId, now);
+// Every alert (verify and paid): one per PayPal order id per stage per hour, and at most
+// ALERT_GLOBAL_MAX per hour per warm instance. There is no free cross-instance store.
+const ALERT_WINDOW_MS = 60 * 60 * 1000;
+const ALERT_GLOBAL_MAX = 20;
+const alertLog = []; // { key, t } within the window
+function shouldSendAlert(orderId, stage, now = Date.now()) {
+  const cutoff = now - ALERT_WINDOW_MS;
+  for (let i = alertLog.length - 1; i >= 0; i--) if (alertLog[i].t <= cutoff) alertLog.splice(i, 1);
+  const key = String(orderId || '') + '\n' + String(stage || 'paid');
+  if (alertLog.some((e) => e.key === key)) return false;
+  if (alertLog.length >= ALERT_GLOBAL_MAX) return false;
+  alertLog.push({ key, t: now });
   return true;
 }
 
@@ -374,58 +482,61 @@ async function sendWhenReady(token, printifyId) {
   return { sent: false, status, detail: 'send_to_production failed ' + sent.status + ' ' + JSON.stringify(sent.body).slice(0, 300) };
 }
 
-export function _resetAlertThrottle() { verifyAlerted.clear(); } // tests only
+export function _resetAlertThrottle() { alertLog.length = 0; } // tests only
 
-export default async function handler(req, res) {
-  const origin = req.headers && req.headers.origin;
-  const origins = allowedOrigins();
-  res.setHeader('Access-Control-Allow-Origin', origins.includes(origin) ? origin : origins[0]);
-  res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Cache-Control', 'no-store');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+// Authenticated PayPal REST call. Shared with api/paypal-webhook.js (signature verify).
+export async function paypalAuthedFetch(path, { method = 'GET', body } = {}) {
+  const token = await paypalAccessToken();
+  const opts = { method, headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' } };
+  if (body !== undefined) opts.body = typeof body === 'string' ? body : JSON.stringify(body);
+  return fetchJson(paypalBase() + path, opts);
+}
+
+function applyPaypalShip(address_to, pp, ctx) {
+  const ship = pp.shipping && pp.shipping.address;
+  if (!ship) return;
+  if (ship.country_code && ship.country_code !== 'US') throw new FulfillError(400, 'We currently ship to US addresses only', 'PayPal ship country ' + ship.country_code, { paid: true });
+  const differs = (ship.postal_code && ship.postal_code !== address_to.zip) ||
+    (ship.address_line_1 && ship.address_line_1.trim().toLowerCase() !== address_to.address1.toLowerCase());
+  if (!differs) return;
+  log('warn', 'PayPal address differs from form; using PayPal address', ctx);
+  address_to.address1 = str(ship.address_line_1, 200) || address_to.address1;
+  address_to.address2 = str(ship.address_line_2, 200);
+  address_to.city = str(ship.admin_area_2, 100) || address_to.city;
+  const st = str(ship.admin_area_1, 2).toUpperCase();
+  if (!US_STATES.has(st)) throw new FulfillError(400, 'Please choose a US state', 'PayPal ship state ' + st, { paid: true });
+  address_to.region = st;
+  address_to.zip = str(ship.postal_code, 10) || address_to.zip;
+}
+
+// Shared by the browser POST and the PayPal webhook. Writes the HTTP response.
+// source 'webhook' defers the address check until after the duplicate lookup, because a
+// PayPal order often has no phone and an already-fulfilled order must not alert again.
+export async function fulfillPaidOrder(body, res, source = 'browser') {
   const token = process.env.PRINTIFY_TOKEN;
   const dryRun = isDryRun();
-  if (req.method !== 'POST') {
-    // Health check — same shape as the version deployed before this change (+ dryRun outside production).
-    const health = { ok: true, service: 'dog-fulfill', shop: SHOP, hasToken: !!token };
-    if (dryRun) health.dryRun = true;
-    return res.status(200).json(health);
-  }
-
-  let body = req.body;
-  if (typeof body === 'string') { try { body = JSON.parse(body); } catch (_) { body = null; } }
   body = body || {};
   const paypalOrderId = str(body.paypalOrderId, 64);
-  const ctx = { paypalOrderId, email: str(body.address && body.address.email, 200) };
+  const ctx = { paypalOrderId, email: str(body.address && body.address.email, 200), source };
   if (dryRun) ctx.dryRun = true;
 
   try {
-    if (!/^[A-Z0-9]{8,64}$/i.test(paypalOrderId)) throw new FulfillError(400, 'Invalid order', 'missing/bad paypalOrderId');
+    if (!isPaypalOrderId(paypalOrderId)) throw new FulfillError(400, 'Invalid order', 'missing/bad paypalOrderId');
     // In dry-run a missing token is expected (PRINTIFY_TOKEN must never be set on Preview).
     if (!token && !dryRun) throw new FulfillError(503, 'Order service unavailable', 'PRINTIFY_TOKEN missing', { paid: true });
 
     const cart = buildCart(body.items);
-    const address_to = buildAddress(body.address);
+    // Browser path rejects a bad address before PayPal so the buyer still gets the phone/address
+    // message. The webhook has no form body; it looks for an existing order first.
+    let address_to = source === 'webhook' ? null : buildAddress(body.address);
     const pp = await verifyPaypal(paypalOrderId, cart); // throws unless paid in full
+    if (address_to) applyPaypalShip(address_to, pp, ctx);
 
-    // PayPal's shipping address (set from the same form via SET_PROVIDED_ADDRESS) is authoritative.
-    const ship = pp.shipping && pp.shipping.address;
-    if (ship) {
-      if (ship.country_code && ship.country_code !== 'US') throw new FulfillError(400, 'We currently ship to US addresses only', 'PayPal ship country ' + ship.country_code, { paid: true });
-      const differs = (ship.postal_code && ship.postal_code !== address_to.zip) ||
-        (ship.address_line_1 && ship.address_line_1.trim().toLowerCase() !== address_to.address1.toLowerCase());
-      if (differs) {
-        log('warn', 'PayPal address differs from form; using PayPal address', ctx);
-        address_to.address1 = str(ship.address_line_1, 200) || address_to.address1;
-        address_to.address2 = str(ship.address_line_2, 200);
-        address_to.city = str(ship.admin_area_2, 100) || address_to.city;
-        const st = str(ship.admin_area_1, 2).toUpperCase();
-        if (!US_STATES.has(st)) throw new FulfillError(400, 'Please choose a US state', 'PayPal ship state ' + st, { paid: true });
-        address_to.region = st;
-        address_to.zip = str(ship.postal_code, 10) || address_to.zip;
-      }
+    const age = captureAgeMs(pp.order);
+    if (age != null && age > MAX_CAPTURE_AGE_MS) {
+      log('warn', 'capture too old', { ...ctx, ageMs: age });
+      await alertHuman('DoG paid order is older than 24h and was NOT sent to Printify: PayPal ' + paypalOrderId + '. Check PayPal before creating anything.', { paypalOrderId, email: ctx.email, error: 'capture too old', stage: 'capture-age' });
+      return res.status(200).json({ ok: true });
     }
 
     // Duplicate lookup is read-only; in dry-run it only runs if a token happens to be present.
@@ -441,7 +552,14 @@ export default async function handler(req, res) {
       } else if (!dryRun && TERMINAL_BAD.has(existing.status)) {
         await alertHuman('DoG order created but NOT sent to production: PayPal ' + paypalOrderId + ' printifyId=' + existing.id + ' — terminal status ' + existing.status + '. Open Printify > Orders and click Send to production.', { paypalOrderId, printifyId: existing.id, email: ctx.email, error: 'terminal status ' + existing.status, stage: 'send_to_production' });
       }
+      // No confirmation email: the request that first created the order already sent one
+      // (Resend Idempotency-Key dog-order-confirm-<order id> dedupes if it races).
       return res.status(200).json({ ok: true, duplicate: true, printifyId: existing.id });
+    }
+
+    if (!address_to) {
+      address_to = buildAddress(body.address);
+      applyPaypalShip(address_to, pp, ctx);
     }
 
     const order = {
@@ -465,6 +583,48 @@ export default async function handler(req, res) {
       throw new FulfillError(502, 'Order service unavailable', 'Printify create failed ' + created.status + ' ' + JSON.stringify(created.body).slice(0, 500), { paid: true });
     }
     const printifyId = created.body.id;
+
+    // Two creates can both pass the pre-check. Re-list before send_to_production and keep only
+    // the oldest non-canceled order. Cancel the others while they are still not in production.
+    let siblings = [];
+    try {
+      siblings = await listMatchingOrders(token, paypalOrderId);
+    } catch (e) {
+      log('error', 'post-create duplicate scan failed', { ...ctx, printifyId, detail: String(e && e.message || e) });
+      siblings = [];
+    }
+    const live = siblings.filter((o) => !isCanceledStatus(o.status));
+    if (!live.some((o) => String(o.id) === String(printifyId))) {
+      live.push({
+        id: printifyId,
+        status: (created.body && created.body.status) || 'pending',
+        created_at: (created.body && created.body.created_at) || new Date().toISOString(),
+        external_id: paypalOrderId,
+        metadata: { shop_order_id: paypalOrderId },
+      });
+    }
+    live.sort(oldestFirst);
+    const winner = live[0];
+    const extras = live.slice(1);
+    if (extras.length) {
+      const canceledIds = [];
+      for (const extra of extras) {
+        const st = String(extra.status || 'pending');
+        if (!CANCELABLE_STATUS.has(st)) {
+          log('warn', 'duplicate order not cancelable', { ...ctx, printifyId: extra.id, status: st });
+          continue;
+        }
+        const c = await cancelPrintifyOrder(token, extra.id);
+        log(c.ok ? 'info' : 'error', c.ok ? 'canceled duplicate printify order' : 'cancel duplicate failed', { ...ctx, printifyId: extra.id, status: c.status });
+        if (c.ok) canceledIds.push(String(extra.id));
+      }
+      await alertHuman('DoG duplicate Printify orders for PayPal ' + paypalOrderId + '. Kept oldest ' + winner.id + '. Canceled ' + (canceledIds.join(', ') || '(none)') + '. Open Printify and confirm only one order is in production.', { paypalOrderId, printifyId: winner.id, email: ctx.email, error: 'duplicate printify orders', stage: 'duplicate-cancel' });
+    }
+    if (String(winner.id) !== String(printifyId)) {
+      log('info', 'duplicate request; newer order not sent', { ...ctx, printifyId, kept: winner.id });
+      return res.status(200).json({ ok: true, duplicate: true, printifyId: winner.id });
+    }
+
     const sendRes = await sendWhenReady(token, printifyId);
     if (!sendRes.sent) {
       // Paid and the Printify order exists; only the production step is waiting. Do not fail the
@@ -473,9 +633,9 @@ export default async function handler(req, res) {
       await alertHuman('DoG order created but NOT sent to production: PayPal ' + paypalOrderId + ' printifyId=' + printifyId + ' — ' + sendRes.detail + '. Open Printify > Orders and click Send to production.', { paypalOrderId, printifyId, email: ctx.email, error: sendRes.detail, stage: 'send_to_production' });
     }
     log('info', 'order fulfilled', { ...ctx, printifyId, paidCents: pp.paidCents, sentToProduction: sendRes.sent });
-    // Customer confirmation: after Printify create succeeded (production send may still be pending), never in dry-run.
-    // Awaited (so the serverless instance is not frozen mid-request) but it never throws and has its own
-    // 5 s timeout; a failure is logged and does not change the order result.
+    // Customer confirmation: after this request's order is the one going to production.
+    // Resend Idempotency-Key is dog-order-confirm-<paypal order id>, so a racing webhook
+    // that also sends does not deliver a second email. A duplicate return above does not send.
     if (!dryRun) {
       await sendOrderConfirmation(pp.payerEmail, {
         orderId: paypalOrderId,
@@ -492,19 +652,38 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, printifyId, sentToProduction: sendRes.sent });
   } catch (e) {
     const fe = e instanceof FulfillError ? e : new FulfillError(500, 'Order service unavailable', String((e && e.message) || e), { paid: true });
-    if (fe.input && /^[A-Z0-9]{8,64}$/i.test(paypalOrderId) && (await paypalOrderIsPaid(paypalOrderId))) fe.paid = true;
+    if (fe.input && isPaypalOrderId(paypalOrderId) && (await paypalOrderIsPaid(paypalOrderId))) fe.paid = true;
     log(fe.paid || fe.verify ? 'error' : 'warn', 'fulfill failed', { ...ctx, status: fe.status, detail: fe.message });
     if (fe.paid) {
-      await alertHuman('DoG order needs attention: PayPal ' + (paypalOrderId || '(none)') + ' — ' + fe.message, { paypalOrderId, email: ctx.email, error: fe.message });
+      await alertHuman('DoG order needs attention: PayPal ' + (paypalOrderId || '(none)') + ' — ' + fe.message, { paypalOrderId, email: ctx.email, error: fe.message, stage: 'paid' });
     } else if (fe.verify) {
-      if (shouldAlertVerify(paypalOrderId)) {
-        await alertHuman('DoG order needs attention: PayPal verification failed after checkout for ' + paypalOrderId + ' — ' + fe.message + '. The buyer may have been charged; check PayPal.', { paypalOrderId, email: ctx.email, error: fe.message, stage: 'paypal-verify' });
-      } else {
-        log('warn', 'verify alert throttled', { paypalOrderId });
-      }
+      await alertHuman('DoG order needs attention: PayPal verification failed after checkout for ' + paypalOrderId + ' — ' + fe.message + '. The buyer may have been charged; check PayPal.', { paypalOrderId, email: ctx.email, error: fe.message, stage: 'paypal-verify' });
     }
     return res.status(fe.status).json({ ok: false, error: fe.publicMsg });
   }
+}
+
+export default async function handler(req, res) {
+  const origin = req.headers && req.headers.origin;
+  const origins = allowedOrigins();
+  res.setHeader('Access-Control-Allow-Origin', origins.includes(origin) ? origin : origins[0]);
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Cache-Control', 'no-store');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  const token = process.env.PRINTIFY_TOKEN;
+  const dryRun = isDryRun();
+  if (req.method !== 'POST') {
+    // Health check — same shape as the version deployed before this change (+ dryRun outside production).
+    const health = { ok: true, service: 'dog-fulfill', shop: SHOP, hasToken: !!token };
+    if (dryRun) health.dryRun = true;
+    return res.status(200).json(health);
+  }
+
+  let body = req.body;
+  if (typeof body === 'string') { try { body = JSON.parse(body); } catch (_) { body = null; } }
+  return fulfillPaidOrder(body || {}, res, 'browser');
 }
 
 // Read-only re-export for api/pool.js (fallback revenue when PayPal cannot be read).
