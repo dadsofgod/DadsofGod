@@ -338,25 +338,36 @@ function shouldAlertVerify(orderId, now = Date.now()) {
   return true;
 }
 
-// Printify creates API orders in status 'pending' while it calculates costs/shipping; send_to_production
-// is rejected (400, code 8502) until the order reaches 'on-hold'. Poll briefly, then send.
+// Printify creates API orders in 'pending' / 'cost-calculation' while it prices and checks the address.
+// send_to_production is rejected (400, code 8502) until the order is 'on-hold'. Any other non-terminal
+// status is "not ready yet": keep polling. Already-sent statuses are done. Terminal failures stop and alert.
+// Wait is ~40s so PayPal + this poll + the confirmation email still finish inside the 60s function limit.
 // Returns { sent: true } or { sent: false, status, detail } — never throws for "not ready yet".
-const READY_WAIT_MS = Number(process.env.PRINTIFY_READY_WAIT_MS || 20000);
-const READY_POLL_MS = Number(process.env.PRINTIFY_READY_POLL_MS || 2000);
-const ALREADY_SENT = new Set(['sending-to-production', 'in-production', 'fulfilled', 'partially-fulfilled', 'shipping', 'delivered']);
+const READY_WAIT_MS = 40000;
+const READY_POLL_MS = 2000;
+const ALREADY_SENT = new Set(['sending-to-production', 'in-production', 'fulfilled', 'partially-fulfilled', 'shipping', 'shipped', 'delivered']);
+const TERMINAL_BAD = new Set(['canceled', 'cancelled', 'has-issues', 'unfulfillable', 'payment-not-received']);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function readyTiming() {
+  const wait = Number(process.env.PRINTIFY_READY_WAIT_MS || READY_WAIT_MS);
+  const poll = Number(process.env.PRINTIFY_READY_POLL_MS || READY_POLL_MS);
+  return { wait: wait > 0 ? wait : READY_WAIT_MS, poll: poll > 0 ? poll : READY_POLL_MS };
+}
 async function sendWhenReady(token, printifyId) {
   const base = 'https://api.printify.com/v1/shops/' + SHOP + '/orders/' + printifyId;
-  const deadline = Date.now() + READY_WAIT_MS;
+  const timing = readyTiming();
+  const deadline = Date.now() + timing.wait;
   let status = 'unknown';
   for (;;) {
     const g = await fetchJson(base + '.json', { headers: printifyHeaders(token) }).catch(() => null);
     status = (g && g.ok && g.body && g.body.status) || status;
+    log('info', 'printify order status', { printifyId, status });
     if (ALREADY_SENT.has(status)) return { sent: true, status };
+    if (TERMINAL_BAD.has(status)) return { sent: false, status, detail: 'terminal status ' + status };
     if (status === 'on-hold') break;
-    if (status !== 'pending' && status !== 'unknown') return { sent: false, status, detail: 'unexpected status ' + status };
-    if (Date.now() + READY_POLL_MS > deadline) return { sent: false, status, detail: 'still ' + status + ' after ' + READY_WAIT_MS + 'ms' };
-    await sleep(READY_POLL_MS);
+    // pending, cost-calculation, unknown, and any other not-ready status: keep polling.
+    if (Date.now() + timing.poll > deadline) return { sent: false, status, detail: 'still ' + status + ' after ' + timing.wait + 'ms' };
+    await sleep(timing.poll);
   }
   const sent = await fetchJson(base + '/send_to_production.json', { method: 'POST', headers: printifyHeaders(token, true) });
   if (sent.ok) return { sent: true, status: 'sending-to-production' };
@@ -421,9 +432,14 @@ export default async function handler(req, res) {
     const existing = token ? await findExistingOrder(token, paypalOrderId) : null;
     if (existing) {
       log('info', 'duplicate request; order already exists', { ...ctx, printifyId: existing.id, status: existing.status });
-      if (!dryRun && (existing.status === 'pending' || existing.status === 'on-hold')) {
+      if (!dryRun && !ALREADY_SENT.has(existing.status) && !TERMINAL_BAD.has(existing.status)) {
         const r = await sendWhenReady(token, existing.id);
         log(r.sent ? 'info' : 'warn', r.sent ? 'duplicate: sent existing order to production' : 'duplicate: existing order not sent', { ...ctx, printifyId: existing.id, ...r });
+        if (!r.sent) {
+          await alertHuman('DoG order created but NOT sent to production: PayPal ' + paypalOrderId + ' printifyId=' + existing.id + ' — ' + r.detail + '. Open Printify > Orders and click Send to production.', { paypalOrderId, printifyId: existing.id, email: ctx.email, error: r.detail, stage: 'send_to_production' });
+        }
+      } else if (!dryRun && TERMINAL_BAD.has(existing.status)) {
+        await alertHuman('DoG order created but NOT sent to production: PayPal ' + paypalOrderId + ' printifyId=' + existing.id + ' — terminal status ' + existing.status + '. Open Printify > Orders and click Send to production.', { paypalOrderId, printifyId: existing.id, email: ctx.email, error: 'terminal status ' + existing.status, stage: 'send_to_production' });
       }
       return res.status(200).json({ ok: true, duplicate: true, printifyId: existing.id });
     }
@@ -464,6 +480,7 @@ export default async function handler(req, res) {
       await sendOrderConfirmation(pp.payerEmail, {
         orderId: paypalOrderId,
         date: new Date(),
+        sentToProduction: sendRes.sent,
         firstName: address_to.first_name,
         lines: cart.lines.map((l) => ({ name: CATALOG[l.sku].name, size: l.size, quantity: l.quantity, priceCents: CATALOG[l.sku].priceCents })),
         shippingCents: SHIPPING_CENTS,

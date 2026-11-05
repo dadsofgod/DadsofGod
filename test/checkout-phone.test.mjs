@@ -32,6 +32,18 @@ test('shipValid() checks the phone, and PayPal onClick + createOrder call shipVa
   assert.match(co, /^if\(!shipValid\(\)\)return a\.reject\(\);/);
 });
 
+test('successful fulfill closes the cart, confirms the order, then returns home', () => {
+  assert.match(html, /function showOrderConfirmed\(orderId,email\)/);
+  assert.match(html, /cart=\[\];saveCart\(\);hideCart\(\)/);
+  assert.match(html, /Thank you! Your order is confirmed\./);
+  assert.match(html, /A confirmation email is on its way to/);
+  assert.match(html, /Back to home/);
+  assert.match(html, /setTimeout\(goHome,5000\)/);
+  assert.match(html, /location\.href='\/'/);
+  assert.match(html, /sendToFulfill\(payload\)\.then\(function\(\)\{showOrderConfirmed\(orderId,getShip\(\)\.email\)\}/);
+  assert.match(html, /Payment received; we\\'re confirming your order, we\\'ll email you\./);
+});
+
 test('privacy and shipping pages describe phone as required, shipping/delivery only', () => {
   const privacy = readFileSync(new URL('../privacy.html', import.meta.url), 'utf8');
   const shipping = readFileSync(new URL('../shipping.html', import.meta.url), 'utf8');
