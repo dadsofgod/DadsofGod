@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/fulfill.js": {
+      "maxDuration": 60
+    }
+  },
   "redirects": [
     {
       "source": "/:path((?!api(?:/|$)).*)",

@@ -337,6 +337,32 @@ function shouldAlertVerify(orderId, now = Date.now()) {
   verifyAlerted.set(orderId, now);
   return true;
 }
+
+// Printify creates API orders in status 'pending' while it calculates costs/shipping; send_to_production
+// is rejected (400, code 8502) until the order reaches 'on-hold'. Poll briefly, then send.
+// Returns { sent: true } or { sent: false, status, detail } — never throws for "not ready yet".
+const READY_WAIT_MS = Number(process.env.PRINTIFY_READY_WAIT_MS || 20000);
+const READY_POLL_MS = Number(process.env.PRINTIFY_READY_POLL_MS || 2000);
+const ALREADY_SENT = new Set(['sending-to-production', 'in-production', 'fulfilled', 'partially-fulfilled', 'shipping', 'delivered']);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function sendWhenReady(token, printifyId) {
+  const base = 'https://api.printify.com/v1/shops/' + SHOP + '/orders/' + printifyId;
+  const deadline = Date.now() + READY_WAIT_MS;
+  let status = 'unknown';
+  for (;;) {
+    const g = await fetchJson(base + '.json', { headers: printifyHeaders(token) }).catch(() => null);
+    status = (g && g.ok && g.body && g.body.status) || status;
+    if (ALREADY_SENT.has(status)) return { sent: true, status };
+    if (status === 'on-hold') break;
+    if (status !== 'pending' && status !== 'unknown') return { sent: false, status, detail: 'unexpected status ' + status };
+    if (Date.now() + READY_POLL_MS > deadline) return { sent: false, status, detail: 'still ' + status + ' after ' + READY_WAIT_MS + 'ms' };
+    await sleep(READY_POLL_MS);
+  }
+  const sent = await fetchJson(base + '/send_to_production.json', { method: 'POST', headers: printifyHeaders(token, true) });
+  if (sent.ok) return { sent: true, status: 'sending-to-production' };
+  return { sent: false, status, detail: 'send_to_production failed ' + sent.status + ' ' + JSON.stringify(sent.body).slice(0, 300) };
+}
+
 export function _resetAlertThrottle() { verifyAlerted.clear(); } // tests only
 
 export default async function handler(req, res) {
@@ -394,7 +420,11 @@ export default async function handler(req, res) {
     // Duplicate lookup is read-only; in dry-run it only runs if a token happens to be present.
     const existing = token ? await findExistingOrder(token, paypalOrderId) : null;
     if (existing) {
-      log('info', 'duplicate request; order already exists', { ...ctx, printifyId: existing.id });
+      log('info', 'duplicate request; order already exists', { ...ctx, printifyId: existing.id, status: existing.status });
+      if (!dryRun && (existing.status === 'pending' || existing.status === 'on-hold')) {
+        const r = await sendWhenReady(token, existing.id);
+        log(r.sent ? 'info' : 'warn', r.sent ? 'duplicate: sent existing order to production' : 'duplicate: existing order not sent', { ...ctx, printifyId: existing.id, ...r });
+      }
       return res.status(200).json({ ok: true, duplicate: true, printifyId: existing.id });
     }
 
@@ -419,15 +449,15 @@ export default async function handler(req, res) {
       throw new FulfillError(502, 'Order service unavailable', 'Printify create failed ' + created.status + ' ' + JSON.stringify(created.body).slice(0, 500), { paid: true });
     }
     const printifyId = created.body.id;
-    const sent = await fetchJson('https://api.printify.com/v1/shops/' + SHOP + '/orders/' + printifyId + '/send_to_production.json', {
-      method: 'POST', headers: printifyHeaders(token, true),
-    });
-    if (!sent.ok) {
-      // Order exists in Printify but is not in production; a human must push it.
-      throw new FulfillError(502, 'Order service unavailable', 'send_to_production failed ' + sent.status + ' printifyId=' + printifyId + ' ' + JSON.stringify(sent.body).slice(0, 300), { paid: true });
+    const sendRes = await sendWhenReady(token, printifyId);
+    if (!sendRes.sent) {
+      // Paid and the Printify order exists; only the production step is waiting. Do not fail the
+      // customer — alert a human to press "Send to production" (or a later retry/duplicate call will).
+      log('warn', 'order created but not yet sent to production', { ...ctx, printifyId, ...sendRes });
+      await alertHuman('DoG order created but NOT sent to production: PayPal ' + paypalOrderId + ' printifyId=' + printifyId + ' — ' + sendRes.detail + '. Open Printify > Orders and click Send to production.', { paypalOrderId, printifyId, email: ctx.email, error: sendRes.detail, stage: 'send_to_production' });
     }
-    log('info', 'order fulfilled', { ...ctx, printifyId, paidCents: pp.paidCents });
-    // Customer confirmation: only after Printify create + send_to_production succeeded, never in dry-run.
+    log('info', 'order fulfilled', { ...ctx, printifyId, paidCents: pp.paidCents, sentToProduction: sendRes.sent });
+    // Customer confirmation: after Printify create succeeded (production send may still be pending), never in dry-run.
     // Awaited (so the serverless instance is not frozen mid-request) but it never throws and has its own
     // 5 s timeout; a failure is logged and does not change the order result.
     if (!dryRun) {
@@ -442,7 +472,7 @@ export default async function handler(req, res) {
         address: address_to,
       }, { log });
     }
-    return res.status(200).json({ ok: true, printifyId });
+    return res.status(200).json({ ok: true, printifyId, sentToProduction: sendRes.sent });
   } catch (e) {
     const fe = e instanceof FulfillError ? e : new FulfillError(500, 'Order service unavailable', String((e && e.message) || e), { paid: true });
     if (fe.input && /^[A-Z0-9]{8,64}$/i.test(paypalOrderId) && (await paypalOrderIsPaid(paypalOrderId))) fe.paid = true;
