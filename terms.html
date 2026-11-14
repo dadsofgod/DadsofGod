@@ -28,7 +28,7 @@
 <body class="bg-zinc-950 text-white">
 <nav class="bg-black border-b border-zinc-800"><div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 <a href="index.html" class="font-black text-3xl gold">DoG</a>
-<a href="index.html" class="text-sm text-zinc-400">Home</a>
+<div class="flex items-center gap-x-5"><button type="button" onclick="showCart()" class="relative hover:text-[#FDD10C]" aria-label="Open cart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="inline-block h-6 w-auto icon" fill="currentColor" aria-hidden="true"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg><span id="cart-count" class="absolute -top-1 -right-1 bg-[#FDD10C] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button><a href="index.html" class="text-sm text-zinc-400">Home</a></div>
 </div></nav>
 <main class="max-w-3xl mx-auto px-6 py-16 space-y-6 text-zinc-300 leading-relaxed">
     <!-- Donation wording set by Shawn (2026-10-29): for-profit; donations held in the DoG PayPal account, labeled separately from product orders. Returns wording still pending Shawn sign-off. -->
@@ -50,5 +50,54 @@
     <p>Questions: <a class="gold underline" href="mailto:contact@dadsofgod.com">contact@dadsofgod.com</a>.</p>
 </main>
 <footer class="max-w-3xl mx-auto px-6 py-10 border-t border-zinc-800 text-sm text-zinc-400 flex flex-wrap gap-6"><a href="index.html">Home</a><a href="shipping.html">Shipping</a><a href="returns.html">Returns</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="contact.html">Contact</a></footer>
+
+<div id="cart-modal" onclick="if(event.target.id==='cart-modal')hideCart()" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-end md:items-center justify-center md:p-4">
+<div class="bg-zinc-950 w-full md:w-[520px] max-h-[92vh] overflow-y-auto md:rounded-3xl rounded-t-3xl p-8 border border-zinc-800" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+<div class="flex justify-between items-center mb-6"><h2 id="cart-title" class="font-black text-3xl">Your Cart</h2><button type="button" onclick="hideCart()" class="text-4xl text-zinc-400" aria-label="Close cart">×</button></div>
+<div id="cart-items" class="space-y-4"></div>
+<div id="cart-footer" class="border-t border-zinc-800 pt-5 mt-5 hidden">
+<p class="text-sm text-zinc-400 mb-6">US shipping $5.99 at checkout.</p>
+<a href="index.html#cart" class="inline-flex w-full items-center justify-center py-4 bg-[#FDD10C] text-black font-black text-lg rounded-2xl">Checkout</a>
+</div>
+</div></div>
+<script>
+(function(){
+  var PRICES={'DOG-TEE':35,'DOG-LS':45,'DOG-HOOD':65,'DOG-CAP':35};
+  function read(){
+    var cart=[];
+    try{cart=JSON.parse(localStorage.getItem('dogCart')||'[]')}catch(e){cart=[]}
+    if(!Array.isArray(cart))cart=[];
+    return cart.filter(function(i){return i&&PRICES[i.sku]}).map(function(i){
+      return {sku:i.sku,name:i.name,price:PRICES[i.sku],size:i.sku==='DOG-CAP'?'One size':i.size,quantity:i.quantity||1};
+    });
+  }
+  function save(cart){localStorage.setItem('dogCart',JSON.stringify(cart));updateCartCount(cart)}
+  function updateCartCount(cart){var el=document.getElementById('cart-count');if(el)el.textContent=String((cart||read()).length)}
+  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  window.showCart=function(){
+    var cart=read();
+    var box=document.getElementById('cart-items');
+    var foot=document.getElementById('cart-footer');
+    box.innerHTML='';
+    if(!cart.length){
+      box.innerHTML='<div class="text-center py-10 text-zinc-400">Your cart is empty</div><div class="text-center"><a href="index.html#shop" class="text-[#FDD10C] font-semibold">Shop</a></div>';
+      foot.classList.add('hidden');
+    }else{
+      cart.forEach(function(item,index){
+        box.innerHTML+='<div class="flex justify-between items-center border-b border-zinc-800 pb-4"><div><div class="font-semibold">'+esc(item.name)+'</div><div class="text-sm text-zinc-400">Size '+esc(item.size)+'</div></div><div class="text-right"><div class="font-bold">$'+item.price+'</div><button type="button" onclick="removeFromCart('+index+')" class="text-xs text-red-400">Remove</button></div></div>';
+      });
+      foot.classList.remove('hidden');
+    }
+    updateCartCount(cart);
+    document.getElementById('cart-modal').classList.remove('hidden');
+  };
+  window.hideCart=function(){document.getElementById('cart-modal').classList.add('hidden')};
+  window.removeFromCart=function(i){var cart=read();cart.splice(i,1);save(cart);showCart()};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')hideCart()});
+  window.addEventListener('storage',function(e){if(e.key==='dogCart')updateCartCount(read())});
+  window.addEventListener('pageshow',function(){updateCartCount(read())});
+  updateCartCount(read());
+})();
+</script>
 </body>
 </html>

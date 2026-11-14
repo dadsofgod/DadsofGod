@@ -3,7 +3,7 @@
 
 The artifact is an allow-list, not a copy of the repository:
 
-  * every *.html file at the repository root
+  * every *.html file at the repository root, including 404.html
   * image and icon files (and image-only folders) those pages reference
   * stylesheets those pages reference, including assets/site.css
   * logo.png, so the existing public URL keeps resolving
@@ -28,6 +28,9 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 REQUIRED = ("CNAME", ".nojekyll", "robots.txt", "sitemap.xml")
+# GitHub Pages looks for this exact filename. The root HTML glob publishes
+# it; failing here keeps it from quietly dropping out of the allow-list.
+REQUIRED_HTML = ("404.html",)
 OPTIONAL = ("pool-ledger.json",)
 # Compiled CSS is linked from every page. Fail if it drops out of the artifact.
 REQUIRED_ASSETS = ("assets/site.css",)
@@ -203,6 +206,13 @@ def assemble(root: Path, site: Path) -> list[str]:
     html_files = sorted(path for path in root.glob("*.html") if path.is_file())
     if not html_files:
         fail("No HTML files at the repository root.")
+    html_names = {path.name for path in html_files}
+    missing_html = [name for name in REQUIRED_HTML if name not in html_names]
+    if missing_html:
+        fail(
+            "These pages are on the Pages allow-list and must be published:\n  "
+            + "\n  ".join(missing_html)
+        )
     for path in html_files:
         copy_file(root, site, path.name, "root HTML page")
 

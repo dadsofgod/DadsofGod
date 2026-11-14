@@ -39,8 +39,9 @@ jobs:
           # Read Pages metadata only. Do not create or reconfigure the site.
           enablement: false
 
-      # Root HTML, referenced images, and referenced stylesheets (assets/site.css)
-      # are the allow-list. logo.png is copied as well so its public URL stays.
+      # Root HTML is the page allow-list, including 404.html. Referenced
+      # images and stylesheets (assets/site.css) are copied too. logo.png stays
+      # so its public URL keeps resolving.
       - name: Copy site files into the Pages artifact
         run: python3 -u .github/workflows/assemble_pages_site.py
 
