@@ -5,6 +5,8 @@ The artifact is an allow-list, not a copy of the repository:
 
   * every *.html file at the repository root, including 404.html
   * image and icon files (and image-only folders) those pages reference
+  * stylesheets those pages reference, including assets/site.css
+  * logo.png, so the existing public URL keeps resolving
   * CNAME, .nojekyll, robots.txt, sitemap.xml
   * pool-ledger.json, when it is present
   * an image on this host that api/ links in customer email, such as
@@ -30,7 +32,13 @@ REQUIRED = ("CNAME", ".nojekyll", "robots.txt", "sitemap.xml")
 # it; failing here keeps it from quietly dropping out of the allow-list.
 REQUIRED_HTML = ("404.html",)
 OPTIONAL = ("pool-ledger.json",)
+# Compiled CSS is linked from every page. Fail if it drops out of the artifact.
+REQUIRED_ASSETS = ("assets/site.css",)
+# Pages use the smaller logo files. This original stays published because
+# https://www.dadsofgod.com/logo.png was the PNG favicon and is a public URL.
+ALWAYS_PUBLIC = ("logo.png",)
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".ico", ".avif", ".bmp"}
+STYLE_EXTS = {".css"}
 SITE_HOSTS = {"www.dadsofgod.com", "dadsofgod.com"}
 DENY_DIRS = {"api", "test", "node_modules", ".github", ".git"}
 DENY_FILES = {"package.json", "package-lock.json", "vercel.json"}
@@ -219,8 +227,21 @@ def assemble(root: Path, site: Path) -> list[str]:
 
     for path in html_files:
         for kind, raw, rel in local_refs(html_text(path)):
-            if kind == "image" or Path(rel).suffix.lower() in IMAGE_EXTS:
+            suffix = Path(rel).suffix.lower()
+            if kind == "image" or suffix in IMAGE_EXTS:
                 copy_image(root, site, rel, f"{path.name} references {raw}")
+            elif suffix in STYLE_EXTS:
+                copy_file(root, site, rel, f"{path.name} references {raw}")
+
+    for name in ALWAYS_PUBLIC:
+        copy_file(root, site, name, "public URL kept on purpose")
+
+    missing_assets = [name for name in REQUIRED_ASSETS if name not in COPIED]
+    if missing_assets:
+        fail(
+            "These files are on the Pages allow-list and were not copied:\n  "
+            + "\n  ".join(missing_assets)
+        )
 
     api = root / "api"
     if api.is_dir():

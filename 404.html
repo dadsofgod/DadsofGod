@@ -7,12 +7,12 @@
     <meta name="description" content="That page isn't on dadsofgod.com. Head back to the shop or the home page.">
     <meta name="robots" content="noindex">
     <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="icon" type="image/png" href="/assets/logo-nav.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/assets/site.css">
     <style>
         body { font-family: Inter, system-ui, sans-serif; }
         .gold { color: #FDD10C; }
@@ -25,7 +25,10 @@
 <nav class="bg-black border-b border-zinc-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
         <a href="/index.html" class="flex items-center gap-x-3">
-            <img src="/logo.png" alt="Dads of God" class="h-11 w-auto logo-glow">
+            <picture>
+                <source srcset="/assets/logo-nav.webp" type="image/webp">
+                <img src="/assets/logo-nav.png" alt="Dads of God" class="h-11 w-auto logo-glow" width="60" height="44">
+            </picture>
             <div><div class="font-black text-4xl tracking-tighter gold">DoG</div><div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div></div>
         </a>
         <div class="hidden md:flex items-center gap-x-8 text-sm">
@@ -36,8 +39,8 @@
             <a href="/contact.html" class="hover:text-[#FDD10C]">Contact</a>
         </div>
         <div class="flex items-center gap-x-4">
-            <button type="button" onclick="showCart()" class="relative hover:text-[#FDD10C]" aria-label="Open cart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="inline-block h-6 w-auto align-[-0.125em]" fill="currentColor" aria-hidden="true"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg><span id="cart-count" class="absolute -top-1 -right-1 bg-[#FDD10C] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
-            <button type="button" class="md:hidden text-2xl" onclick="document.getElementById('m').classList.toggle('hidden')" aria-label="Menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="inline-block h-6 w-auto align-[-0.125em]" fill="currentColor" aria-hidden="true"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></button>
+            <button type="button" onclick="showCart()" class="relative hover:text-[#FDD10C]" aria-label="Open cart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="inline-block h-6 w-auto icon" fill="currentColor" aria-hidden="true"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg><span id="cart-count" class="absolute -top-1 -right-1 bg-[#FDD10C] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
+            <button type="button" class="md:hidden text-2xl" onclick="document.getElementById('m').classList.toggle('hidden')" aria-label="Menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="inline-block h-6 w-6 icon" fill="currentColor" aria-hidden="true"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></button>
         </div>
     </div>
     <div id="m" class="hidden md:hidden px-6 pb-4 flex flex-col gap-3">
@@ -45,7 +48,10 @@
     </div>
 </nav>
 <main class="max-w-3xl mx-auto px-6 py-24 text-center">
-    <img src="/logo.png" alt="" class="h-24 w-auto logo-glow mx-auto mb-8">
+    <picture>
+        <source srcset="/assets/logo-hero.webp" type="image/webp">
+        <img src="/assets/logo-hero.png" alt="" class="h-24 w-auto logo-glow mx-auto mb-8" width="132" height="96">
+    </picture>
     <div class="gold text-sm font-bold tracking-[4px]">404</div>
     <h1 class="text-5xl md:text-6xl font-bold tracking-tight mt-4">We can't find that page.</h1>
     <p class="text-xl text-zinc-400 mt-6 max-w-lg mx-auto">The address may be mistyped, or the page may have moved.</p>

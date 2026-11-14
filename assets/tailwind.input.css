@@ -1,0 +1,7 @@
+/* Source for assets/site.css. Not linked by the site.
+   .icon matches the vertical alignment Font Awesome applied. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.icon { vertical-align: -0.125em; }
