@@ -1,0 +1,55 @@
+# Publish dadsofgod.com from an allow-list of website files.
+#
+# GitHub Pages is still set to "Deploy from a branch", which publishes the
+# repository root, including api/, test/, and vercel.json. This workflow
+# uploads only the public site. actions/deploy-pages does not replace that
+# branch deployment until Settings > Pages > Source is switched to
+# "GitHub Actions". This file does not change that setting.
+name: Publish site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages deployment at a time. Do not cancel a deploy that is already
+# uploading; GitHub Pages allows a single active deployment.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+        with:
+          # Read Pages metadata only. Do not create or reconfigure the site.
+          enablement: false
+
+      - name: Copy site files into the Pages artifact
+        run: python3 -u .github/workflows/assemble_pages_site.py
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          # .nojekyll is a dotfile. v5 omits hidden files unless this is set.
+          # .git and .github are still excluded by the action.
+          include-hidden-files: true
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
