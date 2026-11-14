@@ -65,8 +65,8 @@ body{font-family:Inter,system-ui,sans-serif}
 <a href="#mission">Mission</a><a href="#shop">Shop</a><a href="#impact">Impact</a><a href="#donate">Donate</a><a href="about.html">About</a><a href="contact.html">Contact</a>
 </div></div></nav>
 <header class="max-w-7xl mx-auto px-6 pt-12 pb-20 text-center">
-<img src="logo.png" alt="Dads of God" class="h-52 w-auto logo-glow mx-auto mb-8">
-<h1 class="text-6xl md:text-[92px] font-black leading-none tracking-tighter mb-6">WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span></h1>
+<img src="logo.png" alt="Dads of God" class="h-36 sm:h-40 md:h-44 w-auto logo-glow mx-auto mb-8">
+<h1 class="text-[clamp(2.75rem,13.5vw,5.5rem)] font-black leading-[1.08] tracking-tight mb-6">WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span></h1>
 <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Premium gear for men who stand in the gap.</p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
 <a href="#shop" class="inline-flex items-center justify-center px-14 py-5 gold-bg text-black font-black text-xl rounded-3xl">SHOP THE COLLECTION</a>
@@ -216,7 +216,8 @@ function donationAmount(){const c=parseFloat(document.getElementById('custom-amo
 function setDonationAmount(n){currentDonationAmount=n;document.getElementById('custom-amount').value='';document.querySelectorAll('.donate-btn').forEach(b=>b.classList.toggle('selected',b.textContent.replace('$','')===String(n)))}
 function renderDonationButtons(){const el=document.getElementById('donate-paypal-container');if(!el||typeof paypal==='undefined')return;el.innerHTML='';paypal.Buttons({style:{shape:'rect',color:'gold',layout:'vertical',label:'donate'},createOrder:function(d,a){const amount=donationAmount();if(!amount||amount<1)return a.reject();var money=function(v){return{currency_code:'USD',value:Number(v).toFixed(2)}};return a.order.create({purchase_units:[{reference_id:'donation-pool',custom_id:'donation-pool',description:'Donation – DoG donation pool',amount:{currency_code:'USD',value:amount.toFixed(2),breakdown:{item_total:money(amount)}},items:[{name:'Donation – DoG donation pool',description:'100% after PayPal\'s fee will go to vetted anti-trafficking nonprofits, named before we claim impact. Not tax-deductible.',unit_amount:money(amount),quantity:'1',category:'DONATION'}]}]})},onApprove:function(d,a){return a.order.capture().then(function(cap){toast('Thank you.');try{fetch(DONATION_THANKS,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({paypalOrderId:(cap&&cap.id)||d.orderID}),keepalive:true}).catch(function(){})}catch(_){}},function(e){console.error('Donation capture failed',e);const el=document.getElementById('donate-error');el.textContent='Your donation did not complete. Please try again.';el.classList.remove('hidden')})}}).render('#donate-paypal-container')}
 function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('hidden')}
-window.onload=function(){updateCartCount();renderDonationButtons()}
+window.onload=function(){updateCartCount();renderDonationButtons();if(location.hash==='#cart')showCart()}
+window.addEventListener('hashchange',function(){if(location.hash==='#cart')showCart()})
 </script>
 </body>
 </html>
