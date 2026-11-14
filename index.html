@@ -20,13 +20,14 @@
 <meta name="twitter:description" content="Dads of God rallies men as protectors of the innocent. 25% of profits after print, shipping, and fees is reserved for vetted organizations fighting child trafficking.">
 <meta name="twitter:image" content="https://www.dadsofgod.com/og-image.png">
 <link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/png" href="assets/logo-nav.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
+<link rel="stylesheet" href="assets/site.css">
 <script src="https://www.paypal.com/sdk/js?client-id=Af4xNnTyx97bit9CV_8JPNMIYiV1dQzQv8qDDehdV62GyuSnHG2KAGpf884aK5WF7p646XIuuX8JzKvX&currency=USD"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 body{font-family:Inter,system-ui,sans-serif}
 .gold{color:#FDD10C}.gold-bg{background-color:#FDD10C}
 .product-card{transition:all .4s}
@@ -39,6 +40,7 @@ body{font-family:Inter,system-ui,sans-serif}
 .product-media.show-back .img-back{opacity:1}
 @media (hover:hover){.product-card:hover .img-front{opacity:0}.product-card:hover .img-back{opacity:1}}
 .size-btn.selected,.donate-btn.selected{border-color:#FDD10C;background:rgba(253,209,12,.12)}
+.icon{vertical-align:-.125em}
 </style>
 </head>
 <body class="bg-zinc-950 text-white">
@@ -46,7 +48,10 @@ body{font-family:Inter,system-ui,sans-serif}
 <div class="max-w-7xl mx-auto px-6">
 <div class="flex items-center justify-between h-20">
 <a href="index.html" class="flex items-center gap-x-3">
-<img src="logo.png" alt="Dads of God logo" class="h-11 w-auto logo-glow">
+<picture>
+<source srcset="assets/logo-nav.webp" type="image/webp">
+<img src="assets/logo-nav.png" alt="Dads of God logo" class="h-11 w-auto logo-glow" width="60" height="44">
+</picture>
 <div><div class="font-black text-4xl tracking-tighter gold">DoG</div><div class="text-[10px] text-zinc-400 -mt-1 tracking-[4px]">DADS OF GOD</div></div>
 </a>
 <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
@@ -58,14 +63,17 @@ body{font-family:Inter,system-ui,sans-serif}
 <a href="contact.html" class="hover:text-[#FDD10C]">Contact</a>
 </div>
 <div class="flex items-center gap-x-4">
-<button type="button" onclick="showCart()" class="relative hover:text-[#FDD10C]" aria-label="Open cart"><i class="fa-solid fa-shopping-cart text-2xl"></i><span id="cart-count" class="absolute -top-1 -right-1 bg-[#FDD10C] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
-<button type="button" onclick="toggleMobileMenu()" class="md:hidden text-2xl" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+<button type="button" onclick="showCart()" class="relative hover:text-[#FDD10C]" aria-label="Open cart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="inline-block h-6 w-auto icon" fill="currentColor" aria-hidden="true"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg><span id="cart-count" class="absolute -top-1 -right-1 bg-[#FDD10C] text-black text-xs font-black w-5 h-5 flex items-center justify-center rounded-full">0</span></button>
+<button type="button" onclick="toggleMobileMenu()" class="md:hidden text-2xl" aria-label="Menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="inline-block h-6 w-6 icon" fill="currentColor" aria-hidden="true"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></button>
 </div></div>
 <div id="mobile-menu" class="hidden md:hidden py-6 flex flex-col gap-y-4 text-lg">
 <a href="#mission">Mission</a><a href="#shop">Shop</a><a href="#impact">Impact</a><a href="#donate">Donate</a><a href="about.html">About</a><a href="contact.html">Contact</a>
 </div></div></nav>
 <header class="max-w-7xl mx-auto px-6 pt-12 pb-20 text-center">
-<img src="logo.png" alt="Dads of God" class="h-52 w-auto logo-glow mx-auto mb-8">
+<picture>
+<source srcset="assets/logo-hero.webp" type="image/webp">
+<img src="assets/logo-hero.png" alt="Dads of God" class="h-52 w-auto logo-glow mx-auto mb-8" width="285" height="208">
+</picture>
 <h1 class="text-6xl md:text-[92px] font-black leading-none tracking-tighter mb-6">WE WERE<br>MADE TO<br><span class="gold">PROTECT.</span></h1>
 <p class="text-2xl text-zinc-400 max-w-md mx-auto mb-10">Premium gear for men who stand in the gap.</p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -81,7 +89,7 @@ body{font-family:Inter,system-ui,sans-serif}
 </div>
 <div class="md:col-span-5 mt-12 md:mt-0">
 <div class="bg-black border border-zinc-800 p-9 rounded-3xl flex items-start gap-x-4">
-<i class="fa-solid fa-shield-halved text-5xl gold mt-1"></i>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="inline-block h-12 w-12 shrink-0 icon gold mt-1" fill="currentColor" aria-hidden="true"><path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8V444.8C394 378 431.1 230.1 432 141.4L256 66.8l0 0z"/></svg>
 <div><div class="font-black text-3xl">25% of profits</div>
 <div class="text-lg text-zinc-300 mt-1">after print, shipping, and payment fees is set aside for vetted organizations fighting child trafficking. We will name those partners before we claim rescue numbers.</div></div>
 </div></div></div></section>
