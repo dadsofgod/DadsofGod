@@ -39,6 +39,9 @@ jobs:
           # Read Pages metadata only. Do not create or reconfigure the site.
           enablement: false
 
+      # Root HTML is the page allow-list, including 404.html (GitHub Pages
+      # serves that file for unknown URLs). Every other public file is copied
+      # only when a page or a customer email references it.
       - name: Copy site files into the Pages artifact
         run: python3 -u .github/workflows/assemble_pages_site.py
 
