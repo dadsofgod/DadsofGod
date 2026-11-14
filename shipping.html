@@ -88,5 +88,66 @@
   updateCartCount(read());
 })();
 </script>
+<script>
+(function () {
+  var ACTION = 'a, button, input, select, textarea, summary, [role="button"], [role="menuitem"]';
+  function target(e) {
+    var node = e.target;
+    return node && node.closest ? node : null;
+  }
+  function panels() {
+    return Array.prototype.slice.call(document.querySelectorAll('[data-dropdown]'));
+  }
+  function buttonFor(panel) {
+    if (!panel.id) return null;
+    return document.querySelector('[data-dropdown-toggle][aria-controls="' + panel.id + '"]');
+  }
+  function isOpen(panel) {
+    return !panel.classList.contains('hidden');
+  }
+  function setOpen(panel, open) {
+    panel.classList.toggle('hidden', !open);
+    var btn = buttonFor(panel);
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function closePanel(panel, restoreFocus) {
+    var wasOpen = isOpen(panel);
+    setOpen(panel, false);
+    if (restoreFocus && wasOpen) {
+      var btn = buttonFor(panel);
+      if (btn && panel.contains(document.activeElement)) btn.focus();
+    }
+  }
+  function closeAll(restoreFocus) {
+    panels().forEach(function (panel) { closePanel(panel, restoreFocus); });
+  }
+  panels().forEach(function (panel) { setOpen(panel, isOpen(panel)); });
+  document.addEventListener('click', function (e) {
+    var node = target(e);
+    if (!node) return;
+    var toggle = node.closest('[data-dropdown-toggle]');
+    if (toggle) {
+      var panel = document.getElementById(toggle.getAttribute('aria-controls') || '');
+      if (!panel || !panel.hasAttribute('data-dropdown')) return;
+      var next = !isOpen(panel);
+      panels().forEach(function (other) { if (other !== panel) setOpen(other, false); });
+      setOpen(panel, next);
+      return;
+    }
+    var panel = node.closest('[data-dropdown]');
+    if (panel) {
+      var action = node.closest(ACTION);
+      if (action && panel.contains(action)) setOpen(panel, false);
+      return;
+    }
+    closeAll(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (!panels().some(isOpen)) return;
+    closeAll(true);
+  });
+})();
+</script>
 </body>
 </html>
